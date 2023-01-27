@@ -1,0 +1,110 @@
+/* Main Login Container */
+.login-container,
+.signup-container {
+    background-color: #DEDEDE;
+    padding: 0px;
+    margin: 0px;
+}
+
+/* Main Login Container */
+
+/* Login Stack Container That divides the UI into two section */
+.login-stack-container,
+.signup-stack-container {
+    align-items: center;
+    justify-content: center;
+}
+
+/* Login Stack Container That divides the UI into two section */
+
+/*-------------------------------- Image and Next Section --------------------------------*/
+.login-container .image-section,
+.signup-container .next-section {
+    padding: 0 40px;
+    width: 60%;
+}
+
+.login-container .next-section,
+.signup-container .image-section {
+    padding: 0 40px;
+    width: 40%;
+}
+
+.image-section {
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    background-image: url('../public/Images//login-background.jpg');
+    background-size: auto 110vh;
+}
+
+.next-section {
+    align-items: center;
+    justify-content: center;
+}
+
+/* Welcome banner */
+.welcome-banner {
+    padding: 40px 60px;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: white;
+}
+
+/* Welcome banner */
+
+/* Texts in Welcome Banner */
+.display-text{
+    font-weight: 700;
+}
+/* Texts in Welcome Banner */
+
+/* Purple text */
+.purple-text {
+    color: #A789E5;
+}
+
+/* Purple text */
+/*-------------------------------- Image and Next Section --------------------------------*/
+
+
+
+/* 1200px */
+@media screen and (max-width: 1250px) {
+    .login-container .next-section,
+    .login-container .image-section{
+        width: 50%;
+        padding: 0 20px;
+    }
+    .signup-container .next-section {
+        width: 70%;
+        padding: 0 20px;
+    }
+    .signup-container .image-section{
+        width: 30%;
+        padding: 0 20px;
+    }
+    .signup-container .welcome-banner{
+        padding: 20px 30px;
+    }
+    .signup-container .caption-text{
+        font-size: 0.8rem;
+    }
+    .signup-container .display-text{
+        font-size: 1.5rem;
+    }
+}
+
+/* 1000px */
+@media screen and (max-width: 1000px) {
+    .login-container .image-section,
+    .signup-container .image-section {
+        display: none;
+    }
+
+    .login-container .next-section,
+    .signup-container .next-section {
+        width: 100%;
+        min-height: 100vh;
+    }
+}
