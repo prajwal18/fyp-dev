@@ -24,7 +24,7 @@ const HeadSection = () => {
             <Typography component="h1" variant="h5">
                 Log in
             </Typography>
-            <Typography component="div" variant="h6" sx={{fontSize:"0.9rem", color:"rgba(0,0,0,0.7)", marginTop:"10px" }}>Join us in educating the world</Typography>
+            <Typography component="div" variant="h6" sx={{ fontSize: "0.9rem", color: "rgba(0,0,0,0.7)", marginTop: "10px", textAlign: "center" }}>Join us in educating the world</Typography>
         </>
     )
 }
@@ -41,10 +41,10 @@ const ButtonSection = () => {
                 Log in
             </Button>
             <Stack spacing={2} direction="row">
-                <Link href="#" variant="body2">
+                <Link href="/Auth/SignUp" variant="body2">
                     Create Account
                 </Link>
-                <Link href="#" variant="body2">
+                <Link href="/Auth/ForgotPassword" variant="body2">
                     Forgot Password?
                 </Link>
             </Stack>
@@ -76,7 +76,7 @@ const FormSection = () => {
                     id="password"
                     autoComplete="current-password"
                 />
-                <FormControlLabel sx={{marginLeft: "10px"}}
+                <FormControlLabel sx={{ marginLeft: "10px" }}
                     control={<Checkbox value="remember" color="primary" />}
                     label="Remember me"
                 />
@@ -89,7 +89,7 @@ const FormSection = () => {
 const LoginSection = () => {
 
     return (
-        <Box sx={{ maxWidth: "500px", padding:"30px", borderRadius:"5px", background:"white"}}>
+        <Box sx={{ maxWidth: "500px", padding: "30px", borderRadius: "5px", background: "white" }}>
             <Stack sx={{ alignItems: 'center' }}>
                 {/* Head Section */}
                 <HeadSection />
@@ -106,7 +106,7 @@ const LoginSection = () => {
 }
 
 const LoginPage = () => {
-    return(
+    return (
         <LoginSignupLayout type="login">
             <LoginSection />
         </LoginSignupLayout>

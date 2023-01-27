@@ -21,12 +21,12 @@ const HeadSection = () => {
     return (
         <>
             <Avatar sx={{ m: 1, bgcolor: 'secondary.main', width: "4.5rem", height: "4.5rem" }}>
-                <LockIcon fontSize='large'/>
+                <LockIcon fontSize='large' />
             </Avatar>
             <Typography component="h1" variant="h5">
                 Change Password
             </Typography>
-            <Typography component="div" variant="h6" sx={{ fontSize: "0.9rem", color: "rgba(0,0,0,0.7)", marginTop:"10px" }}>Use special characters for a stronger password</Typography>
+            <Typography component="div" variant="h6" sx={{ fontSize: "0.9rem", color: "rgba(0,0,0,0.7)", marginTop: "10px", textAlign: "center" }}>Use special characters for a stronger password</Typography>
         </>
     )
 }

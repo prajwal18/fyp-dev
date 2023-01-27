@@ -17,7 +17,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import { useRouter } from 'next/router';
 //MUI Icon
 
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 
 const HeadSection = ({ subText }: { subText: string }) => {
     return (
@@ -28,7 +28,7 @@ const HeadSection = ({ subText }: { subText: string }) => {
             <Typography component="h1" variant="h5">
                 Forgot Password - {subText}
             </Typography>
-            <Typography component="div" variant="h6" sx={{ fontSize: "0.9rem", color: "rgba(0,0,0,0.7)", marginTop: "5px" }}>No worries, just fill the form and your set</Typography>
+            <Typography component="div" variant="h6" sx={{ fontSize: "0.9rem", color: "rgba(0,0,0,0.7)", marginTop: "5px", textAlign: "center" }}>No worries, just fill the form and your set</Typography>
         </>
     )
 }
@@ -87,10 +87,10 @@ const FormSection = ({ progress, setProgress }: { progress: number, setProgress:
     const router = useRouter();
     const handleSubmit = (event: React.ChangeEvent<HTMLInputElement>) => {
         event.preventDefault();         // Prevent the default behaviour of the form to refresh
-        if(progress < 3){
+        if (progress < 3) {
             setProgress(progress + 1);
         }
-        if(progress === 3){
+        if (progress === 3) {
             setProgress(4);
             toast.success("Redirecting to Login");
             setTimeout(() => {
@@ -111,7 +111,7 @@ const FormSection = ({ progress, setProgress }: { progress: number, setProgress:
 const ChangePasswordSection = () => {
     const [progress, setProgress] = useState(1);
     const genProgress = () => {
-        switch(progress){
+        switch (progress) {
             case 1:
                 return "Email Address";
             case 2:
@@ -127,7 +127,7 @@ const ChangePasswordSection = () => {
         <Box sx={{ maxWidth: "500px", width: "100%", padding: "30px", borderRadius: "5px", background: "white" }}>
             <Stack sx={{ alignItems: 'center' }}>
                 {/* Head Section */}
-                <Box sx={{ width: '100%', display:"flex", flexDirection:"column", alignItems:"center" }}>
+                <Box sx={{ width: '100%', display: "flex", flexDirection: "column", alignItems: "center" }}>
                     <HeadSection subText={genProgress()} />
                 </Box>
                 {/* Head Section */}
