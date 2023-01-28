@@ -113,7 +113,7 @@ const TopSection = () => {
                 <Box>
                     <FormSectionHeader>Profile Picture</FormSectionHeader>
                     <Stack direction={"row"} sx={{ justifyContent: "center", marginTop: "15px" }}>
-                        <InputFileField image={image} setImage={setImage} dimension={{ height: 180, width: 180 }} />
+                        <InputFileField image={image} setImage={setImage} dimension={{ height: 180, width: 180 }} id="sign-up-profile-image" />
                     </Stack>
                 </Box>
                 {/* Profile Picture Upload Goes here */}

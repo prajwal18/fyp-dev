@@ -7,9 +7,10 @@ import Typography from "@mui/material/Typography";
 //Image Section
 type InputFFPropType = {
     image: any, setImage: (value: any) => void,
-    dimension: { height: number, width: number }
+    dimension: { height: number, width: number },
+    id: string
 }
-export const InputFileField = ({ image, setImage, dimension }: InputFFPropType) => {
+export const InputFileField = ({ image, setImage, dimension, id }: InputFFPropType) => {
     console.log("Why is this not working: ", UploadImage.src)
 
     const handleOnChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +34,7 @@ export const InputFileField = ({ image, setImage, dimension }: InputFFPropType) 
                         e.target.src = UploadImage;  // Provide an alternate image reference here
                     }}
                 />
-                <label htmlFor="upload"
+                <label htmlFor={id}
                     style={{
                         position: "absolute", display: "flex",
                         bottom: "0px", height: "30%",
@@ -45,7 +46,7 @@ export const InputFileField = ({ image, setImage, dimension }: InputFFPropType) 
                 </label>
                 <input
                     type="file"
-                    id="upload"
+                    id={id}
                     style={{ display: "none" }}
                     onChange={handleOnChange}
                 />

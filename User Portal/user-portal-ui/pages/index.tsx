@@ -1,12 +1,12 @@
-import LoginSignupLayout from "@/components/Layout/LoginSignupLayout";
-import Box from "@mui/material/Box";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 const Home = () => {
-  return(
-    <>
-      <LoginSignupLayout type="login"><Box></Box></LoginSignupLayout>
-    </>
-  );
+  const router = useRouter();
+  useEffect(() => {
+    router.push("/Auth/Login");
+  }, []);
+  return (<></>);
 }
 
 export default Home;
