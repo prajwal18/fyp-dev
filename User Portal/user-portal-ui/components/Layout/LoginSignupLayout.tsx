@@ -5,7 +5,7 @@ import { Box, Container, Stack } from "@mui/system";
 
 const LoginSignupLayout = ({ children, type } : { children: JSX.Element, type: string }) => {
     return (
-        <Container maxWidth="xl" className={`${type}-container`}>
+        <Container maxWidth={false} className={`${type}-container`}>
             <Stack 
                 direction={type === "login"? "row": "row-reverse"} 
                 className={`${type}-stack-container`}

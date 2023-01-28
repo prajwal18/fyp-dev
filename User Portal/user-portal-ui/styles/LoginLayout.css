@@ -13,35 +13,47 @@
 .signup-stack-container {
     align-items: center;
     justify-content: center;
+    min-height: 100vh;
 }
 
 /* Login Stack Container That divides the UI into two section */
 
 /*-------------------------------- Image and Next Section --------------------------------*/
-.login-container .image-section,
-.signup-container .next-section {
-    padding: 0 40px;
-    width: 60%;
-}
-
-.login-container .next-section,
-.signup-container .image-section {
-    padding: 0 40px;
-    width: 40%;
-}
-
 .image-section {
-    height: 100vh;
+    height: 100%;
+    position: fixed;
+    top: 0px;
     align-items: center;
     justify-content: center;
     background-image: url('../public/Images//login-background.jpg');
-    background-size: auto 110vh;
+    background-size: auto 150vh;
+}
+
+.login-stack-container .image-section {
+    left: -2px;
+    width: 60%;
+}
+
+.signup-stack-container .image-section {
+    right: -2px;
+    width: 40%;
 }
 
 .next-section {
     align-items: center;
     justify-content: center;
 }
+
+.login-stack-container .next-section {
+    margin-left: 60vw;
+    width: 40%;
+}
+
+.signup-stack-container .next-section {
+    margin-right: 40vw;
+    width: 60%;
+}
+
 
 /* Welcome banner */
 .welcome-banner {
@@ -54,9 +66,10 @@
 /* Welcome banner */
 
 /* Texts in Welcome Banner */
-.display-text{
+.display-text {
     font-weight: 700;
 }
+
 /* Texts in Welcome Banner */
 
 /* Purple text */
@@ -71,39 +84,43 @@
 
 /* 1200px */
 @media screen and (max-width: 1250px) {
-    .login-container .next-section,
-    .login-container .image-section{
+    .login-stack-container .image-section{
         width: 50%;
-        padding: 0 20px;
     }
-    .signup-container .next-section {
-        width: 70%;
-        padding: 0 20px;
+    .login-stack-container .next-section {
+        margin-left: 50vw;
+        width: 50%;
     }
-    .signup-container .image-section{
+
+    .signup-stack-container .image-section {
+        right: -2px;
         width: 30%;
-        padding: 0 20px;
     }
-    .signup-container .welcome-banner{
+    .signup-stack-container .next-section {
+        margin-right: 30vw;
+        width: 70%;
+    }
+
+    .signup-container .welcome-banner {
         padding: 20px 30px;
     }
-    .signup-container .caption-text{
+    .signup-container .caption-text {
         font-size: 0.8rem;
     }
-    .signup-container .display-text{
+    .signup-container .display-text {
         font-size: 1.5rem;
     }
 }
 
 /* 1000px */
 @media screen and (max-width: 1000px) {
-    .login-container .image-section,
-    .signup-container .image-section {
+    .login-stack-container .image-section,
+    .signup-stack-container .image-section {
         display: none;
     }
-
-    .login-container .next-section,
-    .signup-container .next-section {
+    .login-stack-container .next-section,
+    .signup-stack-container .next-section{
+        margin: 10px;
         width: 100%;
         min-height: 100vh;
     }

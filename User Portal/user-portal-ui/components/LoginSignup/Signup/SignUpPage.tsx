@@ -15,14 +15,19 @@ import { Grid } from '@mui/material';
 import InputFileField from '@/components/Common/InputFileField';
 //Login Layout
 
+const FormSectionHeader = ({ children }: { children: string }) => {
+    return <Typography sx={{display:"block", fontSize:"20px", color: "#6B6B6B"}}>
+        { children }
+    </Typography>
+}
 
 const HeadSection = () => {
     return (
         <>
-            <Typography component="h1" variant="h5">
+            <Typography component="h1" variant="h4">
                 Sign Up
             </Typography>
-            <Typography component="div" variant="h6" sx={{ fontSize: "0.9rem", color: "rgba(0,0,0,0.7)", marginTop: "5px", textAlign:"center" }}>Join us and be part of a growing community</Typography>
+            <Typography component="div" variant="h6" sx={{ fontSize: "0.9rem", color: "rgba(0,0,0,0.7)", marginTop: "5px", textAlign: "center" }}>Join us and be part of a growing community</Typography>
         </>
     )
 }
@@ -52,7 +57,7 @@ const LocationAndAbout = () => {
     return (
         <>
             <Box sx={{ width: "100%" }}>
-                <Typography variant='h6' component="p">Location</Typography>
+                <FormSectionHeader>Location</FormSectionHeader>
                 <Grid container spacing={1} sx={{ marginTop: "5px" }}>
                     <Grid item xs={12} md={6}>
                         <TextField fullWidth label="Zip Code" />
@@ -63,7 +68,7 @@ const LocationAndAbout = () => {
                 </Grid>
             </Box>
             <Box sx={{ width: "100%" }}>
-                <Typography variant='h6' component="p">About Yourself</Typography>
+                <FormSectionHeader>About Yourself</FormSectionHeader>
                 <TextField placeholder="About yourself..." sx={{ marginTop: "5px" }}
                     multiline fullWidth rows={3} maxRows={4} />
             </Box>
@@ -73,7 +78,7 @@ const LocationAndAbout = () => {
 const ContactSection = () => {
     return (
         <Box sx={{ width: "100%" }}>
-            <Typography variant='h6' component="p">Contact</Typography>
+            <FormSectionHeader>Contact</FormSectionHeader>
             <Grid container spacing={1} sx={{ marginTop: "5px" }}>
                 <Grid item xs={12} md={6}>
                     <TextField fullWidth label="Email Address" />
@@ -88,7 +93,7 @@ const ContactSection = () => {
 const NameAndRole = () => {
     return (
         <Box>
-            <Typography variant='h6' component="p">Name and User Role</Typography>
+            <FormSectionHeader>Name and User Role</FormSectionHeader>
             <Grid container spacing={2} sx={{ marginTop: "5px" }}>
                 <Grid item xs={12}>
                     <TextField fullWidth label="Name" />
@@ -106,7 +111,7 @@ const TopSection = () => {
         <Grid container spacing={1}>
             <Grid item xs={12} md={6}>
                 <Box>
-                    <Typography variant='h6' component="p">Profile Picture</Typography>
+                    <FormSectionHeader>Profile Picture</FormSectionHeader>
                     <Stack direction={"row"} sx={{ justifyContent: "center", marginTop: "15px" }}>
                         <InputFileField image={image} setImage={setImage} dimension={{ height: 180, width: 180 }} />
                     </Stack>
@@ -135,7 +140,7 @@ const FormSection = () => {
 
 const SignUpSection = () => {
     return (
-        <Box sx={{ maxWidth: "800px", width: "100%", padding: "20px", margin: "10px 10px", borderRadius: "5px", background: "white" }}>
+        <Box sx={{ maxWidth: "800px", width: "100%", padding: "20px", margin: "30px 10px", borderRadius: "5px", background: "white" }}>
             <Stack sx={{ alignItems: 'center' }}>
                 {/* Head Section */}
                 <HeadSection />
