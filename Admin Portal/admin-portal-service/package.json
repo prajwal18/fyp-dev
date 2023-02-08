@@ -1,7 +1,7 @@
 {
   "name": "admin-portal-service",
   "version": "1.0.0",
-  "description": "Backend for user portal client",
+  "description": "Backend for admin portal",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

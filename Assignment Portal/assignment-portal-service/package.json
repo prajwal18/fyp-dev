@@ -1,7 +1,7 @@
 {
-  "name": "user-portal-service",
+  "name": "assignment-portal-service",
   "version": "1.0.0",
-  "description": "Backend for user portal",
+  "description": "Backend for assignment portal",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
