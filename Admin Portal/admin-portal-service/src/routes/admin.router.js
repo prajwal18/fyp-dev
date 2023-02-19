@@ -13,7 +13,7 @@ router.post("/auth/register", adminController.adminRegistration);
 
 // Update admin details
 // Note must provide admin's id as ../update?id=<--- admin's id --->
-router.post("/update", authenticationMiddleware, authorizeAdmin, adminController.adminUpdate); 
+router.put("/update", authenticationMiddleware, authorizeAdmin, adminController.adminUpdate); 
 
 // Get admin details
 // Note must provide admin's id as ../get-details?id=<--- admin's id --->
@@ -24,7 +24,7 @@ router.get("/get-all-admin", authenticationMiddleware, authorizeAdmin, adminCont
 
 // Change password
 // Note must provide admin's id as ../change-password?id=<--- admin's id --->
-router.post("/change-password", authenticationMiddleware, authorizeAdmin, adminController.changePassword);
+router.put("/change-password", authenticationMiddleware, authorizeAdmin, adminController.changePassword);
 
 
 /*

@@ -1,6 +1,6 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
-const Admin = require("../models/user.model");
+const Admin = require("../models/admin.model");
 const asyncWrapper = require("../error/wrapper");
 
 const authenticationMiddleware = asyncWrapper(async (req, res, next) => {
@@ -19,7 +19,7 @@ const authenticationMiddleware = asyncWrapper(async (req, res, next) => {
 });
 
 // Authorize admin access
-const authorizeAdmin = asyncWrapper(async (req, res, next) => {
+const  authorizeAdmin = asyncWrapper(async (req, res, next) => {
   const email = res.locals.email;
   if(email){
     const admin = await Admin.findOne({email: email});

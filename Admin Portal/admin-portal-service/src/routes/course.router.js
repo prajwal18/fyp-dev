@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 // Importing user controller
-const courseController = require("../controllers/user.controller");
+const courseController = require("../controllers/course.controller");
 const { authenticationMiddleware, authorizeAdmin } = require("../middleware/auth");
 
 

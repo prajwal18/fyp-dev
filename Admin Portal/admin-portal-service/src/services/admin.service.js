@@ -1,5 +1,5 @@
 //Importing admin model
-const Admin = require("../model/admin.model");
+const Admin = require("../models/admin.model");
 const jwt = require("jsonwebtoken");
 //Importing password creation and comparision functions
 const { checkPassword, encryptPassword } = require("../utils/encrypt.decrypt.password");
@@ -13,7 +13,7 @@ const adminLogin = async (adminData) => {
         const match = await checkPassword(adminData.password, admin.password);
         if (match) {
             const token = await jwt.sign({ email: admin.email }, process.env.JWT_SECRET);
-            return { success: true, data: { token: token }, message: "Login successful" }
+            return { success: true, data: { _id: admin._id, name: admin.name, token: token }, message: "Login successful" }
         } else {
             return { success: false, data: null, message: "Cannot login. Password does not match." }
         }
@@ -40,7 +40,7 @@ const registerAdmin = async (adminData) => {
     let password = await encryptPassword(data.password);
     data = { ...data, password };
     if (data.profilePicture) {
-        const imageFileData = await base64toImg(data.profilePicture);
+        const imageFileData = await base64toImg(data.profilePicture, 'admins');
         data.profilePicture = imageFileData;
     }
     const admin = await Admin.create(data);
@@ -83,12 +83,13 @@ const getAdminDetail = async (id) => {
 // Get admin detail
 
 // Get all admin data
-const getAllAdmin = async () => {
-    let allAdmin = await Admin.find({});
+const getAllAdmin = async (skip, take) => {
+    let allAdmin = await Admin.find({}).skip(skip).limit(take);
+    let adminsCount = await Admin.count({});
     if (allAdmin) {
-        return { success: true, data: allAdmin, message: "Successfully fetched all admin data" }
+        return { success: true, data: allAdmin, message: "Successfully fetched all admin data", total: adminsCount }
     } else {
-        return { success: false, data: null, message: "Sorry, cannot fetch admin data" }
+        return { success: false, data: null, message: "Sorry, cannot fetch admin data", total: 0 }
     }
 }
 // Get all admin data
@@ -98,8 +99,11 @@ const getAllAdmin = async () => {
 const changePassword = async (id, oldPassword, newPassword) => {
     const admin = await Admin.findById(id);
     if (admin) {
-        if (admin.password === oldPassword) {
-            const updatedAdmin = await Admin.findByIdAndUpdate(id, { password: newPassword });
+        // Check to see if old password is correct
+        const match = await checkPassword(oldPassword, admin.password);
+        if (match) {
+            const newEncryptedPW = await encryptPassword(newPassword);
+            const updatedAdmin = await Admin.findByIdAndUpdate(id, { password: newEncryptedPW });
             if (updatedAdmin) {
                 return { success: true, data: updatedAdmin, message: "Password changed successfully" }
             } else {

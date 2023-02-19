@@ -9,7 +9,7 @@ const { authenticationMiddleware, authorizeAdmin } = require("../middleware/auth
 router.post("/create", authenticationMiddleware, authorizeAdmin, facultyController.create );
 
 // Update Faculty Details
-router.post("/update", authenticationMiddleware, authorizeAdmin, facultyController.update );
+router.put("/update", authenticationMiddleware, authorizeAdmin, facultyController.update );
 
 // Fetch Faculty Details
 router.get("/faculty-details", authenticationMiddleware, authorizeAdmin, facultyController.getFacultyDetail );
@@ -28,7 +28,5 @@ is needed to authorize the admin with those privileges.
 
 Authentication middleware will only authorize requests with JWT token present
 */
-
-module.exports = router;
 
 module.exports = router;

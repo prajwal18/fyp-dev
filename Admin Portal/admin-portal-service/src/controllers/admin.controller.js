@@ -67,9 +67,10 @@ const adminDetail = asyncWrapper(async (req, res, next) => {
 
 // Get all admin
 const getAllAdmin = asyncWrapper(async (req, res, next) => {
-    const {success, data, message} = await adminService.getAllAdmin();
+    const { skip, take } = req.query;
+    const {success, data, message, total} = await adminService.getAllAdmin(skip, take);
     if(success){
-        res.json({ success, data, message });
+        res.json({ success, data, message, total });
     } else {
         throw new Error(message);
     }

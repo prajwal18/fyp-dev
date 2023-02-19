@@ -72,5 +72,13 @@ const changePassword = asyncWrapper(async (req, res, next) => {
 });
 // Change Password
 
+const getAllTeachers = asyncWrapper(async(req, res, next) => {
+    res.json({success: true, data:[], message: null});
+});
 
-module.exports = { userRegistration, userUpdate, userDetail, changePassword }
+const getAllStudents = asyncWrapper(async(req, res, next) => {
+    res.json({success:true, data:[], message: null});
+});
+
+
+module.exports = { userRegistration, userUpdate, userDetail, changePassword, getAllTeachers, getAllStudents }
