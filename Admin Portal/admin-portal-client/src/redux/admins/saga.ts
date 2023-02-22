@@ -29,10 +29,7 @@ import {
 
 
 const generateFetchQuery = (skip: number, take: number, searchTerm?: string) => {
-    return searchTerm ?
-        `skip=${skip}&take=${take}&searchTerm=${searchTerm}`
-        :
-        `skip=${skip}&take=${take}`;
+        return `skip=${skip}&take=${take}&searchTerm=${searchTerm}`
 }
 
 
@@ -69,7 +66,11 @@ function* fetchAdmins(action: ActionType): Generator<any, any, any> {
 function* setSearchTerm(action: ActionType): Generator<any, any, any> {
     const searchTerm = action.payload;
     yield put(updateSearchTerm(searchTerm));
-    yield fetchAdmins(action);
+    const query = generateFetchQuery(0, 0, searchTerm);
+    const response = yield apiCallNResp(() => httpGetAllAdmin(query));
+    if(response) {
+        yield setPaginationData({type:action.type, payload: {skip:0, take: 5, total: response.total}})
+    }
 }
 function* setPaginationData(action: ActionType): Generator<any, any, any> {
     const pagination = action.payload;
@@ -104,6 +105,15 @@ function* deleteAdmin(action: ActionType): Generator<any, any, any> {
     const { id } = action.payload;
     const response = yield apiCallNResp(() => httpDeleteAdmin(id));
     if (response) {
+        toast.success('Admin deleted successfully.');
+        const admin_session_string = localStorage.getItem('admin_session');
+        if (admin_session_string) {
+            const admin_session = JSON.parse(admin_session_string);
+            if (admin_session._id === id) {
+                console.log('Same admin');
+                // trigger logout
+            }
+        }
         yield fetchPaginationData(action);
     }
     // fetchAdmins
@@ -113,6 +123,15 @@ function* changePassword(action: ActionType): Generator<any, any, any> {
     const { id, data } = action.payload;
     const response = yield apiCallNResp(() => httpChangePWAdmin(id, data));
     if (response) {
+        toast.success('Password changed successful.');
+        const admin_session_string = localStorage.getItem('admin_session');
+        if (admin_session_string) {
+            const admin_session = JSON.parse(admin_session_string);
+            if (admin_session._id === id) {
+                console.log('Same admin');
+                // trigger logout
+            }
+        }
         yield fetchAdmins(action);
     }
     // fetchAdmins

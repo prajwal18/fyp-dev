@@ -56,7 +56,7 @@ const userDetail = asyncWrapper(async (req, res, next) => {
 const changePassword = asyncWrapper(async (req, res, next) => {
     const id = req.query.id;
     if (id) {
-        if (req.body.oldPassword && req.body.newPassword) {
+        if (req.body.newPassword) {
             const { success, data, message } = await userService.changePassword(id, req.body.newPassword);
             if (success) {
                 res.json({ success, data, message });
@@ -64,7 +64,7 @@ const changePassword = asyncWrapper(async (req, res, next) => {
                 throw new Error(message);
             }
         } else {
-            throw new Error("Please provide old and new password.");
+            throw new Error("Please provide new password.");
         }
     } else {
         throw new Error("Cannot find user, Specify id");
@@ -72,13 +72,30 @@ const changePassword = asyncWrapper(async (req, res, next) => {
 });
 // Change Password
 
-const getAllTeachers = asyncWrapper(async(req, res, next) => {
-    res.json({success: true, data:[], message: null});
-});
+// Get all Teachers
+const getAllTeachers = asyncWrapper(async (req, res, next) => {
+    const { skip, take, searchTerm } = req.query;
 
-const getAllStudents = asyncWrapper(async(req, res, next) => {
-    res.json({success:true, data:[], message: null});
+    const { success, data, message, total } = await userService.fetchAllTeachers(skip, take, searchTerm);
+    console.log(success, data, message, total)
+    if (success) {
+        res.json({ success, data, message, total });
+    } else {
+        throw new Error(message);
+    }
 });
+// Get all Teachers
 
+// Get all Students
+const getAllStudents = asyncWrapper(async (req, res, next) => {
+    const { skip, take, searchTerm } = req.query;
+    const { success, data, message, total } = await userService.fetchAllStudents(skip, take, searchTerm);
+    if (success) {
+        res.json({ success, data, message, total });
+    } else {
+        throw new Error(message);
+    }
+});
+// Get all Students
 
 module.exports = { userRegistration, userUpdate, userDetail, changePassword, getAllTeachers, getAllStudents }

@@ -1,8 +1,9 @@
 import convertToBase64 from "../../../utils/convertToBase64";              // | Utility Function
-import UploadImage from "../../../assets/images/uploadImg.png";        // | Upload Image - Static
+import UploadImage from "../../../assets/images/uploadImg.png";            // | Upload Image - Static
 import Typography from "@mui/material/Typography";
 
 import { baseURL } from "../../../utils/endpoints";
+import { useEffect, useState } from "react";
 
 //Image Section
 type InputFFPropType = {
@@ -11,7 +12,20 @@ type InputFFPropType = {
     id: string
 }
 export const InputFileField = ({ image, setImage, dimension, id }: InputFFPropType) => {
-    console.log(image);
+
+    // State to hold image upload type (Image upload or location, i.e. http://localhost)
+    const [ isNew, setIsNew ] = useState(true);
+
+    useEffect(() => {
+        if(JSON.stringify(image)){
+            if(!JSON.stringify(image).includes('data:image/')){
+                setIsNew(false);
+            } else {
+                setIsNew(true);
+            }
+        }
+        console.log('Image', image);
+    }, [image]);
 
     const handleOnChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target?.files?.[0]) {
@@ -24,11 +38,11 @@ export const InputFileField = ({ image, setImage, dimension, id }: InputFFPropTy
         <>
             <div className="upload-image-container" style={{ position: "relative", borderRadius: "50%", overflow: "hidden" }}>
                 <img
-                    src={image || UploadImage} // (baseURL + image.replace('./','/'))
+                    src={ image ? (isNew ? image : (baseURL+image)) : UploadImage} // (baseURL + image.replace('./','/'))
                     height={dimension.height}
                     width={dimension.width}
-                    style={{ borderRadius: "50%", border: "5px solid #DEDEDE", objectFit: "cover" }}
-                    alt="Upload"
+                    style={{ borderRadius: "50%", border: "2px solid rgba(0,0,0,0.5)", objectFit: "cover" }}
+                    alt={'upload'}
                     onError={async (e: any) => {
                         e.target.onError = null;
                         e.target.src = UploadImage;  // Provide an alternate image reference here
@@ -37,12 +51,16 @@ export const InputFileField = ({ image, setImage, dimension, id }: InputFFPropTy
                 <label htmlFor={id}
                     style={{
                         position: "absolute", display: "flex",
-                        bottom: "0px", height: "30%",
-                        width: "100%", background: "rgba(0,0,0)",
+                        bottom: "0px", height: "40%",
+                        width: "100%", background: "rgba(0,0,0,0.87)",
                         alignItems: "center", justifyContent: "center",
-                        cursor: "pointer"
+                        cursor: "pointer",
                     }}>
-                    <Typography sx={{ color: "white" }}>UPLOAD</Typography>
+                    <Typography sx={{ color: "white" }}>
+                        {
+                            isNew ? 'UPLOAD' : 'CHANGE'
+                        }
+                    </Typography>
                 </label>
                 <input
                     type="file"

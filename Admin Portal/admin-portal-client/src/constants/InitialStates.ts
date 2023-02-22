@@ -13,6 +13,7 @@ export const CoursesIS: CoursesISType = {
 
 export const FacultiesIS: FacultiesISType = {
     faculties: [],
+    ddFaculties: [],
     searchTerm: "",
     pagination: IVPagination
 }

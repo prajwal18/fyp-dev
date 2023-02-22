@@ -26,14 +26,14 @@ export const teachersSlice = createSlice(options);
 // Creating the admin slice
 
 // Selector functions
-export const selectSearchTerm = (state: TeachersISType) => {
-    return state.searchTerm;
+export const selectSearchTerm = (state: any) => {
+    return state.teachers.searchTerm;
 }
-export const selectPaginationData = (state: TeachersISType) => {
-    return state.pagination;
+export const selectPaginationData = (state: any) => {
+    return state.teachers.pagination;
 }
-export const selectAllTeachers = (state: TeachersISType) => {
-    return state.teachers;
+export const selectAllTeachers = (state: any) => {
+    return state.teachers.teachers;
 }
 // Selector functions
 

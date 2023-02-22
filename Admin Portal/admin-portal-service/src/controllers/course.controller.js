@@ -51,9 +51,10 @@ const getCourseDetail = asyncWrapper(async (req, res, next) => {
 
 // Get all courses
 const getAllCourses = asyncWrapper(async (req, res, next) => {
-    const { success, data, message } = await courseService.getAllCourses();
+    const { skip, take, searchTerm } = req.query;
+    const { success, data, message, total } = await courseService.getAllCourses(skip, take, searchTerm);
     if (success) {
-        res.json({ success, data, message });
+        res.json({ success, data, message, total });
     } else {
         throw new Error("Sorry, cannot fetch courses data.");
     }

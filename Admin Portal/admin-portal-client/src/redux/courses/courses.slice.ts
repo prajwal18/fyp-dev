@@ -26,14 +26,14 @@ export const coursesSlice = createSlice(options);
 // Creating the courses slice
 
 // Selector functions
-export const selectSearchTerm = (state: CoursesISType) => {
-    return state.searchTerm;
+export const selectSearchTerm = (state: any) => {
+    return state.courses.searchTerm;
 }
-export const selectPaginationData = (state: CoursesISType) => {
-    return state.pagination;
+export const selectPaginationData = (state: any) => {
+    return state.courses.pagination;
 }
-export const selectAllCourses = (state: CoursesISType) => {
-    return state.courses;
+export const selectAllCourses = (state: any) => {
+    return state.courses.courses;
 }
 // Selector functions
 

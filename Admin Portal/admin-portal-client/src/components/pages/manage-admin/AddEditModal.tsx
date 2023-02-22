@@ -1,4 +1,3 @@
-import React, { useContext, useEffect, useState } from 'react';
 import {
     Button, Dialog, DialogActions,
     DialogContent, DialogTitle, Box, Stack
@@ -11,8 +10,8 @@ import InputFileField from '../../common/form/InputFileField';
 // Custom Text fields
 
 const AddAdminContent = ({ formik }: { formik: any }) => {
-    const setProfileImg = (value:any) => {
-        if(value){
+    const setProfileImg = (value: any) => {
+        if (value) {
             formik.setFieldValue('profilePicture', value);
         }
     }
@@ -21,7 +20,7 @@ const AddAdminContent = ({ formik }: { formik: any }) => {
             <Stack spacing={3} sx={{ minWidth: "550px" }}>
                 <Stack spacing={2} direction={'row'}>
                     <Stack direction={'row'} sx={{ width: "100%" }}>
-                        <InputFileField image={formik.values.profilePicture} setImage={setProfileImg} dimension={{height:180, width:180}} id='admin-profile-pic' />
+                        <InputFileField image={formik.values.profilePicture} setImage={setProfileImg} dimension={{ height: 180, width: 180 }} id='admin-profile-pic' />
                     </Stack>
                     <Stack spacing={2} sx={{ width: "100%" }}>
                         <Box></Box>
@@ -33,6 +32,31 @@ const AddAdminContent = ({ formik }: { formik: any }) => {
                 <Stack spacing={2} direction={'row'}>
                     <GenerateCustTextField label='Name' name="name" formik={formik} />
                     <GenerateCustTextField label='Contact' name="contact" formik={formik} />
+                </Stack>
+            </Stack>
+        </DialogContent>
+    );
+}
+
+const UpdateAdminContent = ({ formik }: { formik: any }) => {
+    const setProfileImg = (value: any) => {
+        if (value) {
+            formik.setFieldValue('profilePicture', value);
+        }
+    }
+    return (
+        <DialogContent sx={{ padding: "20px 30px" }}>
+            <Stack spacing={3} sx={{ minWidth: "550px" }}>
+                <Stack spacing={2} direction={'row'}>
+                    <Stack direction={'row'} sx={{ width: "100%", alignItems: 'center' }}>
+                        <InputFileField image={formik.values.profilePicture} setImage={setProfileImg} dimension={{ height: 180, width: 180 }} id='admin-profile-pic' />
+                    </Stack>
+                    <Stack spacing={2} sx={{ width: "100%" }}>
+                        <Box></Box>
+                        <GenerateCustTextField label='Email' name="email" formik={formik} />
+                        <GenerateCustTextField label='Name' name="name" formik={formik} />
+                        <GenerateCustTextField label='Contact' name="contact" formik={formik} />
+                    </Stack>
                 </Stack>
             </Stack>
         </DialogContent>
@@ -60,12 +84,22 @@ const AddEditAdminModal = ({ open, handleClose, formik, isEditing }: { open: boo
             onClose={handleClose}
             maxWidth={'md'}
             fullWidth={false}
-            aria-labelledby="add-new-admin-title"
+            aria-labelledby="add-edit-new-admin-title"
         >
-            <DialogTitle id="add-new-admin-title">
-                {"Add New Admin"}
+            <DialogTitle id="add-edit-new-admin-title">
+                {
+                    isEditing? 
+                    'Update Admin Details'
+                    :
+                    'Add New Admin'
+                }
             </DialogTitle>
-            <AddAdminContent formik={formik} />
+            {
+                isEditing ?
+                    <UpdateAdminContent formik={formik} />
+                    :
+                    <AddAdminContent formik={formik} />
+            }
             <AddAdminActionButton
                 isEditing={isEditing}
                 handleDisagree={handleClose}

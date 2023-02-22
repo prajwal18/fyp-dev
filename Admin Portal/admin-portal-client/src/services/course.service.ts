@@ -2,14 +2,16 @@ import axios from "axios";
 import { axiosWithToken } from "../utils/apiCallNResp";
 import endpoints from "../utils/endpoints";
 
-const { } = endpoints.course;
+const {
+    create, edit, getAllCourses
+} = endpoints.course;
 
 export const httpGetAllCourse = (query: string) => {
-    const url = `?${query}`;
+    const url = `${getAllCourses}?${query}`;
     return axiosWithToken('get', url);
 }
 
-export const httpAddCourse = (data: any) => axios.post('', data);
+export const httpAddCourse = (data: any) => axiosWithToken('post', create, data);
 
 export const httpAddUserToCourse = (userId: string, courseId: string) => {
     const url = `?userId=${userId}&courseId=${courseId}`;
@@ -17,7 +19,7 @@ export const httpAddUserToCourse = (userId: string, courseId: string) => {
 }
 
 export const httpUpdateCourse = (id: string, data: any) => {
-    const url = `?id=${id}`;
+    const url = `${edit}?id=${id}`;
     return axiosWithToken('put', url, data);
 }
 

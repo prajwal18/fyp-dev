@@ -2,11 +2,11 @@ const asyncWrapper = require("../error/wrapper");
 const adminService = require("../services/admin.service");
 
 // Admin Login
-const adminLogin = asyncWrapper(async ( req, res, next ) => {
-    if(req.body.email && req.body.password){
+const adminLogin = asyncWrapper(async (req, res, next) => {
+    if (req.body.email && req.body.password) {
         const { success, data, message } = await adminService.adminLogin(req.body);
-        if(success){
-            res.json({success, data, message});
+        if (success) {
+            res.json({ success, data, message });
         } else {
             throw new Error(message);
         }
@@ -35,6 +35,7 @@ const adminRegistration = asyncWrapper(async (req, res, next) => {
 // Edit Admin Info 
 const adminUpdate = asyncWrapper(async (req, res, next) => {
     const id = req.query.id;
+    console.log(id)
     if (id) {
         const { success, data, message } = await adminService.updateAdmin(id, req.body);
         if (success) {
@@ -67,9 +68,10 @@ const adminDetail = asyncWrapper(async (req, res, next) => {
 
 // Get all admin
 const getAllAdmin = asyncWrapper(async (req, res, next) => {
-    const { skip, take } = req.query;
-    const {success, data, message, total} = await adminService.getAllAdmin(skip, take);
-    if(success){
+    const { skip, take, searchTerm } = req.query;
+    console.log(req.query);
+    const { success, data, message, total } = await adminService.getAllAdmin(skip, take, searchTerm);
+    if (success) {
         res.json({ success, data, message, total });
     } else {
         throw new Error(message);
@@ -81,15 +83,15 @@ const getAllAdmin = asyncWrapper(async (req, res, next) => {
 const changePassword = asyncWrapper(async (req, res, next) => {
     const id = req.query.id;
     if (id) {
-        if (req.body.oldPassword && req.body.newPassword) {
-            const { success, data, message } = await adminService.changePassword(id, req.body.oldPassword, req.body.newPassword);
+        if (req.body.newPassword) {
+            const { success, data, message } = await adminService.changePassword(id, req.body.newPassword);
             if (success) {
                 res.json({ success, data, message });
             } else {
                 throw new Error(message);
             }
         } else {
-            throw new Error("Please provide old and new password.");
+            throw new Error("Please provide new password.");
         }
     } else {
         throw new Error("Cannot find Admin, Specify id");
@@ -97,4 +99,21 @@ const changePassword = asyncWrapper(async (req, res, next) => {
 });
 // Change Password
 
-module.exports = { adminLogin, adminRegistration, adminUpdate, adminDetail, getAllAdmin, changePassword };
+
+// Delete admin 
+const deleteAdmin = asyncWrapper(async (req, res, next) => {
+    const id = req.query.id;
+    if (id) {
+        const { success, data, message } = await adminService.deleteAdmin(id);
+        if (success) {
+            res.json({ success, data, message });
+        } else {
+            throw new Error(message);
+        }
+    } else {
+        throw new Error("Cannot find Admin, Specify id");
+    }
+})
+// Delete admin 
+
+module.exports = { adminLogin, adminRegistration, adminUpdate, adminDetail, getAllAdmin, changePassword, deleteAdmin };

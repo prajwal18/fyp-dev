@@ -1,11 +1,17 @@
-import { useState, useEffect } from 'react';
-import { Paper, TableContainer, Table, Grid, Box, TablePagination, Typography, Divider } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import {
+    Paper, TableContainer, Table,
+    TablePagination, Divider, Box,
+    Typography, Grid
+} from '@mui/material';
 // MUI Icon
 import ApartmentIcon from '@mui/icons-material/Apartment'; // Faculty Name
 import FormatListNumberedOutlinedIcon from '@mui/icons-material/FormatListNumberedOutlined'; //Total Courses
 import HandymanIcon from '@mui/icons-material/Handyman'; // Actions
 // MUI Icon
-import { TableHeadPropsType, PaginationStateType } from '../../../constants/CustomTypes';
+import { TableHeadPropsType, PaginationStateType, TableType } from '../../../constants/CustomTypes';
 
 // Table Head and Body
 import TableHeadSection from '../../common/table/TableHeadSection';
@@ -16,7 +22,16 @@ import TableBodySection from '../../common/table/TableBodySection';
 import { handleChangePage, handleChangeRowsPerPage } from "../../common/table/PaginationFunctions";
 //Pagination Functions
 
-import { faculties, courses } from '../tempDataDelLater';
+// Redux Operations
+import { selectPaginationData, selectAllFaculties } from '../../../redux/faculties/faculties.slice'; // Importing selector functions from course.slice
+import {
+    fetchAllFacultiesAC, fetchPaginationDataAC,
+    setPaginationDataAC, deleteFacultyAC
+} from '../../../redux/faculties/actions'; // Importing action creators
+// Redux Operations
+
+import { courses } from '../tempDataDelLater';
+
 
 const FacultyHeadData: Array<TableHeadPropsType> = [
     {
@@ -37,15 +52,16 @@ const FacultyHeadData: Array<TableHeadPropsType> = [
 ];
 
 
-const FacultyTable = () => {
-    const [fPagination, setFPagination] = useState<PaginationStateType>({
-        skip: 0, take: 5, total: faculties.length
-    });
-    const [facultyData, setFacultyData] = useState(faculties);
+const FacultyTable = ({ data, pagination, handleShow, handleEdit }: TableType) => {
+    const faculties = data;
+    // Dispatch function redux
+    const dispatch = useDispatch();
+    // Dispatch function redux
+    const handleDelete = (id: string) => {
+        //dispatch(deleteStudentAC(id))
+        toast.warn('Delete functionality is not available right now.');
+    }
 
-    useEffect(() => {
-        setFacultyData(faculties.slice(fPagination.skip, fPagination.skip + fPagination.take));
-    }, [fPagination]);
     return (
         <Box>
             <Typography my={1} sx={{ fontWeight: "700" }}>Faculty Table</Typography>
@@ -54,24 +70,25 @@ const FacultyTable = () => {
                     <Table>
                         <TableHeadSection HeadData={FacultyHeadData} />
                         <TableBodySection
-                            dataList={facultyData}
+                            dataList={faculties}
                             keyValues={['name', 'courses']}
-                            handleShow={(data: any) => { }}
-                            handleEdit={(data: any) => { }}
-                            handleDelete={(data: any) => { }}
+                            handleShow={handleShow}
+                            handleEdit={handleEdit}
+                            handleDelete={handleDelete}
+                            skip={pagination.skip}
                         />
                     </Table>
                 </TableContainer>
-                <Divider/>
-                {/* <TablePagination
+                <Divider />
+                <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={fPagination.total}
-                    rowsPerPage={fPagination.take}
-                    page={fPagination.skip / fPagination.take}
-                    onPageChange={handleChangePage(setFPagination)}
-                    onRowsPerPageChange={handleChangeRowsPerPage(setFPagination)}
-                /> */}
+                    count={pagination.total}
+                    rowsPerPage={pagination.take}
+                    page={pagination.skip / pagination.take}
+                    onPageChange={handleChangePage(pagination, setPaginationDataAC, dispatch)}
+                    onRowsPerPageChange={handleChangeRowsPerPage(pagination, setPaginationDataAC, dispatch)}
+                />
             </Paper>
         </Box>
     )
@@ -106,7 +123,7 @@ const CourseTable = () => {
                         />
                     </Table>
                 </TableContainer>
-                <Divider/>
+                <Divider />
                 {/* <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
@@ -123,11 +140,29 @@ const CourseTable = () => {
 
 
 // Faculty Table Section
-const FacultyTableSection = () => {
+const FacultyTableContainer = ({ handleShow, handleEdit }: { handleShow: (data: any) => void, handleEdit: (data: any) => void }) => {
+    const dispatch = useDispatch();
+    // Retriving the states from redux
+    const faculties = useSelector(selectAllFaculties);
+    const pagination = useSelector(selectPaginationData);
+    // Retriving the states from redux
+    useEffect(() => {
+        dispatch(fetchPaginationDataAC());
+    }, []);
+    useEffect(() => {
+        dispatch(fetchAllFacultiesAC());
+        console.log(pagination);
+    }, [pagination]);
+
     return (
         <Grid container spacing={2}>
             <Grid item xs={6}>
-                <FacultyTable />
+                <FacultyTable
+                    data={faculties}
+                    pagination={pagination}
+                    handleEdit={handleEdit}
+                    handleShow={handleShow}
+                />
             </Grid>
             <Grid item xs={6}>
                 <CourseTable />
@@ -136,4 +171,4 @@ const FacultyTableSection = () => {
     )
 }
 
-export default FacultyTableSection;
+export default FacultyTableContainer;

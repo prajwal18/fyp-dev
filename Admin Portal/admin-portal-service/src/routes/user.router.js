@@ -10,7 +10,7 @@ router.post("/auth/register", authenticationMiddleware, authorizeAdmin, userCont
 
 // Update user details
 // Note must provide user's id as ../update?id=<--- user's id --->
-router.post("/update", authenticationMiddleware, authorizeAdmin, userController.userUpdate); 
+router.put("/update", authenticationMiddleware, authorizeAdmin, userController.userUpdate); 
 
 // Get user details
 // Note must provide user's id as ../user?id=<--- user's id --->
@@ -18,7 +18,7 @@ router.get("/get-details", authenticationMiddleware, authorizeAdmin, userControl
 
 // Change password
 // Note must provide user's id as ../change-password?id=<--- user's id --->
-router.post("/change-password", authenticationMiddleware, authorizeAdmin, userController.changePassword);
+router.put("/change-password", authenticationMiddleware, authorizeAdmin, userController.changePassword);
 
 // Get all teacher's details
 router.get("/all-teachers", authenticationMiddleware, authorizeAdmin, userController.getAllTeachers );

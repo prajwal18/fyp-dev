@@ -9,7 +9,7 @@ import EmailIcon from '@mui/icons-material/Email'; // Email
 import PhoneIcon from '@mui/icons-material/Phone'; // Contact
 import HandymanIcon from '@mui/icons-material/Handyman'; // Actions
 // MUI Icon
-import { TableHeadPropsType, PaginationStateType } from '../../../constants/CustomTypes';
+import { TableHeadPropsType, PaginationStateType, TableType } from '../../../constants/CustomTypes';
 
 // Table Head and Body
 import TableHeadSection from '../../common/table/TableHeadSection';
@@ -23,12 +23,14 @@ import { handleChangePage, handleChangeRowsPerPage } from "../../common/table/Pa
 // Redux Operations
 import { selectPaginationData, selectAllAdmins } from '../../../redux/admins/admins.slice'; // Importing selector functions from admin.slice
 import { fetchAllAdminsAC, fetchPaginationDataAC } from '../../../redux/admins/actions'; // Importing action creators
-import { setPaginationDataAC } from '../../../redux/admins/actions';
+import { setPaginationDataAC, deleteAdminAC } from '../../../redux/admins/actions';
 // Redux Operations
 
 // Filler image
 import MyImg from '../../../constants/FillerImg';
 // Filler image
+
+import { baseURL } from '../../../utils/endpoints';
 
 const AdminHeadData: Array<TableHeadPropsType> = [
     {
@@ -57,20 +59,21 @@ const AdminHeadData: Array<TableHeadPropsType> = [
 ];
 
 
-const AdminTable = ({ admins, pagination, handleShow, handleEdit }: { admins: Array<any>, pagination: PaginationStateType, handleShow: (data: any) => void, handleEdit: (data: any) => void }) => {
+const AdminTable = ({ data, pagination, handleShow, handleEdit }: TableType) => {
+    const admins = data;
     // Dispatch function redux
     const dispatch = useDispatch();
     // Dispatch function redux
-    const handleDelete = (data: any) => {
-        toast.error("Sorry, still working on delete.", { autoClose: 1500 });
+    const handleDelete = (id: string) => {
+        dispatch(deleteAdminAC(id))
     }
 
     // Provide a filler image for admins without profile picture
     const solveMissingProfile = (data: any) => {
-        if (data.profile) {
-            return { ...data, profile: <MyImg src={data.profile} /> };
+        if (data.profilePicture) {
+            return { ...data, profile: <MyImg src={`${baseURL}${data.profilePicture}`} /> };
         } else {
-            return { ...data, profile: <MyImg src={'https://media.sproutsocial.com/uploads/2022/06/profile-picture.jpeg'} /> }
+            return { ...data, profile: <MyImg/> }
         }
     }
     // Provide a filler image for admins without profile picture
@@ -119,7 +122,7 @@ const AdminTableContainer = ({ handleShow, handleEdit }: { handleShow: (data: an
 
     return (
         <AdminTable
-            admins={admins}
+            data={admins}
             pagination={pagination}
             handleEdit={handleEdit}
             handleShow={handleShow}

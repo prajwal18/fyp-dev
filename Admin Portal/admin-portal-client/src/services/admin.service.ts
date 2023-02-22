@@ -5,7 +5,7 @@ import endpoints from "../utils/endpoints";
 const {
     getAllAdmin, register,
     update, changePassword,
-    getDetail
+    deleteAdmin, getDetail
 } = endpoints.admin;
 
 export const httpGetAllAdmin = (query: string) => {
@@ -26,6 +26,6 @@ export const httpChangePWAdmin = (id: string, data: any) => {
 }
 
 export const httpDeleteAdmin = (id: string) => {
-    const url = `?id=${id}`;
+    const url = `${deleteAdmin}?id=${id}`;
     return axiosWithToken('delete', url);
 }

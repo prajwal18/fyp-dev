@@ -26,6 +26,10 @@ router.get("/get-all-admin", authenticationMiddleware, authorizeAdmin, adminCont
 // Note must provide admin's id as ../change-password?id=<--- admin's id --->
 router.put("/change-password", authenticationMiddleware, authorizeAdmin, adminController.changePassword);
 
+// Delete admin
+// Note must provide admin's id as ../delete-admin?id=<--- admin's id --->
+router.delete("/delete", authenticationMiddleware, authorizeAdmin, adminController.deleteAdmin);
+
 
 /*
 Note: To update and retirve user's information, a middleware is needed

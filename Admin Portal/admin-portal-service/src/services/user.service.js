@@ -1,5 +1,6 @@
-//Importing admin model
+//Importing User model
 const User = require("../models/user.model");
+const {UserRole} = require("../constants/enum");
 //Importing password creation and comparision functions
 const { encryptPassword } = require("../utils/encrypt.decrypt.password");
 
@@ -22,10 +23,10 @@ const validateRequest = (data) => {
 // Register User
 const registerUser = async (data) => {
     const userData = JSON.parse(JSON.stringify(data)); // Making a deep copy of an object
-    // Admin cannot upload user's image
+    // User cannot upload user's image
     delete userData.profilePicture;
     delete userData.coverPicture;
-    // Admin cannot upload user's image
+    // User cannot upload user's image
 
     const hashedPassword = await encryptPassword(userData.password);
     userData.password = hashedPassword;
@@ -45,11 +46,11 @@ const updateUser = async (id, data) => {
     const userData = JSON.parse(JSON.stringify(data));  // Making a deep copy of an object
     delete userData.password;                           // Cannot update password here
 
-    // Admin cannot upload user's image
+    // User cannot upload user's image
     delete userData.profilePicture;
     delete userData.coverPicture;
     delete userData.password;           // Also there's a seperate API to update password
-    // Admin cannot upload user's image
+    // User cannot upload user's image
 
     const user = await User.findByIdAndUpdate(id, userData);
     if (user) {
@@ -100,7 +101,32 @@ const getAllUsers = async () => {
 }
 // Get all users
 
+// Get all Teacher
+const fetchAllTeachers = async (skip, take, searchTerm) => {
+    let allTeacher = await User.find({name: { "$regex": searchTerm, "$options": "i" }, role: UserRole[1]}).skip(skip).limit(take);
+    let teachersCount = await User.count({name: { "$regex": searchTerm, "$options": "i" }, role: UserRole[1]});
+
+    if (allTeacher) {
+        return { success: true, data: allTeacher, message: "Successfully fetched all students data", total: teachersCount }
+    } else {
+        return { success: false, data: null, message: "Sorry, cannot fetch students list", total: 0 }
+    }
+}
+// Get all Teacher
+
+// Get all Student
+const fetchAllStudents = async (skip, take, searchTerm) => {
+    let allStudent = await User.find({name: { "$regex": searchTerm, "$options": "i" }, role: UserRole[0]}).skip(skip).limit(take);
+    let studentsCount = await User.count({name: { "$regex": searchTerm, "$options": "i" }, role: UserRole[0]});
+    if (allStudent) {
+        return { success: true, data: allStudent, message: "Successfully fetched all students data", total: studentsCount }
+    } else {
+        return { success: false, data: null, message: "Sorry, cannot fetch students list", total: 0 }
+    }
+}
+// Get all Student
 
 
 
-module.exports = { validateRequest, registerUser, updateUser, getUserDetail, getAllUsers, changePassword }
+
+module.exports = { validateRequest, registerUser, updateUser, getUserDetail, getAllUsers, changePassword, fetchAllStudents, fetchAllTeachers }

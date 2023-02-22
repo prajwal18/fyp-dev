@@ -8,13 +8,30 @@ export function ErrorMessage({ message }: { message: any }) {
 }
 export function GenerateCustTextField({ formik, name, label, type = "text" }: { formik: any, name: string, label: string, type?: string }) {
     return (
-        <Box sx={{width: "100%"}}>
+        <Box sx={{ width: "100%" }}>
             <TextField
                 name={name}
                 label={label}
                 value={formik.values[name]}
                 onChange={formik.handleChange}
                 type={type}
+                fullWidth
+            />
+            {formik.touched?.[name] && formik.errors?.[name] && <ErrorMessage message={formik.errors?.[name]} />}
+        </Box>
+    )
+}
+
+export function GenerateCustTextArea({ formik, name, label, rows }: { formik: any, name: string, label: string, rows: number }) {
+    return (
+        <Box sx={{ width: "100%" }}>
+            <TextField
+                name={name}
+                label={label}
+                value={formik.values[name]}
+                onChange={formik.handleChange}
+                rows={rows}
+                multiline
                 fullWidth
             />
             {formik.touched?.[name] && formik.errors?.[name] && <ErrorMessage message={formik.errors?.[name]} />}

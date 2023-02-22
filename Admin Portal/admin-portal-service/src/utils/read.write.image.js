@@ -7,6 +7,7 @@ const base64toImg = (base64string, folderName) => {
     const [metaData, imageData] = base64string.split(';base64,');
     if(imageData){
         const extension = metaData.split('image/')[1];
+        console.log('Image Extension: ',extension);
         const buffer = Buffer.from(imageData, "base64");
         const fileName = uuid.v4() + "." + extension;
         const absolutePathToFolder = path.join(__dirname, '../../', `/public/${folderName}`);

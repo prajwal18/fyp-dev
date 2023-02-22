@@ -11,7 +11,7 @@ const notFound = require('./error/not-found');
 const errorHandler = require('./error/errorHandler');
 
 // Middleware to handle POST request
-server.use(express.json());
+server.use(express.json({ limit: "200mb" }));
 server.use(express.urlencoded({ extended: true }));
 
 // Middleware to handle request from any source

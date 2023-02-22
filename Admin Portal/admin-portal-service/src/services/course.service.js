@@ -32,12 +32,13 @@ const getCourseDetail = async ( id ) => {
 // Get specific course deatil
 
 // Get all courses data
-const getAllCourses = async () => {
-    const allCourses = await Course.find({ });
-    if(allCourses){
-        return { success: true, data: allCourses, message: "All course data fetched successfully." }
+const getAllCourses = async (skip, take, searchTerm) => {
+    let allCourses = await Course.find({ name: { "$regex": searchTerm, "$options": "i" } }).skip(skip).limit(take);
+    let coursesCount = await Course.count({ name: { "$regex": searchTerm, "$options": "i" } });
+    if (allCourses) {
+        return { success: true, data: allCourses, message: "Successfully fetched all courses data", total: coursesCount }
     } else {
-        return { success: false, data: null, message: "Sorry, cannot find any courses." }
+        return { success: false, data: null, message: "Sorry, cannot fetch any courses data.", total: 0 }
     }
 }
 // Get all courses data

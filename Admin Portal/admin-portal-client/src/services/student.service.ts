@@ -1,28 +1,31 @@
-import axios from "axios";
 import { axiosWithToken } from "../utils/apiCallNResp";
 import endpoints from "../utils/endpoints";
 
-const { } = endpoints.student;
+const {
+    register, update,
+    getDetail, changePassword,
+    getAllStudents, deleteStudent
+} = endpoints.student;
 
 export const httpGetAllStudent = (query: string) => {
-    const url = `?${query}`;
+    const url = `${getAllStudents}?${query}`;
     return axiosWithToken('get', url);
 }
 
-export const httpAddStudent = (data: any) => axios.post('', data);
+export const httpAddStudent = (data: any) => axiosWithToken('post', register, data);
 
 export const httpUpdateStudent = (id: string, data: any) => {
-    const url = `?id=${id}`;
+    const url = `${update}?id=${id}`;
     return axiosWithToken('put', url, data);
 }
 
 export const httpChangePWStudent = (id: string, data: any) => {
-    const url = `?id=${id}`;
+    const url = `${changePassword}?id=${id}`;
     return axiosWithToken('put', url, data);
 }
 
 export const httpDeleteStudent = (id: string) => {
-    const url = `?id=${id}`;
+    const url = `${deleteStudent}?id=${id}`;
     return axiosWithToken('delete', url);
 }
 

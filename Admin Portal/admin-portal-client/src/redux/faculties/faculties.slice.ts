@@ -18,6 +18,9 @@ const options = {
         },
         updatePaginationData: (state:FacultiesISType, action: ActionType) => {
             return {...state, pagination: action.payload}
+        },
+        updateDDFaculties: (state:FacultiesISType, action:ActionType) => {
+            return {...state, ddFaculties: action.payload}
         }
     }
 }
@@ -26,20 +29,23 @@ export const facultiesSlice = createSlice(options);
 // Creating the faculty slice
 
 // Selector functions
-export const selectSearchTerm = (state: FacultiesISType) => {
-    return state.searchTerm;
+export const selectSearchTerm = (state: any) => {
+    return state.faculties.searchTerm;
 }
-export const selectPaginationData = (state: FacultiesISType) => {
-    return state.pagination;
+export const selectPaginationData = (state: any) => {
+    return state.faculties.pagination;
 }
-export const selectAllFaculties = (state: FacultiesISType) => {
-    return state.faculties;
+export const selectAllFaculties = (state: any) => {
+    return state.faculties.faculties;
+}
+export const selectDDFaculties = (state: any) => {
+    return state.faculties.ddFaculties;
 }
 // Selector functions
 
 
 // Exporting the action creator functions
-export const { updateFaculties, updateSearchTerm, updatePaginationData } = facultiesSlice.actions;
+export const { updateFaculties, updateSearchTerm, updatePaginationData, updateDDFaculties } = facultiesSlice.actions;
 // Exporting the action creator functions
 
 // Exporting the reducer as the default export

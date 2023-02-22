@@ -32,14 +32,25 @@ const getFacultyDetail = async (id) => {
 // Get specific faculty deatil
 
 // Get all facultys data
-const getAllFaculties = async () => {
-    const allFaculties = await Faculty.find({});
+const getAllFaculties = async (skip, take, searchTerm) => {
+    let allFaculties = await Faculty.find({ name: { "$regex": searchTerm, "$options": "i" } }).skip(skip).limit(take);
+    let facultiesCount = await Faculty.count({ name: { "$regex": searchTerm, "$options": "i" } });
     if (allFaculties) {
-        return { success: true, data: allFaculties, message: "All faculty data fetched successfully." }
+        return { success: true, data: allFaculties, message: "Successfully fetched all faculties data", total: facultiesCount }
     } else {
-        return { success: false, data: null, message: "Sorry, cannot find any faculties." }
+        return { success: false, data: null, message: "Sorry, cannot fetch any faculties data.", total: 0 }
     }
 }
 // Get all facultys data
 
-module.exports = { create, update, getFacultyDetail, getAllFaculties } 
+const getDDFaculties = async () => {
+    let allFaculties = await Faculty.find({});
+    if (allFaculties) {
+        allFaculties = allFaculties.map(faculty => ({ id: faculty._id, name: faculty.name }));
+        return { success: true, data: allFaculties, message: "Fetched all faculties for drop-down" }
+    } else {
+        return { success: false, data: null, message: "Sorry, cannot fetch any faculties for drop-down." }
+    }
+}
+
+module.exports = { create, update, getFacultyDetail, getAllFaculties, getDDFaculties } 

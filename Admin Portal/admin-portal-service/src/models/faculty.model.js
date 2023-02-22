@@ -9,5 +9,8 @@ const facultySchema = mongoose.Schema({
     }
 });
 
+//Below line will automatically generate createdAt & updatedAt
+facultySchema.set("timestamps", true);
+
 
 module.exports = mongoose.model('Faculty', facultySchema);

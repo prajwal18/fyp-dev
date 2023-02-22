@@ -123,11 +123,12 @@ const CustomListItem = ({ label, link, path, icon }: { label: string, link: stri
  */
 const BottomSection = () => {
     const cookies = new Cookies();
-    const { clearSession } = useSession("fyp_session");
+    const { clearSession } = useSession("admin_session");
     const navigate = useNavigate();
     const handleOnLogout = () => {
         clearSession();
-        cookies.remove('fyp_token');
+        cookies.remove('admin_token');
+        //.remove('admin_token');
         navigate("/login");
     }
     return (

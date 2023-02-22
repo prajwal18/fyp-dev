@@ -3,7 +3,7 @@ const Admin = require("../models/admin.model");
 const jwt = require("jsonwebtoken");
 //Importing password creation and comparision functions
 const { checkPassword, encryptPassword } = require("../utils/encrypt.decrypt.password");
-const { base64toImg } = require("../utils/read.write.image");
+const { base64toImg, removeImage } = require("../utils/read.write.image");
 
 
 // Admin Login
@@ -55,15 +55,21 @@ const registerAdmin = async (adminData) => {
 // Update admin data
 const updateAdmin = async (id, adminData) => {
     let data = JSON.parse(JSON.stringify(adminData)); //Creating a deep copy of an object
+    let removeOldImg = false; // Make it true if you are replacing an image
     if (data.password) {
         delete data.password;
     }
     if (data.profilePicture) {
-        const imageFileData = await base64toImg(data.profilePicture);
+        removeOldImg = true;
+        const imageFileData = await base64toImg(data.profilePicture, 'admins');
         data.profilePicture = imageFileData;
     }
     const admin = await Admin.findByIdAndUpdate(id, data);
+
     if (admin) {
+        if(removeOldImg) {
+            removeImage(admin.profilePicture);
+        }
         return { success: true, data: admin, message: "Admin Updated successfully" }
     } else {
         return { success: false, data: null, message: "Bad request cannot Update admin details" }
@@ -83,9 +89,9 @@ const getAdminDetail = async (id) => {
 // Get admin detail
 
 // Get all admin data
-const getAllAdmin = async (skip, take) => {
-    let allAdmin = await Admin.find({}).skip(skip).limit(take);
-    let adminsCount = await Admin.count({});
+const getAllAdmin = async (skip, take, searchTerm) => {
+    let allAdmin = await Admin.find({name: { "$regex": searchTerm, "$options": "i" }}).skip(skip).limit(take);
+    let adminsCount = await Admin.count({name: { "$regex": searchTerm, "$options": "i" }});
     if (allAdmin) {
         return { success: true, data: allAdmin, message: "Successfully fetched all admin data", total: adminsCount }
     } else {
@@ -96,12 +102,9 @@ const getAllAdmin = async (skip, take) => {
 
 
 // Change Admin Password
-const changePassword = async (id, oldPassword, newPassword) => {
+const changePassword = async (id, newPassword) => {
     const admin = await Admin.findById(id);
     if (admin) {
-        // Check to see if old password is correct
-        const match = await checkPassword(oldPassword, admin.password);
-        if (match) {
             const newEncryptedPW = await encryptPassword(newPassword);
             const updatedAdmin = await Admin.findByIdAndUpdate(id, { password: newEncryptedPW });
             if (updatedAdmin) {
@@ -109,14 +112,29 @@ const changePassword = async (id, oldPassword, newPassword) => {
             } else {
                 return { success: false, data: null, message: "Sorry, cannot update password" }
             }
-        } else {
-            return { success: false, data: null, message: "Old password does not match" }
-        }
     } else {
         return { success: false, data: null, message: "Cannot find admin." }
     }
 }
 // Change Admin Password
 
+// Delete Admin
+const deleteAdmin = async (id) => {
+    const adminCount = await Admin.count({});
+    if(adminCount > 1){
+        const deletedAdmin = await Admin.findByIdAndRemove(id);
+        removeImage(deletedAdmin.profilePicture);
 
-module.exports = { adminLogin, validateRequest, registerAdmin, updateAdmin, getAdminDetail, getAllAdmin, changePassword };
+        if(deletedAdmin){
+            return { success: true, data: deletedAdmin, message: 'Admin deleted successfully' }
+        } else {
+            return { success: false, data: null, message: 'Sorry, cannot find the admin.' }
+        }
+    } else {
+        return { success: false, data: null, message: 'The system needs to have at least one admin.' }
+    }
+}
+// Delete Admin
+
+
+module.exports = { adminLogin, validateRequest, registerAdmin, updateAdmin, getAdminDetail, getAllAdmin, changePassword, deleteAdmin };

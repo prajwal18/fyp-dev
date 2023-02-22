@@ -9,8 +9,8 @@ const courseSchema = mongoose.Schema({
     },
     description: {
         type: String,
-        minLength: [20, 'Name cannot be less than 20 characters'],
-        maxLength: [1000, 'Name cannot exceed 1000 characters'],
+        minLength: [5, 'Description cannot be less than 20 characters'],
+        maxLength: [1000, 'Description cannot exceed 1000 characters'],
         required: [true, "Course description is required"]
     },
     faculty: {
@@ -27,6 +27,9 @@ const courseSchema = mongoose.Schema({
         ref: 'User'
     }
 });
+
+//Below line will automatically generate createdAt & updatedAt
+courseSchema.set("timestamps", true);
 
 
 module.exports = mongoose.model('Course', courseSchema);
