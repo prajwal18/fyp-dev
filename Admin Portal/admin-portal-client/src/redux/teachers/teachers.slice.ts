@@ -11,13 +11,19 @@ const options = {
     initialState: TeachersIS,
     reducers: {
         updateTeachers: (state: TeachersISType, action: ActionType) => {
-            return {...state, teachers: action.payload}
+            return { ...state, teachers: action.payload }
+        },
+        updateSelectedTeacher: (state: TeachersISType, action: ActionType) => {
+            return { ...state, selectedTeacher: action.payload }
         },
         updateSearchTerm: (state: TeachersISType, action: ActionType) => {
-            return {...state, searchTerm: action.payload}
+            return { ...state, searchTerm: action.payload }
         },
-        updatePaginationData: (state:TeachersISType, action: ActionType) => {
-            return {...state, pagination: action.payload}
+        updatePaginationData: (state: TeachersISType, action: ActionType) => {
+            return { ...state, pagination: action.payload }
+        },
+        resetState: (state: TeachersISType, action: ActionType) => {
+            return TeachersIS
         }
     }
 }
@@ -35,11 +41,18 @@ export const selectPaginationData = (state: any) => {
 export const selectAllTeachers = (state: any) => {
     return state.teachers.teachers;
 }
+export const selectSelectedTeacher = (state: any) => {
+    return state.teachers.selectedTeacher;
+}
 // Selector functions
 
 
 // Exporting the action creator functions
-export const { updateTeachers, updateSearchTerm, updatePaginationData } = teachersSlice.actions;
+export const { 
+    updateTeachers, updateSearchTerm,
+    updatePaginationData, updateSelectedTeacher,
+    resetState
+} = teachersSlice.actions;
 // Exporting the action creator functions
 
 // Exporting the reducer as the default export

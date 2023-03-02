@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { toast } from 'react-toastify';
@@ -13,15 +13,15 @@ import AddIcon from '@mui/icons-material/Add';
 // Components
 import TeacherTableContainer from './TeacherTable';
 // Components
-
+ 
 import { BoxStyle, AddBtn } from '../../common/styled/StyledComponents';
 // Initial Value and Schema for formik
 import { AddTeacherIV, TeacherSchema } from './form-validation/FormValidation';
 // Initial Value and Schema for formik
 
 // Redux operations
-import { addTeacherAC, updateTeacherAC, setSearchTermAC } from '../../../redux/teachers/actions';
-import { selectSearchTerm } from '../../../redux/teachers/teachers.slice';
+import { addTeacherAC, updateTeacherAC, setSearchTermAC, fetchSelectedTeacherAC, fetchPaginationDataAC } from '../../../redux/teachers/actions';
+import { selectSearchTerm, selectSelectedTeacher, resetState } from '../../../redux/teachers/teachers.slice';
 // Redux operations
 
 // Modals
@@ -32,16 +32,16 @@ import AddEditStudentTeacherModal from '../../common/modal/AddEditStudentTeacher
 const ManageTeacher = () => {
     const [open, setOpen] = useState(false);
     const searchTerm = useSelector(selectSearchTerm);
+    const teacher = useSelector(selectSelectedTeacher);
 
     // To manage Editing
     const [editId, setEditId] = useState<null | string>(null);
     const [isEditing, setIsEditing] = useState(false);
     // To manage Editing
 
-    // Store teacher data to view it
+    // State to view teacher data
     const [openView, setOpenView] = useState(false);
-    const [teacher, setTeacher] = useState<any>(null);
-    // Store teacher data to view it
+    // State to view teacher data
 
     const dispatch = useDispatch();
 
@@ -49,7 +49,7 @@ const ManageTeacher = () => {
         dispatch(setSearchTermAC(event.target.value))
     }
     const handleShow = (data: any) => {
-        setTeacher(data);
+        dispatch(fetchSelectedTeacherAC(data._id));
         setOpenView(true);
     };
     const handleEdit = (data: any) => {
@@ -67,7 +67,6 @@ const ManageTeacher = () => {
         setOpen(false);
     }
     const handleCloseView = () => {
-        setTeacher(null);
         setOpenView(false);
     }
     const handleOpen = () => {
@@ -94,7 +93,13 @@ const ManageTeacher = () => {
                 handleClose();
             }
         }
-    })
+    });
+    // Reset redux state
+    useEffect(() => {
+        dispatch(resetState());
+        dispatch(fetchPaginationDataAC());
+    }, []);
+    // Reset redux state
     return (
         <>
             <Box sx={{ padding: "20px 30px", backgroundColor: "white" }}>

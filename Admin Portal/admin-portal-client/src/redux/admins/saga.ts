@@ -8,6 +8,7 @@ import { apiCallNResp } from "../../utils/apiCallNResp";
 // Action creators from slice
 import {
     updateAdmins,
+    updatedSelectedAdmin,
     updateSearchTerm,
     updatePaginationData
 } from "./admins.slice";
@@ -23,7 +24,8 @@ import {
     httpAddAdmin,
     httpUpdateAdmin,
     httpChangePWAdmin,
-    httpDeleteAdmin
+    httpDeleteAdmin,
+    httpGetAdminDetail
 } from "../../services/admin.service";
 // Custom axios calls
 
@@ -60,16 +62,26 @@ function* fetchAdmins(action: ActionType): Generator<any, any, any> {
     }
 
 }
+
+function* fetchSelectedAdmin(action: ActionType): Generator<any, any, any> {
+    const response = yield apiCallNResp(() => httpGetAdminDetail(action.payload.id));
+    if (response) {
+        // Dispatch admin data to the store
+        yield put(updatedSelectedAdmin(response.data));
+    }
+
+}
 // Fetch
 
 // SET Pagination and search term
 function* setSearchTerm(action: ActionType): Generator<any, any, any> {
     const searchTerm = action.payload;
+    const pagination = yield select(selectPaginationData);
     yield put(updateSearchTerm(searchTerm));
     const query = generateFetchQuery(0, 0, searchTerm);
     const response = yield apiCallNResp(() => httpGetAllAdmin(query));
     if(response) {
-        yield setPaginationData({type:action.type, payload: {skip:0, take: 5, total: response.total}})
+        yield setPaginationData({type:action.type, payload: {...pagination, skip:0, total: response.total}})
     }
 }
 function* setPaginationData(action: ActionType): Generator<any, any, any> {
@@ -146,6 +158,7 @@ function* changePassword(action: ActionType): Generator<any, any, any> {
 function* AdminSaga() {
     yield takeEvery(actionTypes.ADMIN_FETCH_PAGINATION_DATA, fetchPaginationData);
     yield takeEvery(actionTypes.FETCH_ALL_ADMINS, fetchAdmins);
+    yield takeEvery(actionTypes.FETCH_SELECTED_ADMIN, fetchSelectedAdmin);
 
     yield takeEvery(actionTypes.ADMIN_SET_SEARCH_TERM, setSearchTerm);
     yield takeEvery(actionTypes.ADMIN_SET_PAGINATION_DATA, setPaginationData);

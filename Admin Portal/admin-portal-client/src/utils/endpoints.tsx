@@ -37,11 +37,13 @@ const endpoints = {
         create: baseURL + "/course/create",
         edit: baseURL + "/course/update",
         getAllCourses: baseURL + "/course/all-courses",
-        getCourseDetail: baseURL + "/course-details",
-        addTeacher: baseURL + "/course/",
-        addStudent: baseURL + "/course/",
-        deleteCourse: baseURL + "/course/",
+        getCourseDetail: baseURL + "/course/course-details",
 
+        addUser: baseURL + "/user/enroll",
+        removeUser: baseURL + "/user/disenroll",
+
+        deleteCourse: baseURL + "/course/",
+        facultyCourses: baseURL + "/course/faculty-courses",
     },
     // To manage the various entities
 

@@ -1,6 +1,7 @@
 //Importing User model
 const User = require("../models/user.model");
-const {UserRole} = require("../constants/enum");
+const Course = require("../models/course.model");
+const { UserRole } = require("../constants/enum");
 //Importing password creation and comparision functions
 const { encryptPassword } = require("../utils/encrypt.decrypt.password");
 
@@ -93,18 +94,18 @@ const changePassword = async (id, newPassword) => {
 // Get all users
 const getAllUsers = async () => {
     const allUsers = await User.find({});
-    if(allUsers){
-        return { success: false, data:allUsers, message: "All users retrived successfully" }
+    if (allUsers) {
+        return { success: false, data: allUsers, message: "All users retrived successfully" }
     } else {
-        return { success: false, data: null, message:"Sorry, can't find any users" }  
+        return { success: false, data: null, message: "Sorry, can't find any users" }
     }
 }
 // Get all users
 
 // Get all Teacher
 const fetchAllTeachers = async (skip, take, searchTerm) => {
-    let allTeacher = await User.find({name: { "$regex": searchTerm, "$options": "i" }, role: UserRole[1]}).skip(skip).limit(take);
-    let teachersCount = await User.count({name: { "$regex": searchTerm, "$options": "i" }, role: UserRole[1]});
+    let allTeacher = await User.find({ name: { "$regex": searchTerm, "$options": "i" }, role: UserRole[1] }).skip(skip).limit(take);
+    let teachersCount = await User.count({ name: { "$regex": searchTerm, "$options": "i" }, role: UserRole[1] });
 
     if (allTeacher) {
         return { success: true, data: allTeacher, message: "Successfully fetched all students data", total: teachersCount }
@@ -116,8 +117,8 @@ const fetchAllTeachers = async (skip, take, searchTerm) => {
 
 // Get all Student
 const fetchAllStudents = async (skip, take, searchTerm) => {
-    let allStudent = await User.find({name: { "$regex": searchTerm, "$options": "i" }, role: UserRole[0]}).skip(skip).limit(take);
-    let studentsCount = await User.count({name: { "$regex": searchTerm, "$options": "i" }, role: UserRole[0]});
+    let allStudent = await User.find({ name: { "$regex": searchTerm, "$options": "i" }, role: UserRole[0] }).skip(skip).limit(take);
+    let studentsCount = await User.count({ name: { "$regex": searchTerm, "$options": "i" }, role: UserRole[0] });
     if (allStudent) {
         return { success: true, data: allStudent, message: "Successfully fetched all students data", total: studentsCount }
     } else {
@@ -128,5 +129,108 @@ const fetchAllStudents = async (skip, take, searchTerm) => {
 
 
 
+// Enroll and Disenroll users from course
+const addUserToCourse = async (userId, courseId, role) => {
+    const user = await User.findById(userId);
+    const course = await Course.findById(courseId);
 
-module.exports = { validateRequest, registerUser, updateUser, getUserDetail, getAllUsers, changePassword, fetchAllStudents, fetchAllTeachers }
+
+    if (user && course) {
+        if (user.role === role) {
+            const updatedUser = await User.findByIdAndUpdate(
+                userId,
+                {
+                    '$addToSet': {
+                        courses: [courseId]
+                    }
+                }
+            );
+            if (updatedUser) {
+                return { success: true, data: updatedUser, message: `${user.name} successfully added to ${course.name}` }
+            } else {
+                return { success: false, data: null, message: 'Cannot add user to course.' }
+            }
+        } else {
+            return { success: false, data: null, message: `Incorrect user role specified.` }
+        }
+    } else if (user) {
+        return { success: false, data: null, message: `Cannot find course.` }
+    } else {
+        return { success: false, data: null, message: "Cannot find user." }
+    }
+}
+
+const removeUserFromCourse = async (userId, courseId, role) => {
+    const user = await User.findById(userId);
+    const course = await Course.findById(courseId);
+    if (user && course) {
+        if (user.role === role) {
+            const updatedUser = await User.findByIdAndUpdate(
+                userId,
+                {
+                    '$pullAll': {
+                        courses: [courseId]
+                    }
+                }
+            );
+            if (updatedUser) {
+                return { success: true, data: updatedUser, message: `${updatedUser.name} successfully removed from ${course.name}` }
+            } else {
+                return { success: false, data: null, message: 'Cannot remove user from course.' }
+            }
+        }
+        else {
+            return { success: false, data: null, message: `Incorrect user role specified.` }
+        }
+    } else if (user) {
+        return { success: false, data: null, message: `Cannot find course.` }
+    } else {
+        return { success: false, data: null, message: "Cannot find user." }
+    }
+}
+
+
+// Fetch course Teachers
+const fetchCourseUsers = async (skip, take, searchTerm, course, purpose, role) => {
+    const courseData = await Course.findById(course);
+    if (courseData) {
+        if (purpose === 'ADD') {
+            const users = await User.find({
+                name: { '$regex': searchTerm, "$options": "i" },
+                role: role,
+                "courses": { "$ne": course } // Not equal to course
+            }).skip(skip).limit(take);
+            if (users) {
+                return { success: true, data: users, message: `Retrived all users who aren't enrolled in ${courseData.name}`, total: users.length }
+            } else {
+                return { success: false, data: null, message: `Unable to retrive users `, total: 0 }
+            }
+        } else {
+            const users = await User.find({
+                name: { '$regex': searchTerm, "$options": "i" },
+                role: role,
+                "courses": {"$in": course}
+            }).skip(skip).limit(take);
+
+            if (users) {
+                return { success: true, data: users, message: `Retrived all users from ${courseData.name}`, total: users.length }
+            } else {
+                return { success: false, data: null, message: `Unable to retrive users from ${courseData.name}`, total: 0 }
+            }
+        }
+    } else {
+        return { success: false, data: null, message: "Cannot find course", total: 0 }
+    }
+}
+// Fetch course Teachers
+
+
+
+module.exports = {
+    validateRequest, registerUser,
+    updateUser, getUserDetail,
+    getAllUsers, changePassword,
+    fetchAllStudents, fetchAllTeachers,
+    addUserToCourse, removeUserFromCourse,
+    fetchCourseUsers
+}

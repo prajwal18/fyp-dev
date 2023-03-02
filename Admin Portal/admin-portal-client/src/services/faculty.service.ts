@@ -4,11 +4,16 @@ import endpoints from "../utils/endpoints";
 const {
     create, edit,
     deleteFaculty, getAllFaculties,
-    getAllDDFaculties
+    getAllDDFaculties, getDetail
 } = endpoints.faculty;
 
 export const httpGetAllFaculty = (query: string) => {
     const url = `${getAllFaculties}?${query}`;
+    return axiosWithToken('get', url);
+}
+
+export const httpGetFacultyDetail = (id: string) => {
+    const url = `${getDetail}?id=${id}`;
     return axiosWithToken('get', url);
 }
 

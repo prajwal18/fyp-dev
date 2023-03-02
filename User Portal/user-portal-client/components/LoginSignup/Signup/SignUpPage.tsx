@@ -16,11 +16,12 @@ import MenuItem from '@mui/material/MenuItem';
 
 //Login Layout
 import LoginSignupLayout from '../../Layout/LoginSignupLayout';
-import InputFileField from '@/components/Common/InputFileField';
+import InputFileField from '@/components/Common/form/InputFileField';
 //Login Layout
 
 // Constants
-import { UserRole, DropDownType } from '@/constants/UserRole';
+import { UserRoleDD } from '@/constants/DropDownOptions';
+import { DDOptionT } from '@/constants/CustomTypes';
 // Constants
 
 const FormSectionHeader = ({ children }: { children: string }) => {
@@ -114,7 +115,7 @@ const NameAndRole = () => {
                             label="User Role"
                         >
                             {
-                                UserRole.map((item:DropDownType, index:number) => (
+                                UserRoleDD.map((item:DDOptionT, index:number) => (
                                     <MenuItem key={index} value={item.value}>{item.name}</MenuItem>
                                 ))
                             }

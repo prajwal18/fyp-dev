@@ -10,7 +10,8 @@ import {
     updateFaculties,
     updateDDFaculties,
     updateSearchTerm,
-    updatePaginationData
+    updatePaginationData,
+    updateSelectedFaculty
 } from "./faculties.slice";
 // Action creators from slice
 
@@ -24,7 +25,8 @@ import {
     httpAddFaculty,
     httpUpdateFaculty,
     httpDeleteFaculty,
-    httpGetDDFaculties
+    httpGetDDFaculties,
+    httpGetFacultyDetail
 } from "../../services/faculty.service";
 // Custom axios calls
 
@@ -70,16 +72,25 @@ function* fetchFaculties(action: ActionType): Generator<any, any, any> {
     }
 
 }
+
+function* fetchSelectedFaculty(action: ActionType): Generator<any, any, any> {
+    const response = yield apiCallNResp(() => httpGetFacultyDetail(action.payload.id));
+    if (response) {
+        // Dispatch selected faculty data to the store
+        yield put(updateSelectedFaculty(response.data));
+    }
+}
 // Fetch
 
 // SET Pagination and search term
 function* setSearchTerm(action: ActionType): Generator<any, any, any> {
     const searchTerm = action.payload;
+    const pagination = yield select(selectPaginationData);
     yield put(updateSearchTerm(searchTerm));
     const query = generateFetchQuery(0, 0, searchTerm);
     const response = yield apiCallNResp(() => httpGetAllFaculty(query));
     if (response) {
-        yield setPaginationData({ type: action.type, payload: { skip: 0, take: 5, total: response.total } })
+        yield setPaginationData({ type: action.type, payload: { ...pagination, skip: 0, total: response.total } })
     }
 }
 function* setPaginationData(action: ActionType): Generator<any, any, any> {
@@ -129,6 +140,7 @@ function* FacultySaga() {
     yield takeEvery(actionTypes.FACULTY_FETCH_PAGINATION_DATA, fetchPaginationData);
     yield takeEvery(actionTypes.FETCH_DD_FACULTIES, fetchDDFaculties);
     yield takeEvery(actionTypes.FETCH_ALL_FACULTIES, fetchFaculties);
+    yield takeEvery(actionTypes.FETCH_SELECTED_FACULTY, fetchSelectedFaculty);
 
     yield takeEvery(actionTypes.FACULTY_SET_SEARCH_TERM, setSearchTerm);
     yield takeEvery(actionTypes.FACULTY_SET_PAGINATION_DATA, setPaginationData);

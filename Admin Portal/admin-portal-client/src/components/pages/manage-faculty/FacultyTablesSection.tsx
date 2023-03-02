@@ -4,18 +4,19 @@ import { toast } from 'react-toastify';
 import {
     Paper, TableContainer, Table,
     TablePagination, Divider, Box,
-    Typography, Grid
+    Typography, Grid, Stack
 } from '@mui/material';
 // MUI Icon
 import ApartmentIcon from '@mui/icons-material/Apartment'; // Faculty Name
 import FormatListNumberedOutlinedIcon from '@mui/icons-material/FormatListNumberedOutlined'; //Total Courses
 import HandymanIcon from '@mui/icons-material/Handyman'; // Actions
 // MUI Icon
-import { TableHeadPropsType, PaginationStateType, TableType } from '../../../constants/CustomTypes';
+import { TableHeadPropsType, TableType } from '../../../constants/CustomTypes';
+import CourseTable from './tables/CourseTable';
 
 // Table Head and Body
 import TableHeadSection from '../../common/table/TableHeadSection';
-import TableBodySection from '../../common/table/TableBodySection';
+import TableBodySection from './tables/FacultyTableBody';
 // Table Head and Body
 
 //Pagination Functions
@@ -23,14 +24,12 @@ import { handleChangePage, handleChangeRowsPerPage } from "../../common/table/Pa
 //Pagination Functions
 
 // Redux Operations
-import { selectPaginationData, selectAllFaculties } from '../../../redux/faculties/faculties.slice'; // Importing selector functions from course.slice
+import { selectPaginationData, selectAllFaculties, updateSelectedFaculty } from '../../../redux/faculties/faculties.slice'; // Importing selector functions from course.slice
 import {
     fetchAllFacultiesAC, fetchPaginationDataAC,
     setPaginationDataAC, deleteFacultyAC
 } from '../../../redux/faculties/actions'; // Importing action creators
 // Redux Operations
-
-import { courses } from '../tempDataDelLater';
 
 
 const FacultyHeadData: Array<TableHeadPropsType> = [
@@ -58,20 +57,21 @@ const FacultyTable = ({ data, pagination, handleShow, handleEdit }: TableType) =
     const dispatch = useDispatch();
     // Dispatch function redux
     const handleDelete = (id: string) => {
-        //dispatch(deleteStudentAC(id))
+        dispatch(updateSelectedFaculty());
         toast.warn('Delete functionality is not available right now.');
     }
 
     return (
         <Box>
-            <Typography my={1} sx={{ fontWeight: "700" }}>Faculty Table</Typography>
+            <Stack direction='row' spacing={2} sx={{ alignItems: "flex-end", p: 2 }}>
+                <Typography sx={{ fontWeight: "700" }}>Faculty Table</Typography>
+            </Stack>
             <Paper sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableContainer>
                     <Table>
                         <TableHeadSection HeadData={FacultyHeadData} />
                         <TableBodySection
                             dataList={faculties}
-                            keyValues={['name', 'courses']}
                             handleShow={handleShow}
                             handleEdit={handleEdit}
                             handleDelete={handleDelete}
@@ -94,53 +94,8 @@ const FacultyTable = ({ data, pagination, handleShow, handleEdit }: TableType) =
     )
 }
 
-// Course Table for Faculty Section
-const CourseHeadData: Array<TableHeadPropsType> = [
-    { name: "S.N" }, { name: "Course" }, { name: "Students" }, { name: "Teachers" }, { name: "Actions" },
-]
-const CourseTable = () => {
-    const [cPagination, setCPagination] = useState<PaginationStateType>({
-        skip: 0, take: 5, total: courses.length
-    });
-    const [courseData, setCourseData] = useState(courses);
-
-    useEffect(() => {
-        setCourseData(courses.slice(cPagination.skip, cPagination.skip + cPagination.take));
-    }, [cPagination]);
-    return (
-        <Box>
-            <Typography my={1} sx={{ fontWeight: "700" }}>Course Table</Typography>
-            <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-                <TableContainer>
-                    <Table>
-                        <TableHeadSection HeadData={CourseHeadData} />
-                        <TableBodySection
-                            dataList={courseData}
-                            keyValues={['name', 'students', 'teachers']}
-                            handleShow={(data: any) => { }}
-                            handleEdit={(data: any) => { }}
-                            handleDelete={(data: any) => { }}
-                        />
-                    </Table>
-                </TableContainer>
-                <Divider />
-                {/* <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={cPagination.total}
-                    rowsPerPage={cPagination.take}
-                    page={cPagination.skip / cPagination.take}
-                    onPageChange={handleChangePage(setCPagination)}
-                    onRowsPerPageChange={handleChangeRowsPerPage(setCPagination)}
-                /> */}
-            </Paper>
-        </Box>
-    )
-}
-
-
 // Faculty Table Section
-const FacultyTableContainer = ({ handleShow, handleEdit }: { handleShow: (data: any) => void, handleEdit: (data: any) => void }) => {
+const FacultyTablesSection = ({ handleShow, handleEdit }: {handleShow: (data: any) => void, handleEdit: (data: any) => void }) => {
     const dispatch = useDispatch();
     // Retriving the states from redux
     const faculties = useSelector(selectAllFaculties);
@@ -151,7 +106,7 @@ const FacultyTableContainer = ({ handleShow, handleEdit }: { handleShow: (data: 
     }, []);
     useEffect(() => {
         dispatch(fetchAllFacultiesAC());
-        console.log(pagination);
+        dispatch(updateSelectedFaculty());
     }, [pagination]);
 
     return (
@@ -171,4 +126,4 @@ const FacultyTableContainer = ({ handleShow, handleEdit }: { handleShow: (data: 
     )
 }
 
-export default FacultyTableContainer;
+export default FacultyTablesSection;

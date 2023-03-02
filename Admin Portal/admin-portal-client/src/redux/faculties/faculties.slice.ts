@@ -11,16 +11,22 @@ const options = {
     initialState: FacultiesIS,
     reducers: {
         updateFaculties: (state: FacultiesISType, action: ActionType) => {
-            return {...state, faculties: action.payload}
+            return { ...state, faculties: action.payload }
+        },
+        updateSelectedFaculty: (state: FacultiesISType, action: ActionType) => {
+            return { ...state, selectedFaculty: action.payload }
         },
         updateSearchTerm: (state: FacultiesISType, action: ActionType) => {
-            return {...state, searchTerm: action.payload}
+            return { ...state, searchTerm: action.payload }
         },
-        updatePaginationData: (state:FacultiesISType, action: ActionType) => {
-            return {...state, pagination: action.payload}
+        updatePaginationData: (state: FacultiesISType, action: ActionType) => {
+            return { ...state, pagination: action.payload }
         },
-        updateDDFaculties: (state:FacultiesISType, action:ActionType) => {
-            return {...state, ddFaculties: action.payload}
+        updateDDFaculties: (state: FacultiesISType, action: ActionType) => {
+            return { ...state, ddFaculties: action.payload }
+        },
+        resetState: (state: FacultiesISType, action: ActionType) => {
+            return FacultiesIS
         }
     }
 }
@@ -38,6 +44,9 @@ export const selectPaginationData = (state: any) => {
 export const selectAllFaculties = (state: any) => {
     return state.faculties.faculties;
 }
+export const selectSelectedFaculty = (state: any) => {
+    return state.faculties.selectedFaculty;
+}
 export const selectDDFaculties = (state: any) => {
     return state.faculties.ddFaculties;
 }
@@ -45,7 +54,10 @@ export const selectDDFaculties = (state: any) => {
 
 
 // Exporting the action creator functions
-export const { updateFaculties, updateSearchTerm, updatePaginationData, updateDDFaculties } = facultiesSlice.actions;
+export const {
+    updateFaculties, updateSearchTerm, updatePaginationData,
+    updateDDFaculties, updateSelectedFaculty, resetState
+} = facultiesSlice.actions;
 // Exporting the action creator functions
 
 // Exporting the reducer as the default export

@@ -17,14 +17,6 @@ const courseSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'Faculty'
-    },
-    students: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'User'
-    },
-    teachers: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'User'
     }
 });
 

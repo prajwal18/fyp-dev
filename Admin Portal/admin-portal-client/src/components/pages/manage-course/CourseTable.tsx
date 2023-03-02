@@ -7,16 +7,14 @@ import {
     Typography, Grid
 } from '@mui/material';
 // MUI Icon
-import PersonIcon from '@mui/icons-material/Person'; // Name
-import ApartmentIcon from '@mui/icons-material/Apartment'; // Faculty 
 import GroupsIcon from '@mui/icons-material/Groups'; // Total Teachers
 import HandymanIcon from '@mui/icons-material/Handyman'; // Actions
 // MUI Icon
-import { TableHeadPropsType, PaginationStateType, TableType } from '../../../constants/CustomTypes';
+import { TableHeadPropsType, TableType } from '../../../constants/CustomTypes';
 
 // Table Head and Body
 import TableHeadSection from '../../common/table/TableHeadSection';
-import TableBodySection from '../../common/table/TableBodySection';
+import TableBodySection from './tables/CourseTableBody';
 // Table Head and Body
 
 //Pagination Functions
@@ -24,15 +22,14 @@ import { handleChangePage, handleChangeRowsPerPage } from "../../common/table/Pa
 //Pagination Functions
 
 // Redux Operations
-import { selectPaginationData, selectAllCourses } from '../../../redux/courses/courses.slice'; // Importing selector functions from course.slice
+import { selectPaginationData, selectAllCourses, updateSelectedCourse } from '../../../redux/courses/courses.slice'; // Importing selector functions from course.slice
 import {
     fetchAllCoursesAC, fetchPaginationDataAC,
     setPaginationDataAC
 } from '../../../redux/courses/actions'; // Importing action creators
 
-import { students, teachers } from '../tempDataDelLater';
-import MyImg from '../../../constants/FillerImg';
-import { baseURL } from '../../../utils/endpoints';
+import TeacherTable from './tables/TeacherTable';
+import StudentTable from './tables/StudentTable';
 
 
 const CourseHeadData: Array<TableHeadPropsType> = [
@@ -75,7 +72,6 @@ const CourseTable = ({ data, pagination, handleShow, handleEdit }: TableType) =>
                         <TableHeadSection HeadData={CourseHeadData} />
                         <TableBodySection
                             dataList={courses}
-                            keyValues={['name', 'faculty', 'users']}
                             handleShow={handleShow}
                             handleEdit={handleEdit}
                             handleDelete={handleDelete}
@@ -98,91 +94,6 @@ const CourseTable = ({ data, pagination, handleShow, handleEdit }: TableType) =>
     )
 }
 
-// Student Table for Course Section
-const StudentTeacherHeadData: Array<TableHeadPropsType> = [
-    { name: "S.N" }, { name: "Profile" }, { name: "Name" }, { name: "Actions" },
-];
-const StudentTable = () => {
-    const [sPagination, setSPagination] = useState<PaginationStateType>({
-        skip: 0, take: 5, total: students.length
-    });
-    const [studentData, setStudentData] = useState(students);
-
-    useEffect(() => {
-        setStudentData(students.slice(sPagination.skip, sPagination.skip + sPagination.take));
-    }, [sPagination]);
-    return (
-        <Box>
-            <Typography my={1} sx={{ fontWeight: "700" }}>Student Table</Typography>
-            <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-                <TableContainer>
-                    <Table>
-                        <TableHeadSection HeadData={StudentTeacherHeadData} />
-                        <TableBodySection
-                            dataList={studentData}
-                            keyValues={['profile', 'name']}
-                            handleShow={(data: any) => { }}
-                            handleEdit={(data: any) => { }}
-                            handleDelete={(data: any) => { }}
-                        />
-                    </Table>
-                </TableContainer>
-                <Divider />
-                {/* <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={sPagination.total}
-                    rowsPerPage={sPagination.take}
-                    page={sPagination.skip / sPagination.take}
-                    onPageChange={handleChangePage(setSPagination)}
-                    onRowsPerPageChange={handleChangeRowsPerPage(setSPagination)}
-                /> */}
-            </Paper>
-        </Box>
-    )
-}
-
-// Teacher Table for Course Section
-const TeacherTable = () => {
-    const [tPagination, setTPagination] = useState<PaginationStateType>({
-        skip: 0, take: 5, total: teachers.length
-    });
-    const [teacherData, setTeacherData] = useState(teachers);
-
-    useEffect(() => {
-        setTeacherData(teachers.slice(tPagination.skip, tPagination.skip + tPagination.take));
-    }, [tPagination]);
-    return (
-        <Box>
-            <Typography my={1} sx={{ fontWeight: "700" }}>Teacher Table</Typography>
-            <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-                <TableContainer>
-                    <Table>
-                        <TableHeadSection HeadData={StudentTeacherHeadData} />
-                        <TableBodySection
-                            dataList={teacherData}
-                            keyValues={['profile', 'name']}
-                            handleShow={(data: any) => { }}
-                            handleEdit={(data: any) => { }}
-                            handleDelete={(data: any) => { }}
-                        />
-                    </Table>
-                </TableContainer>
-                <Divider />
-                {/* <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={tPagination.total}
-                    rowsPerPage={tPagination.take}
-                    page={tPagination.skip / tPagination.take}
-                    onPageChange={handleChangePage(setTPagination)}
-                    onRowsPerPageChange={handleChangeRowsPerPage(setTPagination)}
-                /> */}
-            </Paper>
-        </Box >
-    )
-}
-
 // Course Table Section
 // Faculty Table Section
 const CourseTableContainer = ({ handleShow, handleEdit }: { handleShow: (data: any) => void, handleEdit: (data: any) => void }) => {
@@ -196,7 +107,7 @@ const CourseTableContainer = ({ handleShow, handleEdit }: { handleShow: (data: a
     }, []);
     useEffect(() => {
         dispatch(fetchAllCoursesAC());
-        console.log(pagination);
+        dispatch(updateSelectedCourse());
     }, [pagination]);
 
     return (

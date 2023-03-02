@@ -13,15 +13,15 @@ router.post("/auth/register", userController.userRegistration);
 
 // Update user details
 // Note must provide user's id as ../update?id=<--- user's id --->
-router.post("/update", authenticationMiddleware, authorizeSameUser, userController.userUpdate); 
+router.put("/update", authenticationMiddleware, authorizeSameUser, userController.userUpdate); 
 
 // Get user details
-// Note must provide user's id as ../user?id=<--- user's id --->
+// Note must provide user's id as ../get-details?id=<--- user's id --->
 router.get("/get-details", authenticationMiddleware, authorizeSameUser, userController.userDetail);
 
 // Change password
 // Note must provide user's id as ../change-password?id=<--- user's id --->
-router.post("/change-password", authenticationMiddleware, authorizeSameUser, userController.changePassword);
+router.put("/change-password", authenticationMiddleware, authorizeSameUser, userController.changePassword);
 
 
 /*

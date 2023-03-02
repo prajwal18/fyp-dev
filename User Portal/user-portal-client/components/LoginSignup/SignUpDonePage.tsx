@@ -11,7 +11,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 // MUI Icons
 
 import Lottie from "lottie-react";                             // Lottie Container
-import SuccessLottie from "@/public/Lottie/98741-success.json";
+import SuccessLottie from "@/public/Lottie/success-lottie.json";
 
 import LoginSignupLayout from "../Layout/LoginSignupLayout";
 

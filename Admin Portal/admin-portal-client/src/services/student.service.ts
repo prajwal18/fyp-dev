@@ -11,6 +11,10 @@ export const httpGetAllStudent = (query: string) => {
     const url = `${getAllStudents}?${query}`;
     return axiosWithToken('get', url);
 }
+export const httpGetStudentDetail = (id: string) => {
+    const url = `${getDetail}?id=${id}`;
+    return axiosWithToken('get', url);
+}
 
 export const httpAddStudent = (data: any) => axiosWithToken('post', register, data);
 

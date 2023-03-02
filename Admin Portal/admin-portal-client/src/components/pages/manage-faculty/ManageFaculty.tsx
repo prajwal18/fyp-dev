@@ -10,7 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 //MUI Icon
 
 // Components
-import FacultyTableContainer from './FacultyTable';
+import FacultyTablesSection from './FacultyTablesSection';
 import AddEditFaculty from './AddEditModal';
 import FacultyViewModal from './FacultyViewModal';
 // Components
@@ -21,32 +21,41 @@ import { AddFacultyIV, FacultySchema } from './form-validation/FormValidation';
 // Initial Value and Schema for formik
 
 // Redux operations
-import { selectSearchTerm } from '../../../redux/faculties/faculties.slice';
-import { updateFacultyAC, addFacultyAC, setSearchTermAC } from '../../../redux/faculties/actions';
+import {
+    selectSearchTerm,
+    selectSelectedFaculty,
+    resetState
+} from '../../../redux/faculties/faculties.slice';
+import {
+    updateFacultyAC, addFacultyAC,
+    setSearchTermAC, fetchSelectedFaculty,
+    fetchPaginationDataAC
+} from '../../../redux/faculties/actions';
+import { fetchFacultyCoursePaginationAC } from '../../../redux/courses/actions';
 // Redux operations
 
 
 const ManageFaculty = () => {
     const [open, setOpen] = useState(false);
     const searchTerm = useSelector(selectSearchTerm);
+    const faculty = useSelector(selectSelectedFaculty);
 
     // To manage Editing
     const [editId, setEditId] = useState<null | string>(null);
     const [isEditing, setIsEditing] = useState(false);
     // To manage Editing
 
-    //Store faculty data to view it
+    // State to view faculty data
     const [openView, setOpenView] = useState(false);
-    const [faculty, setFaculty] = useState<any>(null);
-    //Store faculty data to view it
+    // State to view faculty data
 
     const dispatch = useDispatch();
 
     const handleSearchTermChange = (event: any) => {
-        dispatch(setSearchTermAC(event.target.value))
+        dispatch(setSearchTermAC(event.target.value));
     }
     const handleShow = (data: any) => {
-        setFaculty(data);
+        console.log('Data Faculty: ', data);
         setOpenView(true);
     };
     const handleEdit = (data: any) => {
@@ -64,7 +73,6 @@ const ManageFaculty = () => {
         setOpen(false);
     }
     const handleCloseView = () => {
-        setFaculty(null);
         setOpenView(false);
     }
     const handleOpen = () => {
@@ -90,6 +98,17 @@ const ManageFaculty = () => {
             }
         }
     });
+    // Reset redux state
+    useEffect(() => {
+        dispatch(resetState());
+        dispatch(fetchPaginationDataAC());
+    }, []);
+    useEffect(() => {
+        if(faculty){
+            dispatch(fetchFacultyCoursePaginationAC());
+        }
+    }, [faculty]);
+    // Reset redux state
     return (
         <>
             <Box sx={{ padding: "20px 30px", backgroundColor: "white" }}>
@@ -108,7 +127,7 @@ const ManageFaculty = () => {
                             <Typography>New Faculty</Typography>
                         </AddBtn>
                     </Stack>
-                    <FacultyTableContainer
+                    <FacultyTablesSection
                         handleShow={handleShow}
                         handleEdit={handleEdit}
                     />

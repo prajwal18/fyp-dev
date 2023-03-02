@@ -29,3 +29,8 @@ export const httpDeleteAdmin = (id: string) => {
     const url = `${deleteAdmin}?id=${id}`;
     return axiosWithToken('delete', url);
 }
+
+export const httpGetAdminDetail = (id: string) => {
+    const url = `${getDetail}?id=${id}`;
+    return axiosWithToken('get', url);
+}

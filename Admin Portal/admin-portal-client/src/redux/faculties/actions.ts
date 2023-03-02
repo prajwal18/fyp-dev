@@ -4,6 +4,7 @@ import { actionTypes } from "./type";
 export const fetchAllFacultiesAC = (): ActionType => ({ type: actionTypes.FETCH_ALL_FACULTIES });
 export const fetchDDFacultiesAC = (): ActionType => ({type: actionTypes.FETCH_DD_FACULTIES});
 export const fetchPaginationDataAC = (): ActionType => ({ type: actionTypes.FACULTY_FETCH_PAGINATION_DATA });
+export const fetchSelectedFaculty = (id: string): ActionType => ({ type: actionTypes.FETCH_SELECTED_FACULTY, payload: {id} });
 
 
 export const setSearchTermAC = (searchTerm: string): ActionType => ({ type: actionTypes.FACULTY_SET_SEARCH_TERM, payload: searchTerm });

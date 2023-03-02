@@ -61,4 +61,24 @@ const getAllCourses = asyncWrapper(async (req, res, next) => {
 })
 // Get all courses
 
-module.exports = { create, update, getCourseDetail, getAllCourses };
+
+// Get all courses
+const getFacultyCourses = asyncWrapper(async (req, res, next) => {
+    const { skip, take, searchTerm, facultyId } = req.query;
+    if (facultyId) {
+        const { success, data, message, total } = await courseService.getFacultyCourses(skip, take, searchTerm, facultyId);
+        if (success) {
+            res.json({ success, data, message, total });
+        } else {
+            throw new Error(message);
+        }
+    } else {
+        throw new Error("Provide a faculty id.");
+    }
+})
+// Get all courses
+
+module.exports = {
+    create, update, getCourseDetail,
+    getAllCourses, getFacultyCourses
+};

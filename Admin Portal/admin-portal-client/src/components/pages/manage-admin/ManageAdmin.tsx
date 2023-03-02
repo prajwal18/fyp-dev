@@ -20,8 +20,8 @@ import { AddAdminIV, AdminSchema } from './form-validation/FormValidation';
 // Initial Value and Schema for formik
 
 // Redux operations
-import { addAdminAC, updateAdminAC, setSearchTermAC } from '../../../redux/admins/actions';
-import { selectSearchTerm } from '../../../redux/admins/admins.slice';
+import { addAdminAC, updateAdminAC, setSearchTermAC, fetchSelectedAdminAC } from '../../../redux/admins/actions';
+import { selectSearchTerm, selectSelectedAdmin } from '../../../redux/admins/admins.slice';
 // Redux operations
 import AdminViewModal from './AdminViewModal';
 
@@ -29,16 +29,16 @@ import AdminViewModal from './AdminViewModal';
 const ManageAdmin = () => {
     const [open, setOpen] = useState(false);
     const searchTerm = useSelector(selectSearchTerm);
+    const admin = useSelector(selectSelectedAdmin);
 
     // To manage Editing
     const [editId, setEditId] = useState<null | string>(null);
     const [isEditing, setIsEditing] = useState(false);
     // To manage Editing
 
-    //Store admin data to view it
+    //Store view admin modal state
     const [openView, setOpenView] = useState(false);
-    const [admin, setAdmin] = useState<any>(null);
-    //Store admin data to view it
+    //Store view admin modal state
 
     const dispatch = useDispatch();
 
@@ -46,7 +46,7 @@ const ManageAdmin = () => {
         dispatch(setSearchTermAC(event.target.value))
     }
     const handleShow = (data: any) => {
-        setAdmin(data);
+        dispatch(fetchSelectedAdminAC(data._id));
         setOpenView(true);
     };
     const handleEdit = (data: any) => {
@@ -66,7 +66,6 @@ const ManageAdmin = () => {
         setOpen(false);
     }
     const handleCloseView = () => {
-        setAdmin(null);
         setOpenView(false);
     }
     const handleOpen = () => {

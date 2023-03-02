@@ -10,14 +10,17 @@ const options = {
     name: 'admins',
     initialState: AdminsIS,
     reducers: {
+        updatedSelectedAdmin: (state: AdminsISType, action: ActionType) => {
+            return { ...state, selectedAdmin: action.payload }
+        },
         updateAdmins: (state: AdminsISType, action: ActionType) => {
-            return {...state, admins: action.payload}
+            return { ...state, admins: action.payload }
         },
         updateSearchTerm: (state: AdminsISType, action: ActionType) => {
-            return {...state, searchTerm: action.payload}
+            return { ...state, searchTerm: action.payload }
         },
-        updatePaginationData: (state:AdminsISType, action: ActionType) => {
-            return {...state, pagination: action.payload}
+        updatePaginationData: (state: AdminsISType, action: ActionType) => {
+            return { ...state, pagination: action.payload }
         }
     }
 }
@@ -29,17 +32,20 @@ export const adminsSlice = createSlice(options);
 export const selectSearchTerm = (state: any) => {
     return state.admins.searchTerm;
 }
-export const selectPaginationData = (state: any):any => {
+export const selectPaginationData = (state: any): any => {
     return state.admins.pagination;
 }
 export const selectAllAdmins = (state: any) => {
     return state.admins.admins;
 }
+export const selectSelectedAdmin = (state: any) => {
+    return state.admins.selectedAdmin;
+}
 // Selector functions
 
 
 // Exporting the action creator functions
-export const { updateAdmins, updateSearchTerm, updatePaginationData } = adminsSlice.actions;
+export const { updateAdmins, updateSearchTerm, updatePaginationData, updatedSelectedAdmin } = adminsSlice.actions;
 // Exporting the action creator functions
 
 // Exporting the reducer as the default export

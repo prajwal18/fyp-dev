@@ -13,7 +13,7 @@ const CourseContent = ({ data }: { data: any }) => {
         <DialogContent sx={{ padding: "30px" }}>
             <Typography variant='h6' component='h5' mb={2}>Course Information</Typography>
             <Stack direction='row' sx={{ minWidth: "500px", gap: "50px" }}>
-                <Box sx={{ width: "250px" }}>
+                <Box sx={{ maxWidth: "250px", width:"100%" }}>
                     <Lottie animationData={courseLottie} />
                 </Box>
                 <Stack spacing={1}>
@@ -31,7 +31,7 @@ const CourseContent = ({ data }: { data: any }) => {
                     </Stack>
 
                     <Stack direction='row' spacing={2} mt={2} sx={{ padding: "10px", border: "1px solid grey", borderRadius: "5px" }}>
-                        <Typography sx={{ fontWeight: "700" }}>
+                        <Typography sx={{ fontWeight: "700", maxWidth:"300px" }}>
                             Description:
                             <Typography component={'span'} sx={{ paddingLeft: "20px" }}>
                                 {data.description}

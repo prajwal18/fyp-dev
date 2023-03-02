@@ -21,24 +21,24 @@ import { AddCourseIV, CourseSchema } from './form-validation/FormValidation';
 // Initial Value and Schema for formik
 
 // Redux operations
-import { selectSearchTerm } from '../../../redux/courses/courses.slice';
-import { updateCourseAC, addCourseAC, setSearchTermAC } from '../../../redux/courses/actions';
+import { selectSearchTerm, selectSelectedCourse, resetState, updateSelectedPurpose } from '../../../redux/courses/courses.slice';
+import { updateCourseAC, addCourseAC, setSearchTermAC, fetchSelectedCourseAC, fetchPaginationDataAC } from '../../../redux/courses/actions';
 import { fetchDDFacultiesAC } from '../../../redux/faculties/actions';
 // Redux operations
 
 const ManageCourse = () => {
     const [open, setOpen] = useState(false);
     const searchTerm = useSelector(selectSearchTerm);
+    const course = useSelector(selectSelectedCourse);
 
     // To manage Editing
     const [editId, setEditId] = useState<null | string>(null);
     const [isEditing, setIsEditing] = useState(false);
     // To manage Editing
 
-    //Store course data to view it
+    // State to view course data
     const [openView, setOpenView] = useState(false);
-    const [course, setCourse] = useState<any>(null);
-    //Store course data to view it
+    // State to view course data
 
     const dispatch = useDispatch();
 
@@ -46,7 +46,8 @@ const ManageCourse = () => {
         dispatch(setSearchTermAC(event.target.value))
     }
     const handleShow = (data: any) => {
-        setCourse(data);
+        dispatch(fetchSelectedCourseAC(data._id));
+        dispatch(updateSelectedPurpose());
         setOpenView(true);
     };
     const handleEdit = (data: any) => {
@@ -66,7 +67,6 @@ const ManageCourse = () => {
         setOpen(false);
     }
     const handleCloseView = () => {
-        setCourse(null);
         setOpenView(false);
     }
     const handleOpen = () => {
@@ -92,11 +92,13 @@ const ManageCourse = () => {
             }
         }
     });
-    // Fetching data for drop down
+    // Fetching data for drop down and reset on each visit
     useEffect(() => {
+        dispatch(resetState());
+        dispatch(fetchPaginationDataAC());
         dispatch(fetchDDFacultiesAC());
     }, []);
-    // Fetching data for drop down
+    // Fetching data for drop down and reset on each visit
     return (
         <>
             <Box sx={{ padding: "20px 30px", backgroundColor: "white" }}>

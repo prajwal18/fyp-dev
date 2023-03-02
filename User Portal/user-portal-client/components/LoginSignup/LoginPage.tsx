@@ -1,5 +1,7 @@
-import * as React from 'react';
-//MUI Components
+import * as React from 'react'; 
+import { useRouter } from 'next/router';
+import Cookies from 'universal-cookie';
+//MUI Componentsp
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -30,6 +32,13 @@ const HeadSection = () => {
 }
 
 const ButtonSection = () => {
+    const { push } = useRouter();
+    const handleLogin = () => {
+        const cookies = new Cookies();
+        cookies.set('user_token', 'fjidjfidjfidjf');
+        cookies.set('user_session', {email: "prajwal.gautam@gmail.com", id: 'helloThisIsJustUS', role: 'Student'});
+        push('/Student/Dashboard');
+    }
     return (
         <>
             <Button
@@ -37,6 +46,7 @@ const ButtonSection = () => {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
+                onClick={handleLogin}
             >
                 Log in
             </Button>

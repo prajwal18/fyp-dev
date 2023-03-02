@@ -25,19 +25,19 @@ export type HandleChangeRowsPerPageType = (pagination: PaginationStateType, acti
 
 // Types for the various slices in redux
 export type CoursesISType = {
-    courses: Array<any>, searchTerm: string, pagination: PaginationStateType
+    selectedCourse: any, selectionPurpose: string, courses: Array<any>, searchTerm: string, pagination: PaginationStateType
 }
 export type FacultiesISType = {
-    faculties: Array<any>, searchTerm: string, pagination: PaginationStateType, ddFaculties: Array<any>
+    selectedFaculty: any, faculties: Array<any>, searchTerm: string, pagination: PaginationStateType, ddFaculties: Array<any>
 }
 export type StudentsISType = {
-    students: Array<any>, searchTerm: string, pagination: PaginationStateType
+    selectedStudent: any, students: Array<any>, searchTerm: string, pagination: PaginationStateType
 }
 export type TeachersISType = {
-    teachers: Array<any>, searchTerm: string, pagination: PaginationStateType
+    selectedTeacher: any, teachers: Array<any>, searchTerm: string, pagination: PaginationStateType
 }
 export type AdminsISType = {
-    admins: Array<any>, searchTerm: string, pagination: PaginationStateType
+   selectedAdmin: any, admins: Array<any>, searchTerm: string, pagination: PaginationStateType
 }
 // Types for the various slices in redux
 

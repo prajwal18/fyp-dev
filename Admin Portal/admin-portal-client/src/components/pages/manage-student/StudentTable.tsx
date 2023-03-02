@@ -35,6 +35,17 @@ import MyImg from '../../../constants/FillerImg';
 import { baseURL } from '../../../utils/endpoints';
 
 
+
+// Provide a filler image for student's without profile picture
+const solveMissingProfile = (data: any) => {
+    if (data.profilePicture) {
+        return { ...data, profile: <MyImg src={`${baseURL}${data.profilePicture}`} /> };
+    } else {
+        return { ...data, profile: <MyImg /> }
+    }
+}
+// Provide a filler image for student's without profile picture
+
 const StudentHeadData: Array<TableHeadPropsType> = [
     {
         name: "S.N"
@@ -75,16 +86,6 @@ const StudentTable = ({ data, pagination, handleShow, handleEdit }: TableType) =
         //dispatch(deleteStudentAC(id))
         toast.warn('Delete functionality is not available right now.');
     }
-
-    // Provide a filler image for student's without profile picture
-    const solveMissingProfile = (data: any) => {
-        if (data.profilePicture) {
-            return { ...data, profile: <MyImg src={`${baseURL}${data.profilePicture}`} /> };
-        } else {
-            return { ...data, profile: <MyImg /> }
-        }
-    }
-    // Provide a filler image for student's without profile picture
 
     return (
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>

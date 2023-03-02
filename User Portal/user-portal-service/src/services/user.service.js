@@ -2,7 +2,7 @@
 const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 //Importing password creation and comparision functions
-const { base64toImg } = require("../utils/read.write.image");
+const { base64toImg, removeImage } = require("../utils/read.write.image");
 const { checkPassword, encryptPassword } = require("../utils/encrypt.decrypt.password");
 
 
@@ -13,7 +13,14 @@ const loginUser = async (userData) => {
         const match = await checkPassword(userData.password, user.password);
         if (match) {
             const token = jwt.sign({ email: user.email, role: user.role }, process.env.JWT_SECRET);  // JWT Contains user's email and role
-            return { success: true, data: { token }, message: "Login successful" };
+            return {
+                success: true, data: {
+                    token,
+                    email: user.email,
+                    role: user.role,
+                    id: user._id
+                }, message: "Login successful"
+            };
         } else {
             return { success: false, data: null, message: "Cannot login. Password doesn't match" };
         }
@@ -70,16 +77,18 @@ const updateUser = async (id, data) => {
         const imageData = userData.profilePicture;
         delete userData.profilePicture;
         const imageFilePath = await base64toImg(imageData, "user/profile");
+        removeImage(userData.profilePicture);
         userData.profilePicture = imageFilePath;
     }
-    if(userData.coverPicture){
+    if (userData.coverPicture) {
         const coverData = userData.coverPicture;
         delete userData.coverPicture;
         const imageFilePath = await base64toImg(coverData, "user/cover");
+        removeImage(userData.coverPicture);
         userData.coverPicture = imageFilePath;
     }
     const user = await User.findByIdAndUpdate(id, userData);
-    if(user){
+    if (user) {
         return { success: true, data: user, message: "User's data updated successfully" }
     } else {
         throw new Error("Sorry, cannot update user's data");
@@ -88,10 +97,10 @@ const updateUser = async (id, data) => {
 // Update User
 
 // Get user Detail
-const getUserDetail = async ( id ) => {
-    const user = await User.findById(id);
-    if(user){
-        return { success: true, data: user, message:"User's data fetched successfully." }
+const getUserDetail = async (id) => {
+    const user = await User.findById(id, '-password');
+    if (user) {
+        return { success: true, data: user, message: "User's data fetched successfully." }
     } else {
         throw new Error("Cannot find user.");
     }
@@ -101,11 +110,11 @@ const getUserDetail = async ( id ) => {
 // Change Password
 const changePassword = async (id, oldPassword, newPassword) => {
     const user = await User.findById(id);
-    if(user) {
-        if(user.password === oldPassword){
-            const updatedUser = await User.findByIdAndUpdate(id, {password: newPassword});
-            if(updatedUser){
-                return  { success: true, data: updatedUser, message: "Password changed successfully" }
+    if (user) {
+        if (user.password === oldPassword) {
+            const updatedUser = await User.findByIdAndUpdate(id, { password: newPassword });
+            if (updatedUser) {
+                return { success: true, data: updatedUser, message: "Password changed successfully" }
             } else {
                 throw new Error("Sorry, cannot update password");
             }

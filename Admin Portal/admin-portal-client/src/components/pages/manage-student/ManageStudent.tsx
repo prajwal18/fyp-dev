@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { toast } from 'react-toastify';
@@ -20,8 +20,8 @@ import { AddStudentIV, StudentSchema } from './form-validation/FormValidation';
 // Initial Value and Schema for formik
 
 // Redux operations
-import { addStudentAC, updateStudentAC, setSearchTermAC } from '../../../redux/students/actions';
-import { selectSearchTerm } from '../../../redux/students/students.slice';
+import { addStudentAC, updateStudentAC, setSearchTermAC, fetchSelectedStudentAC, fetchPaginationDataAC } from '../../../redux/students/actions';
+import { selectSearchTerm, selectSelectedStudent, resetState } from '../../../redux/students/students.slice';
 // Redux operations
 
 // Modals
@@ -32,16 +32,16 @@ import AddEditStudentTeacherModal from '../../common/modal/AddEditStudentTeacher
 const ManageStudent = () => {
     const [open, setOpen] = useState(false);
     const searchTerm = useSelector(selectSearchTerm);
+    const student = useSelector(selectSelectedStudent);
 
     // To manage Editing
     const [editId, setEditId] = useState<null | string>(null);
     const [isEditing, setIsEditing] = useState(false);
     // To manage Editing
 
-    // Store student data to view it
+    // State to view student data
     const [openView, setOpenView] = useState(false);
-    const [student, setStudent] = useState<any>(null);
-    // Store student data to view it
+    // State to view student data
 
     const dispatch = useDispatch();
 
@@ -49,7 +49,8 @@ const ManageStudent = () => {
         dispatch(setSearchTermAC(event.target.value))
     }
     const handleShow = (data: any) => {
-        setStudent(data);
+        console.log(data);
+        dispatch(fetchSelectedStudentAC(data._id));
         setOpenView(true);
     };
     const handleEdit = (data: any) => {
@@ -68,7 +69,6 @@ const ManageStudent = () => {
         setOpen(false);
     }
     const handleCloseView = () => {
-        setStudent(null);
         setOpenView(false);
     }
     const handleOpen = () => {
@@ -95,7 +95,14 @@ const ManageStudent = () => {
                 handleClose();
             }
         }
-    })
+    });
+
+    // Reset redux state
+    useEffect(() => {
+        dispatch(resetState());
+        dispatch(fetchPaginationDataAC());
+    }, []);
+    // Reset redux state
 
 
     return (

@@ -11,13 +11,22 @@ const options = {
     initialState: CoursesIS,
     reducers: {
         updateCourses: (state: CoursesISType, action: ActionType) => {
-            return {...state, courses: action.payload}
+            return { ...state, courses: action.payload }
+        },
+        updateSelectedCourse: (state: CoursesISType, action: ActionType) => {
+            return { ...state, selectedCourse: action.payload }
+        },
+        updateSelectedPurpose: (state: CoursesISType, action: ActionType) => {
+            return { ...state, selectionPurpose: action.payload }
         },
         updateSearchTerm: (state: CoursesISType, action: ActionType) => {
-            return {...state, searchTerm: action.payload}
+            return { ...state, searchTerm: action.payload }
         },
-        updatePaginationData: (state:CoursesISType, action: ActionType) => {
-            return {...state, pagination: action.payload}
+        updatePaginationData: (state: CoursesISType, action: ActionType) => {
+            return { ...state, pagination: action.payload }
+        },
+        resetState: (state: CoursesISType, action: ActionType) => {
+            return CoursesIS
         }
     }
 }
@@ -35,11 +44,20 @@ export const selectPaginationData = (state: any) => {
 export const selectAllCourses = (state: any) => {
     return state.courses.courses;
 }
+export const selectSelectedCourse = (state: any) => {
+    return state.courses.selectedCourse;
+}
+export const selectSelectionPurpose = (state: any) => {
+    return state.courses.selectionPurpose;
+}
 // Selector functions
 
 
 // Exporting the action creator functions
-export const { updateCourses, updateSearchTerm, updatePaginationData } = coursesSlice.actions;
+export const {
+    updateCourses, updateSearchTerm, updatePaginationData,
+    updateSelectedCourse, resetState, updateSelectedPurpose
+} = coursesSlice.actions;
 // Exporting the action creator functions
 
 // Exporting the reducer as the default export

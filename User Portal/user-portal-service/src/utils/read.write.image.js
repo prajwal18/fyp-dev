@@ -10,6 +10,8 @@ const base64toImg = (base64string, folderName) => {
         const buffer = Buffer.from(imageData, "base64");
         const fileName = uuid.v4() + "." + extension;
         const absolutePathToFolder = path.join(__dirname, '../../', `/public/${folderName}`);
+        // folderName = user/profile for profile pictures
+        // folderName = user/cover for cover pictures
         const absolutePath = path.join(absolutePathToFolder,fileName);
 
 

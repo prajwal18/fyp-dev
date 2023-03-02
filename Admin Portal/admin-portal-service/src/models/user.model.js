@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String, enum: UserRole, required: [true, "Please specify the user role"] // Change this line of code
     },
+    courses: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Course'
+    },
     zipcode: {
         type: String,
         required: [true, "Please provide your zip-code"]

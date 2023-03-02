@@ -3,3 +3,8 @@
   margin: 0;
   box-sizing: border-box;
 }
+
+/* Remove visibility icon for all input field with type password in MS Edge or IE */
+input[type=password]::-ms-reveal{
+  display: none;
+}

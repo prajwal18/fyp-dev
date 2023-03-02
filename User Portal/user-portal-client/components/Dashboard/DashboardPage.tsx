@@ -7,13 +7,13 @@ import { Stack } from "@mui/system";
 import CreateSharpIcon from '@mui/icons-material/CreateSharp';
 //MUI Icon
 import styled from "styled-components";
-import DashLayout from "../Layout/DashLayout/DashLayout";
-import MockData from "./MockData";                                  // Mock Data
 
 //Image upload components
-import InputFileField from "../Common/InputFileField";              // Circular Image
+import InputFileField from "../Common/form/InputFileField";              // Circular Image
 import CoverImgUpload from "./CoverImgUpload";                      // Long rectangular image
 //Image upload components
+import MockData from "./MockData";                                  // Mock Data
+
 
 //Styled Components
 const BaseText = styled(Typography)`
@@ -25,24 +25,6 @@ const MainInfoText = styled(BaseText)`
 `;
 const BodyLabelText = styled(BaseText)`
     font-weight: 600;
-`;
-const DashContainer = styled(Stack)`
-    padding: 20px;
-    flex-direction: row;
-    margin: 0 auto;
-    justify-content: center;
-    align-items: center;
-`;
-const DashSection = styled(Box)`
-    padding: 40px;
-    width: 100%;
-    max-width: 1000px;
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    @media (max-width: 500px){
-        padding: 20px;
-    }
 `;
 const ImageSectionContainer = styled(Box)`
     position: relative;
@@ -59,13 +41,13 @@ const ImageSectionContainer = styled(Box)`
 const ImageSection = () => {
     const [profile, setProfile] = useState("");
     const [cover, setCover] = useState("");
-    return(
+    return (
         <ImageSectionContainer>
             <Box>
                 <CoverImgUpload image={cover} setImage={setCover} id="cover-image" />
             </Box>
-            <Box sx={{height: "150px", width:"150px", position:"absolute", top: "45px", left:"45px"}}>
-                 <InputFileField image={profile} setImage={setProfile} dimension={{height: 150, width: 150}} id="profile-image"/>
+            <Box sx={{ height: "150px", width: "150px", position: "absolute", top: "45px", left: "45px" }}>
+                <InputFileField image={profile} setImage={setProfile} dimension={{ height: 150, width: 150 }} id="profile-image" />
             </Box>
         </ImageSectionContainer>
     );
@@ -78,7 +60,7 @@ const InfoSection = () => {
         <Stack spacing={2}>
             <Box>
                 <Stack direction="row" justifyContent={"flex-end"}>
-                    <Button variant="outlined" sx={{ borderRadius: "50%", height:"50px", width:"50px" }}><CreateSharpIcon fontSize="small" /></Button>
+                    <Button variant="outlined" sx={{ borderRadius: "50%", height: "50px", width: "50px" }}><CreateSharpIcon fontSize="small" /></Button>
                 </Stack>
                 <Stack direction="row" spacing={2} sx={{ justifyContent: "space-between", flexWrap: "wrap" }}>
                     <MainInfoText>{MockData.mainInfo.name}</MainInfoText>
@@ -121,14 +103,10 @@ const InfoSection = () => {
 
 const DashboardPage = () => {
     return (
-        <DashLayout>
-            <DashContainer>
-                <DashSection>
-                    <ImageSection/>
-                    <InfoSection />
-                </DashSection>
-            </DashContainer>
-        </DashLayout>
+        <Box sx={{ padding: "20px 30px", backgroundColor: "white" }}>
+            <ImageSection />
+            <InfoSection />
+        </Box>
     )
 }
 

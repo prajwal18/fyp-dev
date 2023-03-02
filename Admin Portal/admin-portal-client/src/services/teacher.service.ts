@@ -12,6 +12,11 @@ export const httpGetAllTeacher = (query: string) => {
     return axiosWithToken('get', url);
 }
 
+export const httpGetTeacherDetail = (id: string) => {
+    const url = `${getDetail}?id=${id}`;
+    return axiosWithToken('get', url);
+}
+
 export const httpAddTeacher = (data: any) => axiosWithToken('post', register, data);
 
 export const httpUpdateTeacher = (id: string, data: any) => {

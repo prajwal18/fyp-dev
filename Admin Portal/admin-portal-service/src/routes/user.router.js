@@ -26,6 +26,11 @@ router.get("/all-teachers", authenticationMiddleware, authorizeAdmin, userContro
 // Get all student's details
 router.get("/all-students", authenticationMiddleware, authorizeAdmin, userController.getAllStudents );
 
+// Add user to course
+router.put("/enroll", authenticationMiddleware, authorizeAdmin, userController.addUserToCourse );
+
+// Remove user from course
+router.put("/disenroll", authenticationMiddleware, authorizeAdmin, userController.removeUserFromCourse );
 
 /*
 Note: To update and retirve user's information, a middleware is needed
