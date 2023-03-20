@@ -14,13 +14,19 @@ export enum StackDirection {
     COLUMN = 'column'
 }
 
-export enum QuestionTypes {
+export enum TypesOfQuestions {
     QNA = 'QNA',
     MCQ = 'MCQ',
-    MCQ_CHOSSE_ALL = 'MCQ_CHOOSE_ALL'
+    MCQ_CHOOSE_ALL = 'MCQ_CHOOSE_ALL'
 }
 
 export enum MCQType {
-    SINGLE_CHOICE = QuestionTypes.MCQ,
-    MULTIPLE_CHOICE = QuestionTypes.MCQ_CHOSSE_ALL
+    CHOOSE_ONE = TypesOfQuestions.MCQ,
+    CHOOSE_ALL = TypesOfQuestions.MCQ_CHOOSE_ALL
+}
+
+export enum TestQuestionListType {
+    TAKE_TEST,
+    GRADE_TEST,
+    GRADED_TEST
 }

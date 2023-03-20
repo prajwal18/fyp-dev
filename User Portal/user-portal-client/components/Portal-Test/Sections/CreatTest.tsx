@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
+import parse from 'html-react-parser';
 import {
     Box, Tabs, Tab,
-    Stack, Typography
+    Stack, Typography,
+    Button
 } from '@mui/material';
 // MUI Icons
 import AddIcon from '@mui/icons-material/Add';
@@ -9,14 +12,45 @@ import AddIcon from '@mui/icons-material/Add';
 import { AddNewQuestion, TestQuestionContainer, TestTitle } from '../Common/TestCommonComponents';
 import QNAModal from '../Common/QNAModal';
 import MCQModal from '../Common/MCQModal';
-import { AddBtn } from '@/components/Common/styled/StyledComponents';
+import { QuestionType } from '@/constants/CustomTypes';
+import { BorderedBox } from '@/components/Common/styled/StyledComponents';
+// Using dynamic import for jodit
+const Jodit = dynamic(() => import('@/components/TextEditor/Jodit'), { ssr: false })
+// Using dynamic import for jodit
+
+
+
+const SNSBtns = ({ page, setPage }: { page: number, setPage: (value: any) => void }) => {
+    const handleNext = () => {
+        setPage(1);
+    }
+    const handlePrev = () => {
+        setPage(0);
+    }
+    return (
+        <Stack spacing={1}>
+            <Stack direction='row' spacing={1}>
+                <Button color="warning" variant='contained'>Save</Button>
+                {
+                    page === 0 ?
+                        <Button color="primary" variant='outlined' onClick={handleNext}>Next</Button>
+                        :
+                        <Button color="primary" variant='outlined' onClick={handlePrev}>Back</Button>
+                }
+
+            </Stack>
+            <Button color="error" variant='contained'>Submit</Button>
+
+        </Stack>
+    )
+}
 
 const TestTabs = ({ value, setValue }: { value: number, setValue: (value: any) => void }) => {
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
     return (
-        <Box>
+        <Stack direction='row' spacing={4} alignItems='center' justifyContent='space-between'>
             <Tabs
                 value={value}
                 onChange={handleChange}
@@ -28,12 +62,13 @@ const TestTabs = ({ value, setValue }: { value: number, setValue: (value: any) =
                 />
                 <Tab value={1} label="Test Questions" />
             </Tabs>
-        </Box>
+            <SNSBtns page={value} setPage={setValue} />
+        </Stack>
     );
 }
 
 const TestQuestionSection = () => {
-    const [testQuestions, setTestQuestions] = useState<Array<any>>([]);
+    const [testQuestions, setTestQuestions] = useState<Array<QuestionType>>([]);
     const [addNewQuestion, setAddNewQuestion] = useState(true);
     const handleAddNewQuestion: () => void = () => { setAddNewQuestion(true) };
 
@@ -70,10 +105,17 @@ const TestQuestionSection = () => {
                     />
                 }
             </>
-            <AddBtn sx={{ minWidth: "100%", padding: "10px 20px !important", color: "white", justifyContent: "center" }} onClick={handleAddNewQuestion}>
+            <Button
+                sx={{
+                    width: "100%", padding: "10px 20px !important",
+                    background: "rgb(0 0 0 / 10%)", color: "rgb(0 0 0)",
+                    display: "flex", alignItems: "center", gap: "10px"
+                }}
+                onClick={handleAddNewQuestion}
+            >
                 <AddIcon />
-                <Typography sx={{ fontSize: "18px" }}>Add another question</Typography>
-            </AddBtn>
+                <Typography sx={{ fontSize: "20px" }}>Add another question</Typography>
+            </Button>
             <>
                 {
                     toOpen === "Q&A" ?
@@ -86,9 +128,25 @@ const TestQuestionSection = () => {
     );
 }
 
+const TestInstructionSection = () => {
+    const [content, setContent] = useState<any>('');
+    return (
+        <Stack direction='row' gap={3}>
+            <Box sx={{width:"50%"}}>
+                <Jodit content={content} setContent={setContent} />
+            </Box>
+            <BorderedBox sx={{width:"50%"}}>
+                {
+                    parse(content)
+                }
+            </BorderedBox>
+        </Stack>
+    );
+}
+
 const RenderTabPanel = ({ page }: { page: number }) => {
     if (page === 0) {
-        return (<Box />);
+        return (<TestInstructionSection />);
     } else if (page === 1) {
         return (<TestQuestionSection />);
     } else {

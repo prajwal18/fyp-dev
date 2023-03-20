@@ -3,9 +3,9 @@ import {
     InputLabel, Select
 } from '@mui/material';
 import { ErrorMessage } from './CustTextFieldNErrorMsg';
-import { OptionType } from '../../../constants/CustomTypes';
+import { DDOptionT } from '../../../constants/CustomTypes';
 
-export function GenerateCustSelect({ formik, name, label, id, options }: { formik: any, name: string, label: string, id: string, options: Array<OptionType> }) {
+export function GenerateCustSelect({ formik, name, label, id, options }: { formik: any, name: string, label: string, id: string, options: Array<DDOptionT> }) {
     return (
         <>
             <Box sx={{ width: "100%" }}>
@@ -20,7 +20,7 @@ export function GenerateCustSelect({ formik, name, label, id, options }: { formi
                         onChange={formik.handleChange}
                     >
                         {
-                            options.map((option: OptionType, index: number) => {
+                            options.map((option: DDOptionT, index: number) => {
                                 return (
                                     <MenuItem key={index} value={option.value}>{option.name}</MenuItem>
                                 )

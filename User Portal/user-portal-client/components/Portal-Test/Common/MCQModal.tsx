@@ -20,8 +20,8 @@ const SelectMCQType = ({ mcqType, setMcqType }: { mcqType: MCQType, setMcqType: 
                 onChange={(e: any) => { setMcqType(e.target.value) }}
                 name="radio-buttons-group"
             >
-                <FormControlLabel value={MCQType.SINGLE_CHOICE} control={<Radio />} label="Single Choice" />
-                <FormControlLabel value={MCQType.MULTIPLE_CHOICE} control={<Radio />} label="Multiple Choice" />
+                <FormControlLabel value={MCQType.CHOOSE_ONE} control={<Radio />} label="Select one" />
+                <FormControlLabel value={MCQType.CHOOSE_ALL} control={<Radio />} label="Select all" />
             </RadioGroup>
         </FormControl>
     )
@@ -32,7 +32,7 @@ const SelectCorrectAnswer = ({ choices, mcqType }: { choices: Array<string>, mcq
         <FormControl>
             <FormLabel id="select-mcq-type">Select MCQ Correct Answer type</FormLabel>
             {
-                mcqType === MCQType.SINGLE_CHOICE ?
+                mcqType === MCQType.CHOOSE_ONE ?
                     <RadioGroup
                         aria-labelledby="select-mcq-type-answer"
                         name="mcq-answer"
@@ -57,7 +57,7 @@ const SelectCorrectAnswer = ({ choices, mcqType }: { choices: Array<string>, mcq
 }
 
 const MCQModal = ({ open, setOpen, testQuestions, setTestQuestions, setAddNewQuestion }: AddQuestionPropType) => {
-    const [mcqType, setMcqType] = useState(MCQType.SINGLE_CHOICE);
+    const [mcqType, setMcqType] = useState(MCQType.CHOOSE_ONE);
 
     const [question, setQuestion] = useState("");
     const [choiceText, setChoiceText] = useState("");
@@ -68,7 +68,9 @@ const MCQModal = ({ open, setOpen, testQuestions, setTestQuestions, setAddNewQue
         setChoiceText("");
         setChoices([]);
         setOpen(false);
-        setAddNewQuestion(false);
+        if (testQuestions.length >= 1) {
+            setAddNewQuestion(false);
+        }
     };
 
     const handleAddChoice = (e: any) => {
@@ -79,7 +81,7 @@ const MCQModal = ({ open, setOpen, testQuestions, setTestQuestions, setAddNewQue
 
     const handleAdd = () => {
         const lastQuestion = testQuestions.length > 0 && testQuestions.reduce((max: any, current: any) => max.id > current.id ? max : current);
-        const id = lastQuestion?.id ? lastQuestion.id + 1 : 1;
+        const id = lastQuestion ? lastQuestion.id + 1 : 1;
         setTestQuestions([...testQuestions, {
             id: id, question, questionType: mcqType, choices
         }]);
@@ -87,10 +89,10 @@ const MCQModal = ({ open, setOpen, testQuestions, setTestQuestions, setAddNewQue
     }
 
     return (
-        <Dialog open={open} onClose={handleClose} sx={{ padding: "20px 30px" }} maxWidth="md" fullWidth={true}>
+        <Dialog open={open} onClose={handleClose} sx={{ padding: "20px 30px" }} maxWidth="md" fullWidth={false}>
             <DialogTitle sx={{ textAlign: "center" }}>{"New MCQ question"}</DialogTitle>
 
-            <DialogContent sx={{ padding: "20px 30px" }}>
+            <DialogContent sx={{ padding: "20px 30px", width: "600px" }}>
                 <SelectMCQType mcqType={mcqType} setMcqType={setMcqType} />
                 <Box sx={{ mt: 3 }}>
                     <TextField

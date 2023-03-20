@@ -13,7 +13,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import Lottie from "lottie-react";                             // Lottie Container
 import SuccessLottie from "@/public/Lottie/success-lottie.json";
 
-import LoginSignupLayout from "../Layout/LoginSignupLayout";
+import LoginSignupLayout from "@/components/Layout/LoginSignupLayout";
 
 
 const SignUpDoneContainer = () => {

@@ -1,17 +1,18 @@
 const asyncWrapper = require("../error/wrapper");
 const userService = require("../services/user.service");
+const response = require("../utils/response.util");
 
 // User Login
 const userLogin = asyncWrapper(async (req, res, next) => {
     if (req.body.email && req.body.password) {
         const { success, data, message } = await userService.loginUser(req.body);
         if (success) {
-            res.json({ success, data, message });
+            response.success(res, data, message);
         } else {
             throw new Error(message);
         }
     } else {
-        throw new Error("Bad request, provide valid a email and password");
+        throw new Error("Bad request, provide a valid email and password");
     }
 })
 // User Login
@@ -22,7 +23,7 @@ const userRegistration = asyncWrapper(async (req, res, next) => {
     if (isReqValid) {
         const { success, data, message } = await userService.registerUser(req.body);
         if (success) {
-            res.json({ success, data, message });
+            response.success(res, data, message);
         } else {
             throw new Error(message);
         }
@@ -38,7 +39,7 @@ const userUpdate = asyncWrapper(async (req, res, next) => {
     if (id) {
         const { success, data, message } = await userService.updateUser(id, req.body);
         if (success) {
-            res.json({ success, data, message });
+            response.success(res, data, message);
         } else {
             throw new Error(message);
         }
@@ -54,7 +55,7 @@ const userDetail = asyncWrapper(async (req, res, next) => {
     if (id) {
         const { success, data, message } = await userService.getUserDetail(id);
         if (success) {
-            res.json({ success, data, message });
+            response.success(res, data, message);
         } else {
             throw new Error(message);
         }
@@ -73,7 +74,7 @@ const changePassword = asyncWrapper(async (req, res, next) => {
         if (req.body.oldPassword && req.body.newPassword) {
             const { success, data, message } = await userService.changePassword(id, req.body.oldPassword, req.body.newPassword);
             if (success) {
-                res.json({ success, data, message });
+                response.success(res, data, message);
             } else {
                 throw new Error(message);
             }

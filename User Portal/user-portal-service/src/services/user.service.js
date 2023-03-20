@@ -1,5 +1,6 @@
 //Importing admin model
 const User = require("../models/user.model");
+const Course = require("../models/course.model");
 const jwt = require("jsonwebtoken");
 //Importing password creation and comparision functions
 const { base64toImg, removeImage } = require("../utils/read.write.image");
@@ -60,6 +61,7 @@ const registerUser = async (data) => {
     userData.password = hashedPassword;
     const user = await User.create(userData);
     if (user) {
+        delete user.password;
         return { success: true, data: user, message: "New user created successfully" }
     } else {
         return { success: false, data: null, message: "Cannot create new user." }
@@ -77,19 +79,29 @@ const updateUser = async (id, data) => {
         const imageData = userData.profilePicture;
         delete userData.profilePicture;
         const imageFilePath = await base64toImg(imageData, "user/profile");
-        removeImage(userData.profilePicture);
+        removeOldProfilePic(id);
         userData.profilePicture = imageFilePath;
     }
-    if (userData.coverPicture) {
-        const coverData = userData.coverPicture;
-        delete userData.coverPicture;
-        const imageFilePath = await base64toImg(coverData, "user/cover");
-        removeImage(userData.coverPicture);
-        userData.coverPicture = imageFilePath;
-    }
+
     const user = await User.findByIdAndUpdate(id, userData);
     if (user) {
-        return { success: true, data: user, message: "User's data updated successfully" }
+        const updatedUser = await User.findById(id);
+        console.log(`\n\n\nUpdated User: ${updatedUser}\n\n\nuser: ${user}`)
+        delete updatedUser.password;
+        const token = jwt.sign({ email: updatedUser.email, role: updatedUser.role }, process.env.JWT_SECRET);
+        return {
+            success: true,
+            data: {
+                user: updatedUser,
+                newSession: {
+                    token,
+                    role: updatedUser.role,
+                    email: updatedUser.email,
+                    id: updatedUser._id
+                }
+            },
+            message: "User's data updated successfully"
+        };
     } else {
         throw new Error("Sorry, cannot update user's data");
     }
@@ -98,7 +110,7 @@ const updateUser = async (id, data) => {
 
 // Get user Detail
 const getUserDetail = async (id) => {
-    const user = await User.findById(id, '-password');
+    const user = await User.findById(id, '-password').populate('courses', 'name', Course);
     if (user) {
         return { success: true, data: user, message: "User's data fetched successfully." }
     } else {
@@ -111,8 +123,10 @@ const getUserDetail = async (id) => {
 const changePassword = async (id, oldPassword, newPassword) => {
     const user = await User.findById(id);
     if (user) {
-        if (user.password === oldPassword) {
-            const updatedUser = await User.findByIdAndUpdate(id, { password: newPassword });
+        const match = await checkPassword(oldPassword, user.password);
+        if (match) {
+            const hashedPassword = await encryptPassword(newPassword);
+            const updatedUser = await User.findByIdAndUpdate(id, { password: hashedPassword });
             if (updatedUser) {
                 return { success: true, data: updatedUser, message: "Password changed successfully" }
             } else {
@@ -127,7 +141,14 @@ const changePassword = async (id, oldPassword, newPassword) => {
 }
 // Change Password
 
-// 
+// Remove user's old profile picture
+const removeOldProfilePic = async (id) => {
+    const user = await User.findById(id);
+
+    user.profilePicture && removeImage(user.profilePicture);
+
+}
+// Remove user's old profile picture
 
 
 

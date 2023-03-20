@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField } from '@mui/material';
-import { QuestionTypes } from '@/constants/Constants';
+import { TypesOfQuestions } from '@/constants/Constants';
 import { AddQuestionPropType } from '@/constants/CustomTypes';
 
 
@@ -10,41 +10,47 @@ const QNAModal = ({ open, setOpen, testQuestions, setTestQuestions, setAddNewQue
     const handleClose = () => {
         setQuestion("");
         setOpen(false);
-        setAddNewQuestion(false);
+        if (testQuestions.length >= 1) {
+            setAddNewQuestion(false);
+        }
     };
 
     const handleAdd = () => {
         const lastQuestion = testQuestions.length > 0 && testQuestions.reduce((max: any, current: any) => max.id > current.id ? max : current);
-        const id = lastQuestion?.id ? lastQuestion.id + 1 : 1;
+        const id = lastQuestion ? lastQuestion.id + 1 : 1;
         setTestQuestions([...testQuestions, {
-            id: id, question, questionType: QuestionTypes.QNA
+            id: id, question, questionType: TypesOfQuestions.QNA
         }]);
         handleClose();
     }
     return (
-        <Dialog open={open} onClose={handleClose} sx={{ padding: "20px 30px" }} maxWidth="md" fullWidth={true}>
+        <Dialog open={open} onClose={handleClose} sx={{ padding: "20px 30px" }} maxWidth="md" fullWidth={false}>
             <DialogTitle sx={{ textAlign: "center" }}>{"New Q&A question"}</DialogTitle>
 
-            <DialogContent sx={{ padding: "20px 30px" }}>
-                <TextField
-                    label="Add Title/Question"
-                    variant="outlined"
-                    value={question}
-                    fullWidth
-                    sx={{ mt: 3 }}
-                    onChange={(e: any) => { setQuestion(e.target.value) }}
-                />
-
-                <Stack direction="row" spacing={1} sx={{ mt: 3 }}>
+            <DialogContent sx={{ padding: "20px 30px", width: "600px" }}>
+                <Stack spacing={2}>
+                    <TextField
+                        label="Add Title/Question"
+                        variant="outlined"
+                        value={question}
+                        fullWidth
+                        sx={{ mt: 3 }}
+                        onChange={(e: any) => { setQuestion(e.target.value) }}
+                        multiline
+                        rows={2}
+                    />
                     <TextField
                         label="Add Sub Title"
                         variant="outlined"
                         fullWidth
+                        multiline
+                        rows={2}
                     />
                     <TextField
                         label="Marks"
                         variant="outlined"
                         type="number"
+                        fullWidth
                     />
                 </Stack>
             </DialogContent>

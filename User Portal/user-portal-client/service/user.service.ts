@@ -10,16 +10,17 @@ const {
     changePassword
 } = endpoints.user;
 
-export const httpUserLogin = (email: string, password: string) => {
-    return axios.post(login, {email, password});
+export const httpUserLogin = ({ email, password }: { email: string, password: string }) => {
+    return axios.post(login, { email, password });
 }
 
 export const httpUserRegistration = (data: any) => {
     return axios.post(signup, data);
 }
 
-export const httpUpdateUser = (data: any) => {
-    return axiosWithToken('put', update, data);
+export const httpUpdateUser = (data: any, id: string) => {
+    const url = `${update}?id=${id}`;
+    return axiosWithToken('put', url, data);
 }
 
 export const httpGetUserDetails = (id: string) => {
@@ -27,7 +28,7 @@ export const httpGetUserDetails = (id: string) => {
     return axiosWithToken('get', url);
 }
 
-export const httpChangeUserPassword = (id: string, data: any) => {
+export const httpChangeUserPassword = (data: any, id: string) => {
     const url = `${changePassword}?id=${id}`;
     return axiosWithToken('put', url, data);
 }

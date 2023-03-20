@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 import Box from '@mui/material/Box';
 import Sidebar from "./Sidebar";
@@ -9,16 +10,13 @@ const ContainerBox = styled(Box)`
     position: relative;
     background: #F4F4F5;
 `;
-const SideBarContainer = styled(Box)`
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    background: white;
-    min-width: 300px;
-    width: 300px;
-    max-width: 300px;
+const ContentBox = styled(Box)`
+    margin-left: ${(props: any) => props.minimize ? "105px" : "305px"};
     min-height: 100vh;
-    z-index: 3;
+    overflow-z: auto;
+    padding: 20px;
+    transition: all 200ms;
+
 `;
 // Styled Component
 
@@ -28,16 +26,14 @@ const SideBarContainer = styled(Box)`
  * @returns JSX.Element the Layout structure of the App ( UI after the user Logs in )
  */
 const Layout = ({ children }: { children: JSX.Element }) => {
+    const [minimize, setMinimize] = useState(false);
     return (
         <ContainerBox>
-            <SideBarContainer>
-                <Sidebar />
-            </SideBarContainer>
-            <Box sx={{ marginLeft: "305px", minHeight: "100vh", overflowX: "auto", marginRight: "5px" }}>
-                <Box sx={{ padding: "20px" }}>
-                    {children}
-                </Box>
-            </Box>
+            <Sidebar minimize={minimize} setMinimize={setMinimize} />
+
+            <ContentBox minimize={minimize}>
+                {children}
+            </ContentBox>
         </ContainerBox>
     )
 }

@@ -4,6 +4,8 @@ import { List, ListItemAvatar, Avatar, Button, Typography, Box } from "@mui/mate
 import styled from 'styled-components';
 
 // MUI Icons
+import MenuIcon from '@mui/icons-material/Menu';                                // Hamburger Icon
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';          // Hamburger Close Icon
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';            // Student
 import GroupsIcon from '@mui/icons-material/Groups';                            // Teacher
 import ApartmentIcon from '@mui/icons-material/Apartment';                      // Faculty
@@ -16,11 +18,17 @@ import useSession from "../../hooks/useSession";
 
 // Styled Component
 const SidebarContainer = styled(Box)`
-    height: 100%;
-    width:100%;
-    min-height: 100vh; margin: 0px;
+    position: fixed;
+    top: 0px;
+    left: 0px;
     background: linear-gradient(to bottom, #614385, #516395);
+    min-width: ${(props: any) => props.minimize ? "100px" : "300px"};
+    max-width: ${(props: any) => props.minimize ? "100px" : "300px"};
+    min-height: 100vh;
+    z-index: 3;
+    transition: all 200ms;
 `;
+
 const StyledLink = styled(Link)`
     display: flex;
     align-items: center;
@@ -59,6 +67,24 @@ const UserInfo = styled(Box)`
     display: flex;
     flex-direction: column;
     gap: 10px;
+`;
+
+const HamburgerBox = styled(Box)`
+    position: absolute;
+    top: 10px; right: 10px;
+    display: flex;
+    align-items:center;
+    padding: 5px;
+    color: #03a9f4;
+    background: rgb(0 0 0 / 50%);
+    border-radius: 50px;
+    cursor: pointer;
+    &:hover {
+        background: rgb(0 0 0 / 20%);
+    }
+    &:active {
+        background: rgb(0 0 0 / 90%);
+    }
 `;
 // Styled Component
 
@@ -102,7 +128,7 @@ const sidebarData: Array<sidebarDataType> = [
  * @param {label: string, link: string, path:string, icon: any}
  * @returns JSX.Elemnet custom navigation item
  */
-const CustomListItem = ({ label, link, path, icon }: { label: string, link: string, path: string, icon: any }) => {
+const CustomListItem = ({ label, link, path, icon, minimize }: { label: string, link: string, path: string, icon: any, minimize: boolean }) => {
 
     return (
         <StyledLink to={link} selected={path === link}>
@@ -111,7 +137,10 @@ const CustomListItem = ({ label, link, path, icon }: { label: string, link: stri
                     {icon}
                 </Avatar>
             </ListItemAvatar>
-            <Typography sx={{ fontSize: "16px", fontWeight: "400", color: "white" }}>{label}</Typography>
+            {
+                !minimize &&
+                <Typography sx={{ fontSize: "16px", fontWeight: "400", color: "white" }}>{label}</Typography>
+            }
         </StyledLink>
     )
 }
@@ -121,7 +150,7 @@ const CustomListItem = ({ label, link, path, icon }: { label: string, link: stri
  * @params none
  * @returns JSX.Element contains user session handeling options
  */
-const BottomSection = () => {
+const BottomSection = ({ minimize }: { minimize: boolean }) => {
     const cookies = new Cookies();
     const { clearSession } = useSession("admin_session");
     const navigate = useNavigate();
@@ -136,7 +165,10 @@ const BottomSection = () => {
             <Box sx={{ display: "flex", flexDirection: "column", gap: "2px", width: "100%", }}>
                 <StyledButton onClick={handleOnLogout}>
                     <LogoutIcon style={{ color: "white" }} />
-                    <Typography component="span" style={{ color: "white" }}>Log out</Typography>
+                    {
+                        !minimize &&
+                        <Typography component="span" style={{ color: "white" }}>Log out</Typography>
+                    }
                 </StyledButton>
             </Box>
         </UserInfo>
@@ -150,27 +182,46 @@ const BottomSection = () => {
  * @params - none 
  * @returns JSX.Element Sidebar that is used for navigation
  */
-const Sidebar = () => {
+const Sidebar = ({ minimize, setMinimize }: {minimize: boolean, setMinimize: (value:any) => void}) => {
     const [path, setPath] = useState("");
     const location = useLocation();
+
+    const handleMinimize = () => {
+        setMinimize((state: boolean) => !state);
+    }
 
     useEffect(() => {
         setPath(location.pathname);
     }, [location.pathname]);
 
     return (
-        <SidebarContainer>
+        <SidebarContainer minimize={minimize}>
             <Box sx={{
-                padding: "40px 10px 5px 10px", display: "flex",
+                padding: "50px 10px 5px 10px", display: "flex",
                 flexDirection: "column", gap: "20px",
                 minHeight: '100vh',
                 justifyContent: "space-between",
                 alignItems: "center"
             }}>
+                <HamburgerBox onClick={handleMinimize} minimize={minimize}>
+                    {
+                        minimize ?
+                            <ArrowForwardIosIcon />
+                            :
+                            <MenuIcon />
+                    }
+                </HamburgerBox>
                 {/* Top Section */}
                 <Box sx={{ display: "flex", width: "100%", flexDirection: "column", gap: "30px", alignItems: "center" }}>
                     {/*Heading*/}
-                    <Typography variant="h5" component="span" sx={{ color: "white" }}> Admin Portal</Typography>
+                    <Typography variant="h5" component="span" sx={{ color: "white" }}>
+                        {
+                            minimize?
+                            'Admin'
+                            :
+                            'Admin Portal'
+                        }
+                    </Typography>
                     {/*Navigation Options*/}
                     <List sx={{ width: "100%", padding: "0 10px" }}>
                         {
@@ -181,6 +232,7 @@ const Sidebar = () => {
                                         path={path}
                                         icon={data.icon}
                                         label={data.name}
+                                        minimize={minimize}
                                     />
                                 </React.Fragment>
                             ))
@@ -188,7 +240,7 @@ const Sidebar = () => {
                     </List>
                 </Box>
                 {/*Bottom Section*/}
-                <BottomSection />
+                <BottomSection minimize={minimize} />
             </Box>
         </SidebarContainer>
     )

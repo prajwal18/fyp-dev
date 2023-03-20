@@ -1,4 +1,4 @@
-import { TableActionTypes } from './Constants';
+import { TableActionTypes, TypesOfQuestions } from './Constants';
 // PT is short for prop type
 // ST is short for state type
 // T is shor for type
@@ -25,14 +25,7 @@ export type HandleChangePageType = (pagination: PaginationST, actionCreator: (ar
 export type HandleChangeRowsPerPageType = (pagination: PaginationST, actionCreator: (arg: any) => void, dispatch: (arg: any) => void) => (event: React.ChangeEvent<HTMLInputElement>) => void;
 // Pagination function types
 
-// Types for the various slices in redux
-// Types for the various slices in redux
 
-// Action type for reducer
-export type ActionT = {
-    type: string, payload?: any
-}
-// Action type for reducer
 
 // Drop Down option data type 
 export type DDOptionT = {
@@ -58,9 +51,30 @@ export type SidebarDataType = {
 // ADD question prop type for modals
 export type AddQuestionPropType = {
     open: boolean, 
-    testQuestions: any, 
+    testQuestions: Array<QuestionType>, 
     setOpen: (value: any) => void, 
     setTestQuestions: (value: any) => void,
     setAddNewQuestion: (value: any) => void
 }
 // ADD question prop type for modals
+
+
+// Test Question
+export type QuestionType = {
+    id: number,
+    question: string,
+    questionType: TypesOfQuestions,
+    choices?: Array<string>,
+    correctAnswer?: Array<string>
+}
+// Test Question
+
+
+
+
+
+// Action type for reducer
+export type ActionT = {
+    type: string, payload: any
+}
+// Action type for reducer

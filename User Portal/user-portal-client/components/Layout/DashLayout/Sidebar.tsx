@@ -22,6 +22,8 @@ import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew'; // Logo
 // MUI Icons
 import { SidebarDataType } from "@/constants/CustomTypes";
 import { clearSession, getUserSession } from "@/utils/sessionFuncs";
+import { useDispatch } from "react-redux";
+import { removeSessionNTokenAC } from "@/redux/general/actions";
 
 
 
@@ -121,6 +123,11 @@ const getSidebarData = (role: string): Array<SidebarDataType> => [
         link: `/${role}/People`,
         name: "People",
         icon: <PeopleIcon />
+    },
+    {
+        link: '/Common/Setting',
+        name: "Setting",
+        icon: <SettingsIcon/>
     }
 ];
 // Sidebar Data
@@ -154,9 +161,9 @@ const CustomListItem = ({ label, link, path, icon, minimize }: { label: string, 
  */
 const BottomSection = ({ minimize }: { minimize: boolean }) => {
     const router = useRouter();
-
+    const dispatch = useDispatch();
     const handleOnLogout = () => {
-        clearSession();
+        dispatch(removeSessionNTokenAC());
         setTimeout(() => { router.push("/Auth/Login"); }, 100);
     }
     return (

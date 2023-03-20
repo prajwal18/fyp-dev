@@ -1,19 +1,21 @@
 import { combineReducers } from "@reduxjs/toolkit";
 
 // Importing all the reducers
+import GeneralReducer from '@/redux/general/general.slice';
 // Importing all the reducers
 
 const rootReducer = combineReducers({
-    // admin
-    // admins: adminReducer,
-    // courses
-    // courses: courseReducer,
-    // faculty
-    // faculties: facultyReducer,
-    // student
-    // students: studentReducer,
-    // teacher
-    // teachers: teacherReducer
+
+    // Assignments
+    // assignments: AssignmentReducer,
+
+    // General
+    general: GeneralReducer,
+
+    // Courses
+    // courses: CourseReducer,
+
+
 });
 
 export default rootReducer;

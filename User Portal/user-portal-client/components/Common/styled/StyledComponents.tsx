@@ -46,3 +46,22 @@ export const BWTableRow = styled(TableRow)
         },
     }));
 // Some More styled components
+
+
+//Dark button
+export const DarkBtn = styled(Button)`
+    display: flex;
+    align-items:center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 3px;
+    color: white;
+    background: rgb(0 0 0 / 50%);
+    &:hover {
+        background: rgb(0 0 0 / 70%);
+    }
+    &:active {
+        background: rgb(0 0 0 / 100%);
+    }
+`;
+//Dark button

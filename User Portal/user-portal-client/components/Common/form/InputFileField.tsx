@@ -4,7 +4,6 @@ import Image from "next/image";
 
 import convertToBase64 from "@/utils/convertToBase64";              // | Utility Function
 import UploadImage from "@/public/Images/uploadImg.png";            // | Upload Image - Static
-import { baseURL } from "@/utils/endpoints";
 
 
 //Image Section
@@ -14,20 +13,11 @@ type InputFFPropType = {
     id: string
 }
 export const InputFileField = ({ image, setImage, dimension, id }: InputFFPropType) => {
-
-    // State to hold image upload type (Image upload or location, i.e. http://localhost)
-    const [ isNew, setIsNew ] = useState(true);
+    const [disImg, setDisImg] = useState<any>('');
 
     useEffect(() => {
-        if(JSON.stringify(image)){
-            if(!JSON.stringify(image).includes('data:image/')){
-                setIsNew(false);
-            } else {
-                setIsNew(true);
-            }
-        }
-        console.log('Image', image);
-    }, [image]);
+        setDisImg(image);
+    }, [image])
 
     const handleOnChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target?.files?.[0]) {
@@ -40,14 +30,13 @@ export const InputFileField = ({ image, setImage, dimension, id }: InputFFPropTy
         <>
             <div className="upload-image-container" style={{ position: "relative", borderRadius: "50%", overflow: "hidden" }}>
                 <Image
-                    src={ image ? (isNew ? image : (baseURL+image)) : UploadImage} // (baseURL + image.replace('./','/'))
+                    src={ disImg || UploadImage}
                     height={dimension.height}
                     width={dimension.width}
                     style={{ borderRadius: "50%", border: "2px solid rgba(0,0,0,0.5)", objectFit: "cover" }}
                     alt={'upload'}
                     onError={async (e: any) => {
-                        e.target.onError = null;
-                        e.target.src = UploadImage;  // Provide an alternate image reference here
+                        setDisImg(UploadImage)  // Provide an alternate image reference here
                     }}
                 />
                 <label htmlFor={id}
@@ -60,7 +49,7 @@ export const InputFileField = ({ image, setImage, dimension, id }: InputFFPropTy
                     }}>
                     <Typography sx={{ color: "white" }}>
                         {
-                            isNew ? 'UPLOAD' : 'CHANGE'
+                            'UPLOAD'
                         }
                     </Typography>
                 </label>

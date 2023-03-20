@@ -18,7 +18,7 @@ export const apiCallNResp = async (fn: () => any) => {
         }
     } catch (error: any) {
         toast.error(error.message);
-        console.log('Error:',error.message);
+        console.log('Error:', error.message);
         return null;
     }
 }
