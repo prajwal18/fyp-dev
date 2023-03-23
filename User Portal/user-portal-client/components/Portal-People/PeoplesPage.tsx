@@ -4,17 +4,25 @@ import {
     Typography, Button
 } from "@mui/material";
 //MUI Icon
-import AddIcon from '@mui/icons-material/Add';
 import TuneIcon from '@mui/icons-material/Tune';
 //MUI Icon
 // Custom Styled Components
-import { AddBtn, BoxStyle } from '../Common/styled/StyledComponents';
+import { BoxStyle } from '../Common/styled/StyledComponents';
 import PeopleTableContainer from './PeopleTable';
 import PeopleFilter from './PeopleFilter';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectSearchTerm, updateSearchTerm } from '@/redux/people/people.slice';
 // Custom Styled Components
 
 const PeoplesPage = () => {
+    const searchTerm = useSelector(selectSearchTerm);
     const [showFilter, setShowFilter] = useState(false);
+
+    const dispatch = useDispatch();
+
+    const handleSearchTermChange = (e: any) => {
+        dispatch(updateSearchTerm(e.target.value));
+    }
     return (
         <>
             <Box sx={{ padding: "20px 30px", backgroundColor: "white" }}>
@@ -27,18 +35,16 @@ const PeoplesPage = () => {
                                 label="Search Members"
                                 variant="outlined"
                                 sx={{ minWidth: '200px' }}
+                                value={searchTerm}
+                                onChange={handleSearchTermChange}
                             />
                             <Button color='primary' variant='outlined' onClick={() => setShowFilter(!showFilter)}>
                                 <TuneIcon fontSize='large' />
                             </Button>
                         </Stack>
-                        <AddBtn>
-                            <AddIcon />
-                            <Typography>Add Something</Typography>
-                        </AddBtn>
                     </Stack>
                     {
-                        showFilter && <PeopleFilter />
+                        <PeopleFilter showFilter={showFilter} />
                     }
                     <PeopleTableContainer />
                 </BoxStyle>

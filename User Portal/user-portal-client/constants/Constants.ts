@@ -2,6 +2,12 @@ export enum UserTypes {
     STUDENT = "Student",
     TEACHER = "Teacher"
 }
+export enum TestType {
+    ALL = 'ALL',
+    TEST_PAPER = 'TEST_PAPER',
+    SUBMITTED = 'SUBMITTED',
+    GRADED = 'GRADED'
+}
 export enum TableActionTypes {
     EDIT = 'EDIT',
     SHOW = 'SHOW',

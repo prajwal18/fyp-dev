@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import parse from 'html-react-parser';
 import {
     Typography, Box, TextField,
@@ -15,9 +15,45 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SendIcon from '@mui/icons-material/Send';
+import EditIcon from '@mui/icons-material/Edit';
 // MUI Icons
 import { TypesOfQuestions, TestQuestionListType } from '@/constants/Constants';
-import { AddBtn, BoldTableCell, BorderedBox, BWTableRow, DarkBtn } from "@/components/Common/styled/StyledComponents";
+import { BoldTableCell, BorderedBox, BWTableRow, DarkBtn } from "@/components/Common/styled/StyledComponents";
+import { UpdateTestModal } from "./CreateTestModal";
+
+export const TestTitleViewEdit = ({ formik, testData }: { formik: any, testData: any }) => {
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => { setOpen(true) };
+
+    return (
+        <>
+            <Box sx={{ padding: "10px", borderBottom: "2px solid #1976D2", mb: 3 }}>
+                <Stack direction='row' spacing={3} justifyContent='space-between' alignItems='center'>
+                    <Box>
+                        <Typography variant="h5" component="h3" sx={{ fontSize: "24px", fontWeight: "700", color: "#1976D2" }}>Test 2: Psychology</Typography>
+                        <Typography sx={{ fontSize: "0.9rem", my: 1 }}>Mero Raja Pradhan &middot; 8<sup>th</sup> January</Typography>
+                    </Box>
+
+                    <Stack sx={{
+                        justifyContent: 'center', alignItems: 'center', padding: '20px', background: 'rgba(28, 175, 229, 0.1)', borderRadius: "50%",
+                        cursor: 'pointer', '&:hover': { background: 'rgba(28, 175, 229, 0.5)' }, '&:active': { background: 'rgba(28, 175, 229, 0.7)' }
+                    }}
+                        onClick={handleOpen}
+                    >
+                        <EditIcon />
+                    </Stack>
+
+                </Stack>
+            </Box>
+            <UpdateTestModal
+                open={open}
+                setOpen={setOpen}
+                formik={formik}
+                testData={testData}
+            />
+        </>
+    );
+}
 
 export const TestTitle = () => {
     return (

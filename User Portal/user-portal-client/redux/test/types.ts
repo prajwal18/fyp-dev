@@ -1,0 +1,3 @@
+export const actionTypes = {
+    FETCH_SELECTED_TEST_PAPER: 'FETCH_SELECTED_TEST_PAPER'
+}

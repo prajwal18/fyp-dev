@@ -14,7 +14,7 @@ export const apiCallNResp = async (fn: () => any) => {
             return response.data;
         } else {
             toast.error(response.data.message);
-            return null;
+            return response.data;
         }
     } catch (error: any) {
         toast.error(error.message);

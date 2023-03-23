@@ -7,7 +7,8 @@ import { ActionT } from "@/constants/CustomTypes";
 
 // Action creators from slice
 import {
-    updateUser
+    updateUser,
+    updateCourses
 } from './general.slice';
 // Action creators from slice
 
@@ -18,12 +19,22 @@ import {
 // Custom axios calls 
 
 // Generator Functions
+function* updateUserCourses(action: ActionT): Generator<any, any, any> {
+    const rawCourses = action.payload;
+    const courses = rawCourses.map((item: any) => {
+        return {name: item.name, value: item._id}
+    });
+    yield put(updateCourses(courses));
+}
+
 function* fetchUserUpdateState(action: ActionT): Generator<any, any, any> {
     const response = yield apiCallNResp(() => httpGetUserDetails(action.payload));
     if (response && response.success) {
         yield put(updateUser(response.data));
+        yield updateUserCourses({type: action.type, payload: response.data.courses});
     }
 }
+
 function* fetchUserDetails(action: ActionT): Generator<any, any, any> {
     const cookies = new Cookies();
     const session = cookies.get('user_session');
@@ -31,6 +42,7 @@ function* fetchUserDetails(action: ActionT): Generator<any, any, any> {
         yield fetchUserUpdateState({ type: action.type, payload: session.id });
     }
 }
+
 function* updateSessionNToken(action: ActionT): Generator<any, any, any> {
     const cookies = new Cookies();
     const session = { id: action.payload.id, role: action.payload.role, email: action.payload.email };
@@ -39,6 +51,7 @@ function* updateSessionNToken(action: ActionT): Generator<any, any, any> {
     cookies.set('user_token', token, { path: '/' });
     cookies.set('user_session', session, { path: '/' });
 }
+
 function* removeSessionNToken(action: ActionT):Generator<any, any, any> {
     const cookies = new Cookies();
     cookies.remove('user_token', { path: '/' });

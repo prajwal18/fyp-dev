@@ -107,6 +107,7 @@ const LoginSection = ({ formik }: { formik: any }) => {
 const LoginPage = () => {
     const router = useRouter();
     const dispatch = useDispatch();
+      
 
     const formik = useFormik({
         initialValues: InitialValues,
@@ -115,17 +116,15 @@ const LoginPage = () => {
         validateOnChange: true,
         onSubmit: async (values) => {
             try {
-                //dispatch(loginAC(values));
                 const response = await apiCallNResp(() => httpUserLogin(values));
                 if (response && response.success) {
                     toast.success('Login successful.');
+                    formik.resetForm();
                     dispatch(updateSessionNTokenAC(response.data));
                     router.push(`/${response.data.role}/Dashboard`);
                 }
             } catch (error: any) {
                 toast.error(error.message);
-            } finally {
-                setTimeout(() => formik.resetForm(), 200);
             }
         }
     });

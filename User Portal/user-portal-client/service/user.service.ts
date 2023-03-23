@@ -7,7 +7,8 @@ const {
     signup,
     update,
     getDetails,
-    changePassword
+    changePassword,
+    getMembers
 } = endpoints.user;
 
 export const httpUserLogin = ({ email, password }: { email: string, password: string }) => {
@@ -31,4 +32,9 @@ export const httpGetUserDetails = (id: string) => {
 export const httpChangeUserPassword = (data: any, id: string) => {
     const url = `${changePassword}?id=${id}`;
     return axiosWithToken('put', url, data);
+}
+
+export const httpGetAllMembers = (query: string) => {
+    const url=`${getMembers}${query}`;
+    return axiosWithToken('get', url);
 }

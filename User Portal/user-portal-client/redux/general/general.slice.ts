@@ -13,6 +13,9 @@ const options = {
         updateUser: (state: GeneralIST, action: ActionT) => {
             return {...state, user: action.payload}
         },
+        updateCourses: (state: GeneralIST, action: ActionT) => {
+            return {...state, courses: action.payload}
+        },
         resetState: (state: GeneralIST, action: ActionT) => {
             return GeneralIS
         }
@@ -26,11 +29,14 @@ export const generalSlice = createSlice(options);
 export const selectUser = (state: any) => {
     return state.general.user;
 }
+export const selectCourses = (state: any) => {
+    return state.general.courses;
+}
 // Selector functions
 
 
 // Exporting the action creator functions
-export const { updateUser, resetState } = generalSlice.actions;
+export const { updateUser, updateCourses, resetState } = generalSlice.actions;
 // Exporting the action creator functions
 
 // Exporting the reducer as the default export

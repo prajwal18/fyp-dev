@@ -1,0 +1,4 @@
+export const actionTypes = {
+    FETCH_ALL_MEMBERS: 'FETCH_ALL_MEMBERS',
+    FETCH_PAGINATION_DATA: 'FETCH_PAGINATION_DATA'
+}

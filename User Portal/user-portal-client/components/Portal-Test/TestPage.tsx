@@ -11,15 +11,20 @@ import { AddBtn, BoxStyle } from '../Common/styled/StyledComponents';
 import TestFilter from './TestFilter';
 import TestTableContainer from './TestTable';
 import CreateTestModal from './Common/CreateTestModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectSearchTerm, updateSearchTerm } from '@/redux/test/test.slice';
+import { UserTypes } from '@/constants/Constants';
 
-const TestPage = () => {
+const TestPage = ({ role }: { role: UserTypes }) => {
+	const searchTerm = useSelector(selectSearchTerm);
 	const [showFilter, setShowFilter] = useState(false);
 	const [openCT, setOpenCT] = useState(false);
+	const dispatch = useDispatch();
 	const handleOpenCT = () => {
 		setOpenCT(true);
 	}
-	const handleCloseCT = () => {
-		setOpenCT(false);
+	const handleSearchTermChange = (e: any) => {
+		dispatch(updateSearchTerm(e.target.value));
 	}
 	return (
 		<>
@@ -33,23 +38,31 @@ const TestPage = () => {
 								label="Search Tests"
 								variant="outlined"
 								sx={{ minWidth: '200px' }}
+								value={searchTerm}
+								onChange={handleSearchTermChange}
 							/>
 							<Button color='primary' variant='outlined' onClick={() => setShowFilter(!showFilter)}>
 								<TuneIcon fontSize='large' />
 							</Button>
 						</Stack>
-						<AddBtn onClick={handleOpenCT}>
-							<AddIcon />
-							<Typography>Create Test</Typography>
-						</AddBtn>
+						{
+							role === UserTypes.TEACHER &&
+							<AddBtn onClick={handleOpenCT}>
+								<AddIcon />
+								<Typography>Create Test</Typography>
+							</AddBtn>
+						}
 					</Stack>
 					{
-						showFilter && <TestFilter />
+						<TestFilter showFilter={showFilter} />
 					}
 					<TestTableContainer />
 				</BoxStyle>
 			</Box>
-			<CreateTestModal open={openCT} handleClose={handleCloseCT} />
+			{
+				role === UserTypes.TEACHER &&
+				<CreateTestModal open={openCT} setOpen={setOpenCT} />
+			}
 		</>
 	)
 }

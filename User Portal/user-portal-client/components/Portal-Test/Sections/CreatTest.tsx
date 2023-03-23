@@ -9,11 +9,14 @@ import {
 // MUI Icons
 import AddIcon from '@mui/icons-material/Add';
 // MUI Icons
-import { AddNewQuestion, TestQuestionContainer, TestTitle } from '../Common/TestCommonComponents';
+import { AddNewQuestion, TestQuestionContainer, TestTitleViewEdit } from '../Common/TestCommonComponents';
 import QNAModal from '../Common/QNAModal';
 import MCQModal from '../Common/MCQModal';
 import { QuestionType } from '@/constants/CustomTypes';
 import { BorderedBox } from '@/components/Common/styled/StyledComponents';
+import { useFormik } from 'formik';
+import { useSelector } from 'react-redux';
+import { selectSelectedTest } from '@/redux/test/test.slice';
 // Using dynamic import for jodit
 const Jodit = dynamic(() => import('@/components/TextEditor/Jodit'), { ssr: false })
 // Using dynamic import for jodit
@@ -156,6 +159,15 @@ const RenderTabPanel = ({ page }: { page: number }) => {
 
 const CreateTestContainer = () => {
     const [page, setPage] = useState<number>(0); // To navigate between Test Instructions and Test Questions
+    const testData = useSelector(selectSelectedTest);
+    const formik = useFormik({
+        initialValues: {},
+        enableReinitialize: true,
+        validateOnChange: true,
+        onSubmit: async (values) => {
+            console.log(values)
+        }
+    });
     return (
         <Stack
             sx={{ padding: "20px 30px", background: "white", minHeight: "95vh" }}
@@ -163,7 +175,10 @@ const CreateTestContainer = () => {
             alignItems='flex-start'
         >
             <Box sx={{ padding: "20px", width: "100%" }}>
-                <TestTitle />
+                <TestTitleViewEdit
+                    formik={formik}
+                    testData={testData}
+                />
                 <TestTabs value={page} setValue={setPage} />
                 <Box sx={{ padding: "30px 20px" }}>
                     <RenderTabPanel page={page} />

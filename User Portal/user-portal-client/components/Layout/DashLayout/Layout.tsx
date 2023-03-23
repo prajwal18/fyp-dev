@@ -3,6 +3,9 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import Box from '@mui/material/Box';
 import Sidebar from "./Sidebar";
+import { containsSession } from "@/utils/sessionFuncs";
+import { useDispatch } from "react-redux";
+import { fetchUserAC } from "@/redux/general/actions";
 
 // Styled Component
 const ContainerBox = styled(Box)`
@@ -26,6 +29,14 @@ const ContentBox = styled(Box)`
  */
 const Layout = ({ children }: { children: JSX.Element }) => {
     const [minimize, setMinimize] = useState(false);
+    const { asPath } = useRouter();
+    const dispatch = useDispatch();
+    useEffect(() => {
+        if(containsSession()) {
+            dispatch(fetchUserAC());
+        }
+    }, [asPath, dispatch]);
+
     return (
         <ContainerBox>
             <Sidebar minimize={minimize} setMinimize={setMinimize} />

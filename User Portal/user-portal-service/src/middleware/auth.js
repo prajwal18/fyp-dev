@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { UserRole } = require("../constants/enum");
 const jwt = require('jsonwebtoken');
 const User = require("../models/user.model");
 const asyncWrapper = require("../error/wrapper");
@@ -41,4 +42,44 @@ const authorizeSameUser = asyncWrapper(async (req, res, next) => {
   }
 });
 
-module.exports = { authenticationMiddleware, authorizeSameUser };
+
+// Authorize student
+const authorizeStudent = asyncWrapper(async (req, res, next) => {
+  const email = res.locals.email;
+  if (email) {
+    const user = await User.findOne({ email: email });
+    if (user) {
+      if (user.role === UserRole[0]) {
+        next();
+      } else {
+        throw new Error("You are not authorized to view this page. Not a Student.");
+      }
+    } else {
+      throw new Error("User cannot be identified.");
+    }
+  } else {
+    throw new Error("You're not authorized to view this page.");
+  }
+});
+
+
+// Authorize teacher
+const authorizeTeacher = asyncWrapper(async (req, res, next) => {
+  const email = res.locals.email;
+  if (email) {
+    const user = await User.findOne({ email: email });
+    if (user) {
+      if (user.role === UserRole[1]) {
+        next();
+      } else {
+        throw new Error("You are not authorized to view this page. Not a Teacher.");
+      }
+    } else {
+      throw new Error("User cannot be identified.");
+    }
+  } else {
+    throw new Error("You're not authorized to view this page.");
+  }
+});
+
+module.exports = { authenticationMiddleware, authorizeSameUser, authorizeStudent, authorizeTeacher };

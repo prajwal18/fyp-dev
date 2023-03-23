@@ -51,6 +51,16 @@ export const setSession = (key: string, data: any) => {
     cookies.set(key, data);
 }
 
+export const containsSession = () => {
+    const cookies = new Cookies();
+    const session = cookies.get('user_session');
+
+    if(session && session.role && session.email && session.id) {
+        return true;
+    }
+    return false;
+}
+
 export const getUserSession = () => {
     const cookies = new Cookies();
     return cookies.get('user_session');

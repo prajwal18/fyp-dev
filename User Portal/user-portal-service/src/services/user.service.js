@@ -85,9 +85,7 @@ const updateUser = async (id, data) => {
 
     const user = await User.findByIdAndUpdate(id, userData);
     if (user) {
-        const updatedUser = await User.findById(id);
-        console.log(`\n\n\nUpdated User: ${updatedUser}\n\n\nuser: ${user}`)
-        delete updatedUser.password;
+        const updatedUser = await User.findById(id, '-password');
         const token = jwt.sign({ email: updatedUser.email, role: updatedUser.role }, process.env.JWT_SECRET);
         return {
             success: true,
@@ -151,6 +149,26 @@ const removeOldProfilePic = async (id) => {
 // Remove user's old profile picture
 
 
+// Get all course members 
+const getAllCourseMembers = async (courses, roles, searchTerm, skip, take) => {
+    const users = await User
+        .find({
+            courses: { '$in': courses },
+            role: { '$in': roles },
+            name: { '$regex': searchTerm, '$options': 'i' }
+        }, '-password -address -contact -zipcode')
+        .populate('courses', 'name', Course)
+        .skip(skip)
+        .limit(take);
+
+    if (users) {
+        return { success: true, data: users, message: 'Successfully fetched all the members', hits: users.length }
+    } else {
+        return { success: false, data: null, message: 'Problem fetching the members.' }
+    }
+}
 
 
-module.exports = { loginUser, validateRequest, registerUser, updateUser, getUserDetail, changePassword }
+
+
+module.exports = { loginUser, validateRequest, registerUser, updateUser, getUserDetail, changePassword, getAllCourseMembers }

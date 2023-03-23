@@ -16,6 +16,7 @@ export function GenerateCustTextField({ formik, name, label, type = "text" }: { 
                 onChange={formik.handleChange}
                 type={type}
                 fullWidth
+                focused={type === 'date'}
             />
             {formik.touched?.[name] && formik.errors?.[name] && <ErrorMessage message={formik.errors?.[name]} />}
         </Box>

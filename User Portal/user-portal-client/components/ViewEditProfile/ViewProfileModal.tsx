@@ -12,6 +12,7 @@ import { selectUser } from '@/redux/general/general.slice';
 
 import { baseURL } from '@/utils/endpoints';
 import { CustomImage } from '../Common/components/ProfileImage';
+import {selectSelectedMember } from '@/redux/people/people.slice';
 
 
 
@@ -204,17 +205,17 @@ const HeadSectionViewOnly = ({ userName }: { userName: string }) => {
 }
 
 const ContentSectionViewOnly = () => {
-  //const user = useSelector(--some custom selector to get the specific person's information --)
+  const selectedMember = useSelector(selectSelectedMember);
   return (
     <Stack spacing={4} sx={{ padding: "15px 30px" }}>
-      {/* <HeadSectionViewOnly userName={user?.name || ''} />
+      <HeadSectionViewOnly userName={selectedMember?.name || ''} />
       <Stack direction='row' gap={5}>
 
-        <ImageCourseSection user={user} />
+        <ImageCourseSection user={selectedMember} />
 
-        <InformationSectionViewOnly user={user} />
+        <InformationSectionViewOnly user={selectedMember} />
 
-      </Stack> */}
+      </Stack>
     </Stack>
   )
 }

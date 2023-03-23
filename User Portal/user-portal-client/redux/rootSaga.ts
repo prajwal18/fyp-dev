@@ -2,6 +2,8 @@ import { all } from "redux-saga/effects";
 
 // importing all the sagas for different slices
 import GeneralSaga from "./general/saga";
+import PeopleSaga from "./people/saga";
+import TestSaga from "./test/saga";
 // importing all the sagas for different slices
 
 export default function* rootSaga() {
@@ -15,6 +17,12 @@ export default function* rootSaga() {
 
         // Courses
         // CoursesSaga(),
+
+        // People
+        PeopleSaga(),
+
+        // Test
+        TestSaga()
 
     ]);
 }

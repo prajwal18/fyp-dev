@@ -2,6 +2,8 @@ import { combineReducers } from "@reduxjs/toolkit";
 
 // Importing all the reducers
 import GeneralReducer from '@/redux/general/general.slice';
+import PeopleReducer from '@/redux/people/people.slice';
+import TestReducer from '@/redux/test/test.slice';
 // Importing all the reducers
 
 const rootReducer = combineReducers({
@@ -14,6 +16,12 @@ const rootReducer = combineReducers({
 
     // Courses
     // courses: CourseReducer,
+
+    // People
+    people: PeopleReducer,
+
+    // Test
+    test: TestReducer
 
 
 });

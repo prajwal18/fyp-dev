@@ -88,4 +88,26 @@ const changePassword = asyncWrapper(async (req, res, next) => {
 // Change Password
 
 
-module.exports = { userLogin, userRegistration, userUpdate, userDetail, changePassword }
+
+// Get all course members
+const getAllCourseMembers = asyncWrapper(async(req, res, next) => {
+    const { courseIds, role, searchTerm, skip, take } = req.query;
+    const courses = courseIds.split(',');
+    const roles = role.split(',');
+
+    if(courses.length && roles.length){
+        const {success, data, message, hits} = await userService.getAllCourseMembers(courses, roles, searchTerm, skip, take);
+        if(success) {
+            res.json({success, data, message, hits});
+        } else {
+            throw new Error(message);
+        }
+    } else {
+        throw new Error('Cannot find users, specify a course.');
+    }
+});
+// Get all course members
+
+
+
+module.exports = { userLogin, userRegistration, userUpdate, userDetail, changePassword, getAllCourseMembers }
