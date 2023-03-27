@@ -4,6 +4,11 @@ const router = express.Router();
 const { authenticationMiddleware, authorizeTeacher, authorizeStudent } = require("../middleware/auth");
 const assignmentSubmissionController = require("../controllers/assignment.submission.controller");
 
+// Check to see if assignment submission exists
+router.get("/check", authenticationMiddleware, assignmentSubmissionController.submissionExists);
+// Check to see if assignment submission exists
+
+
 // Create Assignment Submission
 router.post("/create",  authenticationMiddleware, authorizeStudent, assignmentSubmissionController.create);
 // Create Assignment Submission
@@ -25,10 +30,6 @@ router.put("/grade", authenticationMiddleware, authorizeTeacher, assignmentSubmi
 router.get('/get-submission', authenticationMiddleware, assignmentSubmissionController.getSubmission);
 // Get specific submission
 
-// Get all submissions
-// Must provide course details like so
-// .../all-submission?type=SUBMITTED || GRADED & courseIds= a list of course id's seperated by comma ,
-router.get('/all-submission', authenticationMiddleware, assignmentSubmissionController.getAllSubmissions);
-// Ger all submissions
+router.get('/get-all-specific', authenticationMiddleware, assignmentSubmissionController.getAllSpecificAssignments)
 
 module.exports = router;

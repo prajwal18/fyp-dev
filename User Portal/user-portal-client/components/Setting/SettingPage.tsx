@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Box, Typography } from '@mui/material';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -13,15 +13,20 @@ import ViewProfileModal from "@/components/ViewEditProfile/ViewProfileModal";
 import EditProfileModal from "@/components/ViewEditProfile/EditProfileModal";
 // Redux functions
 import { fetchUserAC } from "@/redux/general/actions";
+import { selectOpenProfile, updateOpenProfile } from "@/redux/general/general.slice";
 // Redux functions
 
 
 export default function SettingPage() {
     const [openCP, setOpenCP] = useState(false);
-    const [openViewProfile, setOpenViewProfile] = useState(false);
+    const openViewProfile = useSelector(selectOpenProfile);
     const [openEditProfile, setOpenEditProfile] = useState(false);
 
     const dispatch = useDispatch();
+
+    const setOpenViewProfile = (value: boolean) => {
+        dispatch(updateOpenProfile(value));
+    }
 
     const handleOpenCP = () => {
         dispatch(fetchUserAC());
@@ -29,7 +34,7 @@ export default function SettingPage() {
     }
     const handleOpenViewProfile = () => {
         dispatch(fetchUserAC());
-        setOpenViewProfile(true); 
+        setOpenViewProfile(true);
     }
     const handleOpenEditProfile = () => {
         dispatch(fetchUserAC());
@@ -61,7 +66,10 @@ export default function SettingPage() {
                 </Box>
             </Box>
             <ChangePasswordModal open={openCP} setOpen={setOpenCP} />
-            <ViewProfileModal open={openViewProfile} setOpen={setOpenViewProfile} handleOpenEdit={handleOpenEditProfile} />
+            {
+                handleOpenEditProfile &&
+                <ViewProfileModal handleOpenEdit={handleOpenEditProfile} />
+            }
             <EditProfileModal open={openEditProfile} setOpen={setOpenEditProfile} />
         </>
     )

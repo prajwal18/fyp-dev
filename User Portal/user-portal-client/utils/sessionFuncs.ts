@@ -1,7 +1,7 @@
 import Cookies from "universal-cookie";
 import { toast } from 'react-toastify';
 
-export const manageSessionRouting = (asPath: string, push: (value: string) => void, setIncludeLayout: (value: any) => void) => {
+export const manageSessionRouting = (asPath: string, push: (value: string) => void, selectIncludeSidebar: (value: boolean) => void) => {
     const cookies = new Cookies();
     const session = cookies.get('user_session');
     const token = cookies.get('user_token');
@@ -9,28 +9,28 @@ export const manageSessionRouting = (asPath: string, push: (value: string) => vo
     if (session && token) {
 
         if (['Student', 'Teacher'].includes(session.role)) {
-            setIncludeLayout(true);
             if (asPath === '/' || asPath === `/${session.role}`) {
                 push(`/${session.role}/Dashboard`);
             } else if (!(asPath.includes('/Common/') || asPath.includes(`/${session.role}/`))) {
-                toast.warn(`You cannot access ${asPath} route. kokokoko`);
+                toast.warn(`You cannot access ${asPath} route.`);
                 push(`/${session.role}/Dashboard`);
             }
+            selectIncludeSidebar(true);
         } else {
-            setIncludeLayout(false);
             push('/Auth/Login');
             toast.warn('Sorry, you have invalid credentials. Try to Login.');
             cookies.remove('user_session');
             cookies.remove('user_token');
+            selectIncludeSidebar(false);
         }
     } else {
-        setIncludeLayout(false);
         if (asPath === '/') {
             push('/Auth/Login');
         } else if (!asPath.includes('/Auth/')) {
             push('/Auth/Login');
             toast.warn('Restricted page, login to access.');
         }
+        selectIncludeSidebar(false);
     }
 
 }
@@ -55,7 +55,7 @@ export const containsSession = () => {
     const cookies = new Cookies();
     const session = cookies.get('user_session');
 
-    if(session && session.role && session.email && session.id) {
+    if (session && session.role && session.email && session.id) {
         return true;
     }
     return false;

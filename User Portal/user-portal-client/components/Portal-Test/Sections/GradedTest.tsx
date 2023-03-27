@@ -6,26 +6,23 @@ import {
 import { GradeTestTable, HideInstructionsBtn, TestInstructions, TestQuestions, TestTitle } from '../Common/TestCommonComponents';
 import { MockTestData } from '@/constants/TempDataDeleteLater';
 import { TestQuestionListType } from '@/constants/Constants';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectSelectedAnswerPaper } from '@/redux/test/test.slice';
+import { selectUser } from '@/redux/general/general.slice';
 
 
-const GradedTestPaperSection = () => {
-    const [show, setShow] = useState(false);
+const GradedTestPaperSection = ({ answerPaper }: { answerPaper: any }) => {
+    const [show, setShow] = useState(true);
     return (
         <Box>
             <Stack direction='row' gap={2} mb={2}>
                 <HideInstructionsBtn show={show} setShow={setShow} />
-                <Button
-                    color='primary'
-                    variant="outlined"
-                >
-                    Next
-                </Button>
             </Stack>
 
             <Stack direction='row' gap={2}>
                 <Stack spacing={2} sx={{ width: "100%" }}>
                     <TestQuestions
-                        testQuestions={MockTestData.testQuestions}
+                        testQuestions={answerPaper?.questions || []}
                         type={TestQuestionListType.GRADED_TEST}
                     />
                 </Stack>
@@ -33,7 +30,7 @@ const GradedTestPaperSection = () => {
                     show &&
                     <Box sx={{ width: "50%" }}>
                         <TestInstructions
-                            instructions={MockTestData.testInstructions}
+                            instructions={answerPaper?.testPaperId?.instructions || ''}
                         />
                     </Box>
                 }
@@ -42,10 +39,10 @@ const GradedTestPaperSection = () => {
         </Box>
     )
 }
-const TestResults = () => {
+const TestResults = ({ answerPaper }: { answerPaper: any }) => {
     return (
         <Box>
-            <GradeTestTable isGraded={true}/>
+            <GradeTestTable answerPaper={answerPaper} />
         </Box>
     );
 }
@@ -64,19 +61,20 @@ const TestTabs = ({ value, setValue }: { value: number, setValue: (value: any) =
             >
                 <Tab
                     value={0}
-                    label="Test Paper"
+                    label="Answer Paper"
                 />
-                <Tab value={1} label="Grade Test" />
+                <Tab value={1} label="Graded Test" />
             </Tabs>
         </Stack>
     );
 }
 
-const RenderTabPanel = ({ page }: { page: number }) => {
+const RenderTabPanel = ({ page, answerPaper }: { page: number, answerPaper: any }) => {
+
     if (page === 0) {
-        return (<GradedTestPaperSection />);
+        return (<GradedTestPaperSection answerPaper={answerPaper} />);
     } else if (page === 1) {
-        return (<TestResults />);
+        return (<TestResults answerPaper={answerPaper} />);
     } else {
         return (<></>);
     }
@@ -84,6 +82,7 @@ const RenderTabPanel = ({ page }: { page: number }) => {
 
 
 const GradedTestContainer = () => {
+    const answerPaper = useSelector(selectSelectedAnswerPaper);
     const [page, setPage] = useState<number>(0); // To navigate between Test Instructions and Test Questions
     return (
         <Stack
@@ -92,10 +91,14 @@ const GradedTestContainer = () => {
             alignItems='flex-start'
         >
             <Box sx={{ padding: "20px", width: "100%" }}>
-                <TestTitle />
+                <TestTitle
+                    title={answerPaper?.testPaperId?.title}
+                    teacher={answerPaper?.testPaperId?.createdBy?.name}
+                    date={answerPaper?.testPaperId?.releaseDate}
+                />
                 <TestTabs value={page} setValue={setPage} />
                 <Box sx={{ padding: "30px 20px" }}>
-                    <RenderTabPanel page={page} />
+                    <RenderTabPanel page={page} answerPaper={answerPaper} />
                 </Box>
             </Box>
         </Stack>

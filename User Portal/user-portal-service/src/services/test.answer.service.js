@@ -1,6 +1,27 @@
-const { TestAns_AssignmentSub_Type } = require("../constants/enum");
+const { TestAns_AssignmentSub_Type, TestPaperType, UserRole } = require("../constants/enum");
 const TestAnswer = require("../models/test.answer.model");
 const TestPaper = require("../models/test.question.model");
+const Course = require("../models/course.model");
+const User = require("../models/user.model");
+
+// Check to see if the test answer of a specific student for a specific test exists
+const checkTestAnswerExist = async (testId, studentId) => {
+    const test = await TestAnswer.findOne({ testPaperId: testId, submittedBy: studentId });
+    if (test) {
+        return {
+            testExists: true,
+            data: test._id,
+            message: "Test Answer paper for the students exists."
+        }
+    } else {
+        return {
+            testExists: false,
+            data: null,
+            message: "Test Answer for the student does not exist."
+        }
+    }
+}
+
 
 /**
  * The function checks to see if the request has all the parameters needed to 
@@ -14,12 +35,12 @@ const TestPaper = require("../models/test.question.model");
  * 
  * @returns { {isVerified:boolean, isVerifiedMessage:string} }
  */
-const verifyCreateRequest = async ({ testPaperId, submissionDate, submittedBy, ...rest }) => {
+const verifyCreateRequest = async ({ testPaperId, submittedBy, ...rest }) => {
     const test = await TestPaper.findById(testPaperId);
+
     if (test) {
         const today = new Date(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()); // Getting the date without time component
-        const dueDate = new Date(test.dueDate + ' 00:00:00');
-
+        const dueDate = new Date(test.dueDate);
         if (today.getTime() <= dueDate.getTime()) {
             return {
                 isVerified: true,
@@ -52,7 +73,7 @@ const verifyCreateRequest = async ({ testPaperId, submissionDate, submittedBy, .
  */
 const verifyUpdateRequest = async (id) => {
     const testAnswer = await TestAnswer.findById(id);
-    const { isVerified, isVerifiedMessage } = verifyCreateRequest(testAnswer);
+    const { isVerified, isVerifiedMessage } = await verifyCreateRequest(testAnswer);
     if (isVerified) {
         if (testAnswer.isGraded) {
             return {
@@ -78,9 +99,9 @@ const verifyUpdateRequest = async (id) => {
  * 
  * @returns { {isVerified:boolean, isVerifiedMessage:string} }
 */
-const verifyGradeRequest = async (id) => {
+const verifyGradeRequest = async (data, id) => {
     const testAnswer = await TestAnswer.findById(id);
-    if (testAnswer.remark && testAnswer.gradedBy && testAnswer.marksObtained) {
+    if (testAnswer && data.remark && data.gradedBy && data.marksObtained) {
         return {
             isVerified: true, isVerifiedMessage: null
         }
@@ -93,7 +114,7 @@ const verifyGradeRequest = async (id) => {
 
 
 const create = async (data) => {
-    const test = await TestAnswer.create(data);
+    const test = await TestAnswer.create({ ...data, submissionDate: new Date() });
     if (test) {
         return {
             success: true, data: test, message: "Test created successfully."
@@ -107,7 +128,7 @@ const create = async (data) => {
 
 
 const update = async (data, id) => {
-    const updatedTest = await TestAnswer.findByIdAndUpdate(id, data);
+    const updatedTest = await TestAnswer.findByIdAndUpdate(id, { ...data, submissionDate: new Date() });
     if (updatedTest) {
         return {
             success: true, data: updatedTest, message: "Test updated successfully."
@@ -135,7 +156,19 @@ const grade = async (data, id) => {
 
 
 const getTest = async (id) => {
-    const test = await TestAnswer.findById(id);
+    const test = await TestAnswer.findById(id)
+        .populate({
+            path: 'testPaperId',
+            populate: [{
+                path: 'createdBy',
+                model: 'User'
+            }, {
+                path: 'courseId',
+                model: 'Course'
+            }]
+        })
+        .populate('submittedBy')
+        .populate('gradedBy');
     if (test) {
         return {
             success: true, data: test, message: "Fetched test successfully."
@@ -147,38 +180,114 @@ const getTest = async (id) => {
     }
 }
 
-const getAllTests = async (courses, type) => {
+const getAllSpecificTestPapers = async (courses, searchTerm, skip, take, role) => {
+    // 0 ==> Student 1 ==> Teacher :indexes
+    let preCount = 0;
     let testPapers = await TestPaper.find({
-        courseId: { '$in': courses }
-    });
-
-    if (testPapers.length) {
-        testPapers = testPapers.map(testPaper => testPaper._id);
-        let tests = await TestAnswer.find({
-            testPaperId: { '$in': testPapers }
-        });
-
-        if (type === TestAns_AssignmentSub_Type.GRADED) {
-            tests = tests.filter(test => {
-                return test.isGraded;
+        courseId: { '$in': courses },
+        title: { '$regex': searchTerm, '$options': 'i' }
+    })
+        .populate('courseId', 'name', Course);
+    if (testPapers) {
+        if (role === UserRole[0]) {
+            testPapers = testPapers.filter(paper => {
+                const today = new Date(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()); // Getting the date without time component
+                const releaseDate = new Date(paper.releaseDate);
+                if (releaseDate <= today) {
+                    return true;
+                } else {
+                    return false;
+                }
             })
         }
-
-        if (tests) {
-            return {
-                success: true, data: tests, message: "Fetched all tests successfully.", hits: tests.length
-            }
-        } else {
-            return {
-                success: false, data: null, message: "Sorry, cannot fetch tests.", hits: 0
-            }
-        }
+        preCount = testPapers.length;
+        testPapers = testPapers.splice(skip, take);
+        return { success: true, data: testPapers, message: "Successfully fetched all test papers", hits: preCount }
     } else {
-        return {
-            success: false, data: null, message: "Sorry, cannot fetch tests.", hits: 0
-        }
+        return { success: false, data: null, message: 'Problem fetching test papers', hits: 0 }
     }
 
 }
 
-module.exports = { verifyCreateRequest, verifyUpdateRequest, verifyGradeRequest, create, update, grade, getTest, getAllTests };
+const getAllSpecificAnswerPapers = async (courses, type, searchTerm, skip, take, userId, role) => {
+
+    const isGraded = type === TestPaperType.GRADED;
+    let testPaper = await TestPaper.find({
+        courseId: { '$in': courses },
+        title: { '$regex': searchTerm, '$options': 'i' },
+    });
+
+    if (testPaper) {
+        let testIds = testPaper.map(paper => paper._id);
+        let submittedPapers = null;
+        // 0 ==> Student 1 ==> Teacher :indexes
+        if (role === UserRole[0]) {
+            submittedPapers = await TestAnswer.find({
+                testPaperId: { '$in': testIds },
+                isGraded: isGraded,
+                submittedBy: userId
+            })
+                .populate({
+                    path: 'testPaperId',
+                    populate: [{
+                        path: 'createdBy',
+                        model: 'User'
+                    }, {
+                        path: 'courseId',
+                        model: 'Course'
+                    }]
+                })
+                .populate('submittedBy')
+                .populate('gradedBy');
+        }
+        else {
+            submittedPapers = await TestAnswer.find({
+                testPaperId: { '$in': testIds },
+                isGraded: isGraded
+            })
+                .populate({
+                    path: 'testPaperId',
+                    populate: [{
+                        path: 'createdBy',
+                        model: 'User'
+                    }, {
+                        path: 'courseId',
+                        model: 'Course'
+                    }]
+                })
+                .populate('submittedBy')
+                .populate('gradedBy');
+        }
+
+        // Returing the results
+        if (submittedPapers) {
+            let preCount = submittedPapers.length;
+            submittedPapers = submittedPapers.splice(skip, take);
+            return { success: true, data: submittedPapers, message: "Successfully fetched test answer papers", hits: preCount }
+        } else {
+            return { success: false, data: null, message: 'Problem fetching test answer papers', hits: 0 }
+        }
+    }
+
+    else {
+        return { success: false, data: null, message: 'Cannot find any test answer papers', hits: 0 }
+    }
+}
+
+const getAllSpecificTests = async (courses, type, searchTerm, skip, take, userId, role) => {
+
+    if (type === TestPaperType.TEST_PAPER) {
+        return getAllSpecificTestPapers(courses, searchTerm, skip, take, role)
+    }
+    else {
+        return getAllSpecificAnswerPapers(courses, type, searchTerm, skip, take, userId, role);
+    }
+}
+
+
+
+module.exports = {
+    verifyCreateRequest, verifyUpdateRequest, verifyGradeRequest,
+    create, update, grade, getTest, checkTestAnswerExist,
+    getAllSpecificTests
+};

@@ -11,7 +11,11 @@ const assignmentSchema = mongoose.Schema({
         type: Date,
         validate: {
             validator: (v) => {
-                return v.getTime() >= assignmentSchema.createdAt.getTime();
+                if(assignmentSchema.createdAt) {
+                    return v.getTime() >= assignmentSchema.createdAt.getTime();
+                } else {
+                    return v.getTime() >= Date.now();
+                }
             },
             message: "Release date should be after the assignment was created."
         },
@@ -20,20 +24,26 @@ const assignmentSchema = mongoose.Schema({
     dueDate: {
         type: Date,
         required: [true, 'Provide a due date for assignment submission.'],
-        alidate: {
+        validate: {
             validator: (v) => {
-                return v.getTime() >= assignmentSchema.releaseDate.getTime();
+                if(assignmentSchema.releaseDate) {
+                    return v.getTime() >= assignmentSchema.releaseDate.getTime();
+                } else {
+                    return v.getTime() > Date.now();
+                }
             },
-            message: "Due date comes after the assignment's created."
-        }
+            message: "Due date should be after the assignment was created."
+        },
     },
-    totalMarks: {
+    fullMark: {
         type: Number,
-        min: [1, 'Total marks cannot be less than 1']
+        min: [1, 'Total marks cannot be less than 1'],
+        required: [true, "Assignment needs to have a full marks"]
     },
     description: {
         type: String,
-        minLength: [20, 'Assignment description cannot be less than 20 characters.']
+        minLength: [5, 'Assignment description cannot be less than 5 characters.'],
+        require: [true, "Assignment needs to have a description."]
     },
     manual: {
         type: String

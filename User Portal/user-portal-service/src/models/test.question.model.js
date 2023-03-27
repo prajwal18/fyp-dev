@@ -21,7 +21,7 @@ const testQuestionSchema = mongoose.Schema({
                 if(testQuestionSchema.createdAt) {
                     return v.getTime() >= testQuestionSchema.createdAt.getTime();
                 } else {
-                    return v.getTime() > Date.now();
+                    return v.getTime() >= Date.now();
                 }
             },
             message: "Release date should be after the test was created."
@@ -75,6 +75,9 @@ const testQuestionSchema = mongoose.Schema({
                     type: Number,
                     required: [true, 'Specify the marks associated with the question'],
                     min: [0, 'Score obtained cannot be less than 0.']
+                },
+                choices: {
+                    type: [String]
                 },
                 correctAnswer: {
                     type: [String]

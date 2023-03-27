@@ -4,6 +4,7 @@ import {
   MenuItem, Select, Stack, Button
 
 } from "@mui/material";
+import { joinCoursesCS } from '@/utils/filterFunctions';
 
 // MUI Icon
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
@@ -14,47 +15,40 @@ import { TestType } from '@/constants/Constants';
 // MUI Icon
 
 const TestFilter = ({ showFilter }: { showFilter: boolean }) => {
-  const searchParam = useSelector(selectSearchParams);
+  const searchParams = useSelector(selectSearchParams);
   const courses = useSelector(selectCourses);
 
   const [selectedCourse, setSelectedCourse] = useState('');
-  const [selectedTestType, setSelectedTestType] = useState<string>(TestType.ALL);
+  const [selectedTestType, setSelectedTestType] = useState<string>(TestType.TEST_PAPER);
 
   const dispatch = useDispatch();
-
-  const joinCoursesCS = (courses: Array<any>) => {
-    const coursesIds = courses.map(course => {
-      return course.value
-    });
-    return coursesIds.join(',');
-  }
 
   const handleResetFilter = useCallback(() => {
     if (courses?.length) {
       setSelectedCourse(joinCoursesCS(courses));
-      setSelectedTestType(TestType.ALL);
+      setSelectedTestType(TestType.TEST_PAPER);
     }
   }, [courses])
 
 
   useEffect(() => {
     if (courses?.length) {
-      dispatch(updateSearchParams({ testType: TestType.ALL, courses: joinCoursesCS(courses) }));
+      dispatch(updateSearchParams({ testType: TestType.TEST_PAPER, courses: joinCoursesCS(courses) }));
       setSelectedCourse(joinCoursesCS(courses));
     }
   }, [courses, dispatch]);
 
   useEffect(() => {
     if (selectedTestType) {
-      dispatch(updateSearchParams({ ...searchParam, testType: selectedTestType }))
+      dispatch(updateSearchParams({ ...searchParams, testType: selectedTestType }))
     }
-  }, [selectedTestType, dispatch]); // Don't add searchParam to the list
+  }, [selectedTestType, dispatch]); // Don't add searchParamss to the list
 
   useEffect(() => {
     if (selectedCourse) {
-      dispatch(updateSearchParams({ ...searchParam, courses: selectedCourse }))
+      dispatch(updateSearchParams({ ...searchParams, courses: selectedCourse }))
     }
-  }, [selectedCourse, dispatch]); // Don't add searchParam to the list
+  }, [selectedCourse, dispatch]); // Don't add searchParamss to the list
   return (
     <>
       {
@@ -62,7 +56,7 @@ const TestFilter = ({ showFilter }: { showFilter: boolean }) => {
         <Box mt={2} mb={3} p={2} sx={{ background: "rgba(0,0,0,0.05)" }}>
           <Stack direction='row' gap={2} sx={{ maxWidth: "500px" }}>
             {
-              searchParam && searchParam.testType && searchParam.courses &&
+              searchParams && searchParams.testType && searchParams.courses &&
               <>
                 {/* Filter by Test Type */}
                 <FormControl fullWidth>
@@ -76,7 +70,6 @@ const TestFilter = ({ showFilter }: { showFilter: boolean }) => {
                       setSelectedTestType(e.target.value);
                     }}
                   >
-                    <MenuItem value={TestType.ALL}>All</MenuItem>
                     <MenuItem value={TestType.TEST_PAPER}>Test Paper</MenuItem>
                     <MenuItem value={TestType.SUBMITTED}>Submitted</MenuItem>
                     <MenuItem value={TestType.GRADED}>Graded</MenuItem>

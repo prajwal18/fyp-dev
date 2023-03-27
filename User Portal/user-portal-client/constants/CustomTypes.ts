@@ -50,24 +50,11 @@ export type SidebarDataType = {
 
 // ADD question prop type for modals
 export type AddQuestionPropType = {
-    open: boolean, 
-    testQuestions: Array<QuestionType>, 
-    setOpen: (value: any) => void, 
-    setTestQuestions: (value: any) => void,
-    setAddNewQuestion: (value: any) => void
+    open: boolean,
+    formik: any,
+    handleClose: () => void
 }
 // ADD question prop type for modals
-
-
-// Test Question
-export type QuestionType = {
-    id: number,
-    question: string,
-    questionType: TypesOfQuestions,
-    choices?: Array<string>,
-    correctAnswer?: Array<string>
-}
-// Test Question
 
 
 

@@ -13,6 +13,12 @@ const options = {
         updateSelectedTest: (state: TestIST, action: ActionT) => {
             return { ...state, selectedTest: action.payload }
         },
+        updateAllTests: (state: TestIST, action: ActionT) => {
+            return { ...state, allTests: action.payload }
+        },
+        updateSelectedAnswerPaper: (state: TestIST, action: ActionT) => {
+            return { ...state, selectedAnswerPaper: action.payload }
+        },
         updateSearchTerm: (state: TestIST, action: ActionT) => {
             return { ...state, searchTerm: action.payload }
         },
@@ -35,6 +41,12 @@ export const testSlice = createSlice(options);
 export const selectSelectedTest = (state: any) => {
     return state.test.selectedTest;
 }
+export const selectAllTests = (state: any) => {
+    return state.test.allTests;
+}
+export const selectSelectedAnswerPaper = (state: any) => {
+    return state.test.selectedAnswerPaper;
+}
 export const selectSearchTerm = (state: any) => {
     return state.test.searchTerm;
 }
@@ -51,7 +63,8 @@ export const selectSearchParams = (state: any) => {
 export const {
     updateSelectedTest, updateSearchTerm,
     updatePagination, updateSearchParams,
-    resetState
+    resetState, updateSelectedAnswerPaper,
+    updateAllTests
 } = testSlice.actions;
 // Exporting the action creator functions
 

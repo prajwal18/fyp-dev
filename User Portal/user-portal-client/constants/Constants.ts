@@ -3,8 +3,12 @@ export enum UserTypes {
     TEACHER = "Teacher"
 }
 export enum TestType {
-    ALL = 'ALL',
     TEST_PAPER = 'TEST_PAPER',
+    SUBMITTED = 'SUBMITTED',
+    GRADED = 'GRADED'
+}
+export enum AssignmentType {
+    ASSIGNMENT = 'ASSIGNMENT',
     SUBMITTED = 'SUBMITTED',
     GRADED = 'GRADED'
 }

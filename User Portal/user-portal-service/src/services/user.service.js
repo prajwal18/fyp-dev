@@ -13,7 +13,7 @@ const loginUser = async (userData) => {
     if (user) {
         const match = await checkPassword(userData.password, user.password);
         if (match) {
-            const token = jwt.sign({ email: user.email, role: user.role }, process.env.JWT_SECRET);  // JWT Contains user's email and role
+            const token = jwt.sign({ email: user.email, role: user.role, id: user._id }, process.env.JWT_SECRET);  // JWT Contains user's email and role
             return {
                 success: true, data: {
                     token,
@@ -75,6 +75,7 @@ const updateUser = async (id, data) => {
     const userData = JSON.parse(JSON.stringify(data));  // Making a deep copy of an object
     delete userData.password;                           // Cannot update password here
 
+    console.log("\n\n\n", userData, "\n\n\n");
     if (userData.profilePicture) {
         const imageData = userData.profilePicture;
         delete userData.profilePicture;
@@ -86,7 +87,7 @@ const updateUser = async (id, data) => {
     const user = await User.findByIdAndUpdate(id, userData);
     if (user) {
         const updatedUser = await User.findById(id, '-password');
-        const token = jwt.sign({ email: updatedUser.email, role: updatedUser.role }, process.env.JWT_SECRET);
+        const token = jwt.sign({ email: updatedUser.email, role: updatedUser.role, id: user._id }, process.env.JWT_SECRET);
         return {
             success: true,
             data: {

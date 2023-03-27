@@ -28,7 +28,7 @@ const ContentBox = styled(Box)`
  * @returns JSX.Element the Layout structure of the App ( UI after the user Logs in )
  */
 const Layout = ({ children }: { children: JSX.Element }) => {
-    const [minimize, setMinimize] = useState(false);
+    const [minimize, setMinimize] = useState<boolean>(false);
     const { asPath } = useRouter();
     const dispatch = useDispatch();
     useEffect(() => {

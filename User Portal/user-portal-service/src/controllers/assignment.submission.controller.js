@@ -1,6 +1,16 @@
 const asyncWrapper = require("../error/wrapper");
 const assignmentSubmissionService = require("../services/assignment.submission.service");
 
+const submissionExists = asyncWrapper(async (req, res, next) => {
+    const { assignmentId, studentId } = req.query;
+    if (assignmentId && studentId) {
+        const { submissionExists, data, message } = await assignmentSubmissionService.checkSubmissionExist(assignmentId, studentId);
+        res.json({ success: submissionExists, data: data, message: message });
+    } else {
+        throw new Error("Provide assignmentId and studentId. Cannot find the assignment submission.");
+    }
+});
+
 const create = asyncWrapper(async (req, res, next) => {
     const { isVerified, isVerifiedMessage } = assignmentSubmissionService.verifyCreateRequest(req.body); // Will verify the request and returns data(request body) if the request is valid to create a new assignment.
     if (isVerified) {
@@ -17,7 +27,7 @@ const create = asyncWrapper(async (req, res, next) => {
 
 const update = asyncWrapper(async (req, res, next) => {
     const { id } = req.query;
-    const { isVerified, isVerifiedMessage } = assignmentSubmissionService.verifyUpdateRequest(id); // Will verify the request and return data if the request is valid to upadate a assignment.
+    const { isVerified, isVerifiedMessage } = await assignmentSubmissionService.verifyUpdateRequest(id); // Will verify the request and return data if the request is valid to upadate a assignment.
     if (isVerified) {
         const { success, data, message } = await assignmentSubmissionService.update(req.body, id);
         if (success) {
@@ -32,7 +42,7 @@ const update = asyncWrapper(async (req, res, next) => {
 
 const grade = asyncWrapper(async (req, res, next) => {
     const { id } = req.query;
-    const { isVerified, isVerifiedMessage } = assignmentSubmissionService.verifyGradeRequest(id); // Will verify the request and return data if the request is valid to upadate a assignment.
+    const { isVerified, isVerifiedMessage } = assignmentSubmissionService.verifyGradeRequest(req.body, id); // Will verify the request and return data if the request is valid to upadate a assignment.
     if (isVerified) {
         const { success, data, message } = await assignmentSubmissionService.grade(req.body, id);
         if (success) {
@@ -60,12 +70,15 @@ const getSubmission = asyncWrapper(async (req, res, next) => {
     }
 });
 
-const getAllSubmissions = asyncWrapper(async (req, res, next) => {
-    const { courseIds, type } = req.query;
+
+const getAllSpecificAssignments = asyncWrapper(async (req, res, next) => {
+    const { courseIds, type, searchTerm, skip, take } = req.query;
     const courses = courseIds.split(',');
+    const userId = res.locals.id;
+    const role = res.locals;
 
     if (courses.length && type) {
-        const { success, data, message, hits } = await assignmentSubmissionService.getAllSubmissions(courses, type);
+        const { success, data, message, hits } = await assignmentSubmissionService.getAllSpecificAssignments(courses, type, searchTerm, skip, take, userId, role);
         if (success) {
             res.json({ success, data, message, hits });
         } else {
@@ -76,8 +89,7 @@ const getAllSubmissions = asyncWrapper(async (req, res, next) => {
     } else {
         throw new Error('Specify the assignment type.');
     }
-
 });
 
 
-module.exports = { create, update, grade, getSubmission, getAllSubmissions };
+module.exports = { submissionExists, create, update, grade, getSubmission, getAllSpecificAssignments };

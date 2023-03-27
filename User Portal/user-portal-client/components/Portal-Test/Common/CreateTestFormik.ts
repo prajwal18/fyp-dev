@@ -4,7 +4,7 @@ type CreateTestType = {
     title: string, subtitle: string, courseId: string,
     fullMark: number, releaseDate: string, dueDate: string
 }
-export const InitialValues: CreateTestType = {
+export const InitialValues = {
     title: '',
     subtitle: '',
     courseId: '',

@@ -23,13 +23,13 @@ const PeopleTableContainer = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (!(searchParam.courses === '' || searchParam.role === '')) {
+        if (searchParam.courses !== '' && searchParam.role !== '') {
             dispatch(fetchPaginationDataAC());
         }
     }, [searchTerm, searchParam, dispatch]);
 
     useEffect(() => {
-        if (!(searchParam.courses === '' || searchParam.role === '')) {
+        if (searchParam.courses !== '' && searchParam.role !== '') {
             dispatch(fetchAllMembersAC());
         }
     }, [searchTerm, searchParam, pagination, dispatch]);
@@ -41,17 +41,17 @@ const PeopleTableContainer = () => {
                     <Table>
                         <TableHeadSection HeadData={PeopleHeadData} />
                         <TableBodySection
-                            skip={0}
+                            skip={pagination.skip}
                             includeSN={true}
                             dataList={members}
                             keyValues={['profile', 'role', 'name', 'email']}
                             actionData={[
                                 {
                                     name: TableActionTypes.SHOW,
-                                    callback: (data) => { 
+                                    callback: (data) => {
                                         dispatch(updateSelectedMember(data));
                                         setOpenView(true);
-                                     }
+                                    }
                                 },
                                 {
                                     name: TableActionTypes.MESSAGE,
@@ -62,7 +62,7 @@ const PeopleTableContainer = () => {
                     </Table>
                     <Divider />
                     <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
+                        rowsPerPageOptions={[1, 5, 10, 25]}
                         component="div"
                         count={pagination.total}
                         rowsPerPage={pagination.take}

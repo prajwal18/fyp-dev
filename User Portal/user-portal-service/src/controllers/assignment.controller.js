@@ -20,7 +20,7 @@ const create = asyncWrapper(async (req, res, next) => {
 // Update Assignment
 const update = asyncWrapper(async (req, res, next) => {
     const { id } = req.query;
-    const { isVerified, isVerifiedMessage } = assignmentService.verifyUpdateRequest(req.body, id); // Will verify the request and return data if the request is valid to upadate a assignment
+    const { isVerified, isVerifiedMessage } = await assignmentService.verifyUpdateRequest(req.body, id); // Will verify the request and return data if the request is valid to upadate a assignment
     if (isVerified) {
         const { success, data, message } = await assignmentService.update(req.body, id);
         if (success) {
@@ -50,39 +50,5 @@ const getAssignment = asyncWrapper(async (req, res, next) => {
 });
 // Get Assignment
 
-// Get All Assignments
-const getAllAssignments = asyncWrapper(async (req, res, next) => {
-    const { courseIds } = req.query;
-    const courses = courseIds.split(',');
-    if (courses.length) {
-        const { success, data, message, hits } = await assignmentService.getAllAssignments(courses);
-        if (success) {
-            res.json({ success, data, message, hits });
-        } else {
-            throw new Error(message);
-        }
-    } else {
-        throw new Error('Sorry, cannot find any assignments.');
-    }
-});
-// Get All Assignments
 
-// Get all released assignments
-const getAllReleasedAssignments = asyncWrapper(async (req, res, next) => {
-    const { courseIds } = req.query;
-    const courses = courseIds.split(',');
-    if (courses.length) {
-        const { success, data, message, hits } = await assignmentService.getAllReleasedAssignments(courses);
-        if (success) {
-            res.json({ success, data, message, hits });
-        } else {
-            throw new Error(message);
-        }
-    } else {
-        throw new Error('Sorry, cannot find any assignments.');
-    }
-});
-// Get all released assignments
-
-
-module.exports = { create, update, getAssignment, getAllAssignments, getAllReleasedAssignments }
+module.exports = { create, update, getAssignment }

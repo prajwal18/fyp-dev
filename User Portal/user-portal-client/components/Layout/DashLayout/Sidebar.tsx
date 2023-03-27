@@ -22,8 +22,12 @@ import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew'; // Logo
 // MUI Icons
 import { SidebarDataType } from "@/constants/CustomTypes";
 import { clearSession, getUserSession } from "@/utils/sessionFuncs";
-import { useDispatch } from "react-redux";
-import { removeSessionNTokenAC } from "@/redux/general/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserAC, removeSessionNTokenAC } from "@/redux/general/actions";
+import ProfileImage from "@/components/Common/components/ProfileImage";
+import { baseURL } from "@/utils/endpoints";
+import { selectUser, updateOpenProfile } from "@/redux/general/general.slice";
+import ViewProfileModal from "@/components/ViewEditProfile/ViewProfileModal";
 
 
 
@@ -66,17 +70,20 @@ const StyledButton = styled(Button)`
     width: 100% !important;
     margin-top: 5px !important;
     color: black !important;
-    border-radius: 50px;
-    background: rgba(0 0 0 / 90%);
+    border-radius: 50px !important;
+    background: rgba(0 0 0 / 90%) !important;
     &:hover { background: rgb(0 0 0 / 70%) !important; }
 `;
 
 const UserInfo = styled(Box)`
     width: 100%;
-    padding: 10px;
+    padding: ${(props:any) => props.minimize ? '5px': '10px'};
     display: flex;
     flex-direction: column;
     gap: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border: 2px solid rgba(255 255 255 / 40%);
 `;
 
 const HamburgerBox = styled(Box)`
@@ -98,38 +105,45 @@ const HamburgerBox = styled(Box)`
 `;
 // Styled Component
 
-const getSidebarData = (role: string): Array<SidebarDataType> => [
-    {
-        link: `/${role}/Dashboard`,
-        name: "Dashboard",
-        icon: <DashboardIcon />
-    },
-    {
-        link: `/${role}/Test`,
-        name: "Test",
-        icon: <AssignmentSharpIcon />
-    },
-    {
-        link: `/${role}/Assignment`,
-        name: "Assignment",
-        icon: <DriveFolderUploadSharpIcon />
-    },
-    {
-        link: `/${role}/Message`,
-        name: "Message",
-        icon: <ForumIcon />
-    },
-    {
-        link: `/${role}/People`,
-        name: "People",
-        icon: <PeopleIcon />
-    },
-    {
-        link: '/Common/Setting',
-        name: "Setting",
-        icon: <SettingsIcon/>
+const getSidebarData = (role: string): Array<SidebarDataType> => {
+    if (role && role !== '') {
+        return ([
+            {
+                link: `/${role}/Dashboard`,
+                name: "Dashboard",
+                icon: <DashboardIcon />
+            },
+            {
+                link: `/${role}/Test`,
+                name: "Test",
+                icon: <AssignmentSharpIcon />
+            },
+            {
+                link: `/${role}/Assignment`,
+                name: "Assignment",
+                icon: <DriveFolderUploadSharpIcon />
+            },
+            {
+                link: `/${role}/Message`,
+                name: "Message",
+                icon: <ForumIcon />
+            },
+            {
+                link: `/${role}/People`,
+                name: "People",
+                icon: <PeopleIcon />
+            },
+            {
+                link: '/Common/Setting',
+                name: "Setting",
+                icon: <SettingsIcon />
+            }
+        ])
+    } else {
+        return [];
     }
-];
+}
+
 // Sidebar Data
 
 /**
@@ -160,22 +174,54 @@ const CustomListItem = ({ label, link, path, icon, minimize }: { label: string, 
  * @returns JSX.Element contains user session handeling options
  */
 const BottomSection = ({ minimize }: { minimize: boolean }) => {
+    const user = useSelector(selectUser);
     const router = useRouter();
     const dispatch = useDispatch();
     const handleOnLogout = () => {
         dispatch(removeSessionNTokenAC());
         setTimeout(() => { router.push("/Auth/Login"); }, 100);
     }
+    const handleOpenViewProfile = () => {
+        dispatch(fetchUserAC());
+        dispatch(updateOpenProfile(true));
+    }
     return (
-        <UserInfo>
-            <StyledButton onClick={handleOnLogout}>
-                <PowerSettingsNewIcon style={{ color: "white" }} />
+        <>
+            <UserInfo minimize={minimize}>
                 {
                     !minimize &&
-                    <Typography component="span" style={{ color: "white", whiteSpace: "nowrap" }}>Log out</Typography>
+                    <Stack
+                        direction="row" spacing={2} alignItems={'center'}
+                        sx={{
+                            padding: "10px",
+                            cursor: "pointer",
+                            borderRadius: "50px", background: "rgba(255 255 255 / 10%)",
+                            '&:hover': {
+                                background: "rgba(255 255 255 / 30%)"
+                            },
+                            '&:active': {
+                                background: "rgba(255 255 255 / 60%)"
+                            }
+                        }}
+                        onClick={handleOpenViewProfile}
+                    >
+                        <ProfileImage src={baseURL + (user?.profilePicture || '/abc.jpg')} />
+                        <Typography sx={{ color: "white" }}>{user.name}</Typography>
+                    </Stack>
                 }
-            </StyledButton>
-        </UserInfo>
+                <StyledButton onClick={handleOnLogout}>
+                    <PowerSettingsNewIcon style={{ color: "white" }} />
+                    {
+                        !minimize &&
+                        <Typography component="span" style={{ color: "white", whiteSpace: "nowrap" }}>Log out</Typography>
+                    }
+                </StyledButton>
+            </UserInfo>
+            {
+                !router.asPath.includes("/Setting") &&
+                <ViewProfileModal />
+            }
+        </>
     )
 }
 

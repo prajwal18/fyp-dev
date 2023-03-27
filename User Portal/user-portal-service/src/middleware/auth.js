@@ -12,6 +12,7 @@ const authenticationMiddleware = asyncWrapper(async (req, res, next) => {
   const token = authorization.split(' ')[1];
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.locals.id = decoded.id;
     res.locals.email = decoded.email;
     res.locals.role = decoded.role;
     next()

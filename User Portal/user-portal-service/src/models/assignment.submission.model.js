@@ -6,7 +6,7 @@ const submissionSchema = mongoose.Schema({
         ref: 'Assignment',
         required: true
     },
-    studentId: {
+    submittedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
@@ -15,8 +15,12 @@ const submissionSchema = mongoose.Schema({
         type: String,
         required: [true, 'Provide your assignment file. Format: .pdf']
     },
+    submissionDate: {
+        type: Date,
+        required: [true, "Provide the date of submission."]
+    },
     remark: {
-        type: String, 
+        type: String,
         minLength: [10, 'Remark has to be longer than 10 characters.']
     },
     gradedBy: {

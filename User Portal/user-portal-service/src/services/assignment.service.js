@@ -1,12 +1,14 @@
 //Importing Assignment model
 const Assignment = require("../models/assignment.model");
+const User = require("../models/user.model");
+const Course = require("../models/course.model");
 //Importing string to image function (Will replace it with another string to file function)
-const { base64toImg } = require("../utils/read.write.image"); // base64toImg will be replaced by another function
+const { base64ToPdf, removePdf } = require("../utils/read.write.pdf"); // base64ToPdf will be replaced by another function
 
 // Validate Request
 const verifyCreateRequest = (data) => {
     if (
-        data.title && data.weightage && data.assignedDate && data.dueDate
+        data.title && data.releaseDate && data.dueDate && data.fullMark
         && data.description && data.createdBy && data.courseId
     ) {
         return { isVerified: true, isVerifiedMessage: null };
@@ -21,7 +23,7 @@ const verifyUpdateRequest = async (id) => {
     const assignment = await Assignment.findById(id);
     if (assignment) {
         const today = new Date(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()); // Getting the date without time component
-        const dueDate = new Date(assignment.dueDate + ' 00:00: 00');
+        const dueDate = new Date(assignment.dueDate);
         if (today.getTime() <= dueDate.getTime()) {
             return {
                 isVerified: true,
@@ -43,9 +45,9 @@ const verifyUpdateRequest = async (id) => {
 // Validate Update request
 
 // Create Assignment
-const createAssignment = async (data) => {
+const create = async (data) => {
     if (data.manual) {
-        const manualDataPath = await base64toImg(data.manual, "assignments"); // base64toIm will be replaced here
+        const manualDataPath = await base64ToPdf(data.manual, "assignments"); // base64toIm will be replaced here
         data.manual = manualDataPath;
     }
     const assignment = await Assignment.create(data);
@@ -58,38 +60,29 @@ const createAssignment = async (data) => {
 // Create Assignment
 
 // Update Assignment
-const updateAssignment = async (data, id) => {
+const update = async (data, id) => {
     const assignment = await Assignment.findById(id);
-    if (assignment) {
-
-        const today = new Date(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()); // Getting the date without time component
-        const dueDate = new Date(assignment.dueDate + ' 00:00: 00');
-
-        if (today.getTime() <= dueDate.getTime()) {
-            if (data.manual) {
-                assignment.manual // remove assignment.manual first
-                const manualDataPath = await base64toImg(data.manual, "assignments"); // base64toIm will be replaced here
-                data.manual = manualDataPath;
-            }
-            const updatedAssignemnt = await Assignment.findByIdAndUpdate(id, data);
-            if (updatedAssignemnt) {
-                return { success: true, data: updatedAssignemnt, message: "Assignment updated successfully." }
-            } else {
-                return { success: false, data: null, message: "Sorry assignment cannot be updated." }
-            }
-
-        } else {
-            return { success: false, data: null, message: "You cannot update the assignment after the due date." }
+    if (data.manual) {
+        const manualDataPath = await base64ToPdf(data.manual, "assignments"); // base64toIm will be replaced here
+        data.manual = manualDataPath;
+        if(assignment.manual){
+            removePdf(assignment.manual);
         }
+    }
+    const updatedAssignment = await Assignment.findByIdAndUpdate(id, data);
+    if (updatedAssignment) {
+        return { success: true, data: updatedAssignment, message: "Assignment updated successfully." }
     } else {
-        return { success: false, data: null, message: "Sorry cannot find the assignment." }
+        return { success: false, data: null, message: "Problem updating Assignment." }
     }
 }
 // Update Assignment
 
 // Get Assignment
 const getAssignment = async (id) => {
-    const assignment = await Assignment.findById(id);
+    const assignment = await Assignment.findById(id)
+    .populate('createdBy', 'name', User)
+    .populate('courseId', 'name', Course);
     if (assignment) {
         return { success: true, data: assignment, message: "Assignment fetched successfully." }
     } else {
@@ -97,38 +90,5 @@ const getAssignment = async (id) => {
     }
 }
 // Get Assignment
-
-// Get all assignments
-const getAllAssignments = async (courses) => {
-    const assignments = await Assignment.find({
-        courseId: { '$in': courses }
-    });
-    if (assignments) {
-        return { success: true, data: assignments, message: "Assignments fetched successfully.", hits: assignments.length }
-    } else {
-        return { success: false, data: null, message: "Sorry cannot fetch assignments.", hits: 0 }
-    }
-}
-// Get all assignments
-
-
-// Get all assignments
-const getAllReleasedAssignments = async (courses) => {
-    const assignments = await Assignment.find({
-        courseId: { '$in': courses }
-    });
-    if (assignments) {
-        const today = new Date(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()); // Getting the date without time component
-        const releasedAssignments = assignments.filter(assignment => {
-            const releaseDate = new Date(assignment.releaseDate + ' 00:00:00');
-            return today >= releaseDate;
-        });
-        return { success: true, data: releasedAssignments, message: "Assignments fetched successfully.", hits: releasedAssignments.length }
-    } else {
-        return { success: false, data: null, message: "Sorry cannot fetch assignments.", hits: 0 }
-    }
-}
-// Get all assignments
-
-module.exports = { verifyCreateRequest, verifyUpdateRequest, createAssignment, updateAssignment, getAssignment, getAllAssignments, getAllReleasedAssignments };
+module.exports = { verifyCreateRequest, verifyUpdateRequest, create, update, getAssignment};
 

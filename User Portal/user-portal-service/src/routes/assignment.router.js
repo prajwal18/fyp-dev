@@ -20,18 +20,6 @@ router.post('/update', authenticationMiddleware, authorizeTeacher, assignmentCon
 router.get('/get-assignment', authenticationMiddleware, assignmentController.getAssignment );
 // Get assignment Details
 
-// Get all assignments for a user/course
-// Must provide course Id
-// .../all-assignments?courseIds=<---Course's Id--->
-router.get('/all-assignment', authenticationMiddleware, assignmentController.getAllAssignments );
-// Get all assignments for a user/course
-
-// Get all released assignments for a user/course
-// Must provide course Id
-// .../all-assignments?courseIds=<---Course's Id--->
-router.get('/all-released-assignment', authenticationMiddleware, assignmentController.getAllReleasedAssignments );
-// Get all assignments for a user/course
-
 
 
 module.exports = router;

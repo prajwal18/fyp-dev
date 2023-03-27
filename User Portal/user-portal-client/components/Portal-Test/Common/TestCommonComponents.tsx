@@ -14,24 +14,38 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
+import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
 import EditIcon from '@mui/icons-material/Edit';
 // MUI Icons
 import { TypesOfQuestions, TestQuestionListType } from '@/constants/Constants';
 import { BoldTableCell, BorderedBox, BWTableRow, DarkBtn } from "@/components/Common/styled/StyledComponents";
 import { UpdateTestModal } from "./CreateTestModal";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchSelectedTestPaperAC } from "@/redux/test/actions";
+import { useRouter } from "next/router";
+import { GenerateCustTextArea, GenerateCustTextField } from "@/components/Common/form/CustTextFieldNErrorMsg";
 
 export const TestTitleViewEdit = ({ formik, testData }: { formik: any, testData: any }) => {
+    const [proceed, setProceed] = useState(false);
+    const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
-    const handleOpen = () => { setOpen(true) };
+    const { query } = useRouter();
+    const handleOpen = () => {
+        if (typeof query.id === 'string' && query.id !== '') {
+            dispatch(fetchSelectedTestPaperAC({ id: query.id }));
+            setProceed(true);
+        }
+        setOpen(true);
+    };
 
     return (
         <>
             <Box sx={{ padding: "10px", borderBottom: "2px solid #1976D2", mb: 3 }}>
                 <Stack direction='row' spacing={3} justifyContent='space-between' alignItems='center'>
                     <Box>
-                        <Typography variant="h5" component="h3" sx={{ fontSize: "24px", fontWeight: "700", color: "#1976D2" }}>Test 2: Psychology</Typography>
-                        <Typography sx={{ fontSize: "0.9rem", my: 1 }}>Mero Raja Pradhan &middot; 8<sup>th</sup> January</Typography>
+                        <Typography variant="h5" component="h3" sx={{ fontSize: "24px", fontWeight: "700", color: "#1976D2" }}>{testData.title}</Typography>
+                        <Typography sx={{ fontSize: "0.9rem", my: 1 }}>{testData.createdBy.name} &middot; {testData.releaseDate.split("T")[0]}</Typography>
                     </Box>
 
                     <Stack sx={{
@@ -45,21 +59,24 @@ export const TestTitleViewEdit = ({ formik, testData }: { formik: any, testData:
 
                 </Stack>
             </Box>
-            <UpdateTestModal
-                open={open}
-                setOpen={setOpen}
-                formik={formik}
-                testData={testData}
-            />
+            {
+                proceed && testData?._id &&
+                <UpdateTestModal
+                    open={open}
+                    setOpen={setOpen}
+                    formik={formik}
+                    testData={testData}
+                />
+            }
         </>
     );
 }
 
-export const TestTitle = () => {
+export const TestTitle = ({ title, teacher, date }: { title: string, teacher: string, date: string }) => {
     return (
         <Box sx={{ padding: "10px", borderBottom: "2px solid #1976D2", mb: 3 }}>
-            <Typography variant="h5" component="h3" sx={{ fontSize: "24px", fontWeight: "700", color: "#1976D2" }}>Test 2: Psychology</Typography>
-            <Typography sx={{ fontSize: "0.9rem", my: 1 }}>Mero Raja Pradhan &middot; 8<sup>th</sup> January</Typography>
+            <Typography variant="h5" component="h3" sx={{ fontSize: "24px", fontWeight: "700", color: "#1976D2" }}>{title}</Typography>
+            <Typography sx={{ fontSize: "0.9rem", my: 1 }}>{teacher} &middot; {date?.split("T")[0]}</Typography>
         </Box>
     );
 }
@@ -73,7 +90,7 @@ const RenderGradedRadio = ({ choice, correctChoice, userAnswer }: { choice: stri
                     alignItems='center'
                     sx={{ padding: "10px" }}
                 >
-                    <FormControlLabel value="choice" control={<Radio />} label={choice} disabled />
+                    <FormControlLabel value="choice" control={<Radio />} label={choice} disabled checked={true} />
                     <CheckCircleIcon sx={{ color: "#81b21b" }} />
                 </Stack>
             )
@@ -96,7 +113,7 @@ const RenderGradedRadio = ({ choice, correctChoice, userAnswer }: { choice: stri
                 alignItems='center'
                 sx={{ padding: "10px" }}
             >
-                <FormControlLabel value="choice" control={<Radio />} label={choice} disabled />
+                <FormControlLabel value="choice" control={<Radio />} label={choice} disabled checked={true} />
                 <CancelIcon sx={{ color: "#AC0D0F" }} />
             </Stack>
         )
@@ -119,7 +136,7 @@ const RenderGradedCheckbox = ({ choice, correctChoice, userAnswer }: { choice: s
                     alignItems='center'
                     sx={{ padding: "10px" }}
                 >
-                    <FormControlLabel control={<Checkbox />} label={choice} disabled />
+                    <FormControlLabel control={<Checkbox />} label={choice} disabled checked={true}/>
                     <CheckCircleIcon sx={{ color: "#81b21b" }} />
                 </Stack>
             )
@@ -142,7 +159,7 @@ const RenderGradedCheckbox = ({ choice, correctChoice, userAnswer }: { choice: s
                 alignItems='center'
                 sx={{ padding: "10px" }}
             >
-                <FormControlLabel control={<Checkbox />} label={choice} disabled />
+                <FormControlLabel control={<Checkbox />} label={choice} disabled checked={true}/>
                 <CancelIcon sx={{ color: "#AC0D0F" }} />
             </Stack>
         )
@@ -164,7 +181,7 @@ const GradeNGradedAnswerSection = ({ question }: { question: any }) => {
         return (
             <Box sx={{ padding: "10px" }}>
                 <TextField
-                    placeholder="Your answer..."
+                    value={question?.answer?.[0]}
                     multiline fullWidth rows={3}
                     sx={{ background: "white", overflow: "hidden", borderRadius: "5px" }}
                     disabled
@@ -178,12 +195,12 @@ const GradeNGradedAnswerSection = ({ question }: { question: any }) => {
             <Box sx={{ padding: "10px", mt: 1 }}>
                 <FormControl sx={{ width: "100%" }}>
                     <RadioGroup
-                        defaultValue={question.choices?.[0]}
+                        value={question.choices?.[0]}
                     >
                         {
                             question.choices && question.choices.map((choice: string, index: number) => (
                                 <React.Fragment key={index}>
-                                    <RenderGradedRadio choice={choice} correctChoice={question.correctChoice} userAnswer={question.yourAnswer} />
+                                    <RenderGradedRadio choice={choice} correctChoice={question.correctAnswer} userAnswer={question.answer} />
                                 </React.Fragment>
                             ))
                         }
@@ -200,7 +217,7 @@ const GradeNGradedAnswerSection = ({ question }: { question: any }) => {
                     {
                         question.choices && question.choices.map((choice: string, index: number) => (
                             <React.Fragment key={index}>
-                                <RenderGradedCheckbox choice={choice} correctChoice={question.correctChoice} userAnswer={question.yourAnswer} />
+                                <RenderGradedCheckbox choice={choice} correctChoice={question.correctAnswer} userAnswer={question.answer} />
                             </React.Fragment>
                         ))
                     }
@@ -212,12 +229,17 @@ const GradeNGradedAnswerSection = ({ question }: { question: any }) => {
     return <></>
 
 }
-const AnswerSection = ({ question }: { question: any }) => {
+const AnswerSection = ({ question, handleOnAnswer }: { question: any, handleOnAnswer: any }) => {
     if (question.questionType === TypesOfQuestions.QNA) {
         return (
             <Box sx={{ padding: "10px" }}>
                 <TextField placeholder="Your answer..."
-                    multiline fullWidth rows={3} sx={{ background: "white", overflow: "hidden", borderRadius: "5px" }} />
+                    multiline
+                    fullWidth
+                    value={question?.answer?.[0] || ''}
+                    rows={3} sx={{ background: "white", overflow: "hidden", borderRadius: "5px" }}
+                    onChange={handleOnAnswer(TypesOfQuestions.QNA)}
+                />
 
             </Box>
         )
@@ -227,11 +249,12 @@ const AnswerSection = ({ question }: { question: any }) => {
             <Box sx={{ padding: "10px", mt: 1 }}>
                 <FormControl>
                     <RadioGroup
-                        defaultValue={question.choices?.[0]}
+                        value={question?.answer?.[0] || ''}
+                        onChange={handleOnAnswer(TypesOfQuestions.MCQ)}
                     >
                         {
                             question.choices && question.choices.map((choice: string, index: number) => (
-                                <FormControlLabel key={index} value="choice" control={<Radio />} label={choice} />
+                                <FormControlLabel key={index} value={choice} control={<Radio />} label={choice} />
                             ))
                         }
                     </RadioGroup>
@@ -244,7 +267,12 @@ const AnswerSection = ({ question }: { question: any }) => {
             <FormGroup>
                 {
                     question.choices && question.choices.map((choice: string, index: number) => (
-                        <FormControlLabel control={<Checkbox />} label={choice} key={index} />
+                        <FormControlLabel
+                            control={<Checkbox />} label={choice} key={index}
+                            value={choice}
+                            onChange={handleOnAnswer(TypesOfQuestions.MCQ_CHOOSE_ALL)}
+                            checked={question?.answer && question.answer.includes(choice)}
+                        />
                     ))
                 }
             </FormGroup>
@@ -252,21 +280,56 @@ const AnswerSection = ({ question }: { question: any }) => {
     )
 }
 
-export const TestQuestionContainer = ({ question }: { question: any }) => {
+export const TestQuestionContainer = ({ question, index, handleOnAnswer }: { question: any, index: number, handleOnAnswer: any }) => {
     return (
         <BorderedBox sx={{ background: "rgb(0 0 0 / 5%)", borderRadius: "5px" }}>
-
             <Box sx={{ padding: "20px 0px 5px 0px", borderBottom: "1px solid #CCCCCC" }}>
                 <Typography sx={{ fontWeight: "700", fontSize: "1.1rem" }}>
-                    {question.id}. {" "} {question.question}
+                    {index}. {" "} {question.title}
                 </Typography>
             </Box>
-            <AnswerSection question={question} />
+            <AnswerSection question={question} handleOnAnswer={handleOnAnswer} />
         </BorderedBox>
     )
 }
 
-export const TestQuestionContainerGrade = ({ question, type }: { question: any, type: TestQuestionListType }) => {
+export const TestQuestionContainerUpdatable = ({ question, index, handleEdit, handleRemove }: { question: any, index: number, handleEdit: () => void, handleRemove: () => void }) => {
+    return (
+        <BorderedBox sx={{ background: "rgb(0 0 0 / 5%)", borderRadius: "5px" }}>
+            <Stack direction={'row'} alignItems='center' justifyContent={'space-between'}
+                sx={{ padding: "20px 0px 5px 0px", borderBottom: "1px solid #CCCCCC" }}
+            >
+                <Typography sx={{ fontWeight: "700", fontSize: "1.1rem" }}>
+                    {index}. {" "} {question.title}
+                </Typography>
+
+                <Stack direction='row' spacing={1}>
+                    <Stack sx={{
+                        justifyContent: 'center', alignItems: 'center', padding: '10px', background: 'rgba(28, 175, 229, 0.1)', borderRadius: "50%",
+                        cursor: 'pointer', '&:hover': { background: 'rgba(28, 175, 229, 0.5)' }, '&:active': { background: 'rgba(28, 175, 229, 0.7)' }
+                    }}
+                        onClick={handleEdit}
+                    >
+                        <EditIcon />
+                    </Stack>
+                    <Stack sx={{
+                        justifyContent: 'center', alignItems: 'center', padding: '10px', background: 'rgba(191, 16, 51, 0.1)', borderRadius: "50%",
+                        cursor: 'pointer', '&:hover': { background: 'rgba(191, 16, 51, 0.5)' }, '&:active': { background: 'rgba(191, 16, 51, 0.7)' }
+                    }}
+                        onClick={handleRemove}
+                    >
+                        <CloseIcon />
+                    </Stack>
+
+                </Stack>
+
+            </Stack>
+            <AnswerSection question={question} handleOnAnswer={(value: any) => () => { }} />
+        </BorderedBox>
+    )
+}
+
+export const TestQuestionContainerGrade = ({ question, type, index, handleAssignMarks }: { question: any, type: TestQuestionListType, index: number, handleAssignMarks?: any }) => {
     return (
         <Box>
             <Stack direction='row' justifyContent='flex-end'>
@@ -279,14 +342,15 @@ export const TestQuestionContainerGrade = ({ question, type }: { question: any, 
                     alignItems: "center"
                 }}>
                     <Typography sx={{ fontWeight: "700", fontSize: "1.1rem" }}>
-                        {question.id}. {" "} {question.question}
+                        {index}. {" "} {question.title}
                     </Typography>
                     <TextField
                         type="number"
                         label="Marks"
                         sx={{ width: "100px" }}
                         variant="standard"
-                        value={TestQuestionListType.GRADED_TEST === type ? question.marksObtained : 0}
+                        value={question?.marksObtained || 0}
+                        onChange={TestQuestionListType.GRADE_TEST ? (e:any) => handleAssignMarks(e.target.value) : () => { }}
                         disabled={TestQuestionListType.GRADED_TEST === type}
                     />
                 </Stack>
@@ -296,15 +360,24 @@ export const TestQuestionContainerGrade = ({ question, type }: { question: any, 
     );
 }
 
-export const TestQuestions = ({ testQuestions, type }: { testQuestions: Array<any>, type: TestQuestionListType }) => {
-    const renderTestQuestions = (question: any) => {
+export const TestQuestions = ({ testQuestions, type, handleOnAnswer, handleAssignMarks }: { testQuestions: Array<any>, type: TestQuestionListType, handleOnAnswer?: any, handleAssignMarks?: any }) => {
+    const renderTestQuestions = (question: any, index: number) => {
         switch (type) {
             case TestQuestionListType.TAKE_TEST:
-                return <TestQuestionContainer question={question} />;
+                return <TestQuestionContainer question={question} index={index + 1} handleOnAnswer={handleOnAnswer(index)} />;
             case TestQuestionListType.GRADE_TEST:
-                return <TestQuestionContainerGrade question={question} type={TestQuestionListType.GRADE_TEST} />;
+                return <TestQuestionContainerGrade
+                    question={question}
+                    index={index + 1}
+                    type={TestQuestionListType.GRADE_TEST}
+                    handleAssignMarks={handleAssignMarks(index)}
+                />;
             case TestQuestionListType.GRADED_TEST:
-                return <TestQuestionContainerGrade question={question} type={TestQuestionListType.GRADED_TEST} />;
+                return <TestQuestionContainerGrade
+                    question={question}
+                    type={TestQuestionListType.GRADED_TEST}
+                    index={index + 1}
+                />;
             default:
                 return <></>;
         }
@@ -312,11 +385,11 @@ export const TestQuestions = ({ testQuestions, type }: { testQuestions: Array<an
     return (
         <>
             {
-                testQuestions.map((question: any) => {
+                testQuestions.map((question: any, index: number) => {
                     return (
                         <React.Fragment key={question.id}>
                             {
-                                renderTestQuestions(question)
+                                renderTestQuestions(question, index)
                             }
                         </React.Fragment>
                     )
@@ -377,19 +450,39 @@ export const HideInstructionsBtn = ({ show, setShow }: { show: boolean, setShow:
 }
 
 
-export const GradeTestForm = () => {
+export const GradeTestForm = ({ formik }: { formik: any }) => {
+    const handleCalculateTotal = () => {
+        const questions = formik.values.questions;
+        const marks = questions.map((question: any) => question.marksObtained);
+        const totalMarks = marks.reduce((sum: number, current: number) => Number(sum) + Number(current), 0);
+        formik.setFieldValue('marksObtained', totalMarks)
+    }
     return (
         <BorderedBox sx={{ minWidth: "400px", alignSelf: "flex-start" }}>
             <Stack spacing={2}>
                 <Typography sx={{ fontSize: "22px" }}>Grade Test</Typography>
                 <Stack direction='row' spacing={2}>
-                    <Button color="primary" variant="outlined" sx={{ fontSize: "0.9rem", whiteSpace: "nowrap", width: "200px" }}>
+                    <Button
+                        color="primary" variant="outlined"
+                        sx={{ fontSize: "0.7rem", whiteSpace: "nowrap", width: "200px" }}
+                        onClick={handleCalculateTotal}
+                    >
                         Calculate Total
                     </Button>
-                    <TextField label="Marks Obtained" type="number" />
+                    <GenerateCustTextField
+                        formik={formik}
+                        name='marksObtained'
+                        label='Marks Obtained'
+                        type='number'
+                    />
                 </Stack>
-                <TextField multiline rows={3} label="Leave a reamrk" />
-                <Button color="primary" variant="contained">
+                <GenerateCustTextArea
+                    formik={formik}
+                    name='remark'
+                    label='Leave a remark'
+                    rows={3}
+                />
+                <Button color="primary" variant="contained" onClick={formik.handleSubmit}>
                     Submit
                 </Button>
             </Stack>
@@ -397,19 +490,19 @@ export const GradeTestForm = () => {
     );
 }
 
-export const GradeTestTable = ({ isGraded }: { isGraded: boolean }) => {
+export const GradeTestTable = ({ answerPaper }: { answerPaper: any }) => {
     return (
         <TableContainer>
             <Table>
                 <TableBody>
                     <BWTableRow>
                         <BoldTableCell>Course</BoldTableCell>
-                        <TableCell>Computer Science</TableCell>
+                        <TableCell>{answerPaper?.testPaperId?.courseId?.name}</TableCell>
                     </BWTableRow>
                     <BWTableRow>
                         <BoldTableCell>Status</BoldTableCell>
                         {
-                            isGraded ?
+                            answerPaper?.isGraded ?
                                 <TableCell sx={{ color: "#2e7d32", fontWeight: "700" }}>Graded</TableCell>
                                 :
                                 <TableCell sx={{ color: "#1976D2", fontWeight: "700" }}>Pending</TableCell>
@@ -417,37 +510,37 @@ export const GradeTestTable = ({ isGraded }: { isGraded: boolean }) => {
                     </BWTableRow>
                     <BWTableRow>
                         <BoldTableCell>Submission Date</BoldTableCell>
-                        <TableCell>11<sup>th</sup> November 2022</TableCell>
+                        <TableCell>{answerPaper.submissionDate.split("T")[0]}</TableCell>
                     </BWTableRow>
                     <BWTableRow>
                         <BoldTableCell>Submitted By</BoldTableCell>
-                        <TableCell>Prajwal Gautam</TableCell>
+                        <TableCell>{answerPaper?.submittedBy?.name}</TableCell>
                     </BWTableRow>
                     <BWTableRow>
                         <BoldTableCell>Full Marks</BoldTableCell>
-                        <TableCell>100</TableCell>
+                        <TableCell>{answerPaper?.testPaperId?.fullMark}</TableCell>
                     </BWTableRow>
 
                     {
-                        isGraded &&
+                        answerPaper?.isGraded &&
                         <>
                             <BWTableRow>
                                 <BoldTableCell>Obtained Marks</BoldTableCell>
-                                <TableCell>88</TableCell>
+                                <TableCell>{answerPaper?.marksObtained}</TableCell>
                             </BWTableRow>
                             <BWTableRow>
                                 <BoldTableCell>Graded By</BoldTableCell>
-                                <TableCell>Mero Raja Pradhan</TableCell>
+                                <TableCell>{answerPaper?.gradedBy?.name}</TableCell>
                             </BWTableRow>
                             <BWTableRow>
                                 <BoldTableCell>{'Teacher\'s  Remark'}</BoldTableCell>
-                                <TableCell>You have been making great progress. Keep it up.</TableCell>
+                                <TableCell>{answerPaper?.remark}</TableCell>
                             </BWTableRow>
                             <BWTableRow>
                                 <BoldTableCell>{'Message your Teacher'}</BoldTableCell>
                                 <TableCell>
                                     <Stack direction='row' alignItems='center' gap={1}>
-                                        <Typography>Mero Raja Pradhan</Typography>
+                                        <Typography>{answerPaper?.gradedBy?.name}</Typography>
                                         <Button variant="text">
                                             <SendIcon color="info" />
                                         </Button>

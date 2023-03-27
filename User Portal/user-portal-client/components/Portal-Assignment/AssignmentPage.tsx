@@ -11,10 +11,21 @@ import { AddBtn, BoxStyle } from '../Common/styled/StyledComponents';
 import AssignmenTableContainer from './AssignmentTable';
 import AssignmentFilter from './AssignmentFilter';
 import CreateAssignment from './Sections/CreateAssignment';
+import { UserTypes } from '@/constants/Constants';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectSearchTerm, updateSearchTerm } from '@/redux/assignment/assignment.slice';
 
-const AssignmentPage = () => {
-	const [showFilter, setShowFilter] = useState(false);
-	const [show, setShow] = useState(false); // To show and hide add/edit assignment modal
+const AssignmentPage = ({ role }: { role: UserTypes }) => {
+	const searchTerm = useSelector(selectSearchTerm);
+	const [showFilter, setShowFilter] = useState(true);
+	const [openCA, setOpenCA] = useState(false); // To show and hide add/edit assignment modal
+	const dispatch = useDispatch();
+	const handleOpenCA = () => {
+		setOpenCA(true);
+	}
+	const handleSearchTermChange = (e: any) => {
+		dispatch(updateSearchTerm(e.target.value));
+	}
 	return (
 		<>
 			<Box sx={{ padding: "20px 30px", backgroundColor: "white" }}>
@@ -27,26 +38,34 @@ const AssignmentPage = () => {
 								label="Search Assignments"
 								variant="outlined"
 								sx={{ minWidth: '200px' }}
+								value={searchTerm}
+								onChange={handleSearchTermChange}
 							/>
 							<Button color='primary' variant='outlined' onClick={() => setShowFilter(!showFilter)}>
 								<TuneIcon fontSize='large' />
 							</Button>
 						</Stack>
-						<AddBtn onClick={() => setShow(true)}>
-							<AddIcon />
-							<Typography>Create Assignment</Typography>
-						</AddBtn>
+						{
+							role === UserTypes.TEACHER &&
+							<AddBtn onClick={handleOpenCA}>
+								<AddIcon />
+								<Typography>Create Assignment</Typography>
+							</AddBtn>
+						}
 					</Stack>
 					{
-						showFilter && <AssignmentFilter />
+						<AssignmentFilter showFilter={showFilter} />
 					}
 					<AssignmenTableContainer />
 				</BoxStyle>
 			</Box>
-			<CreateAssignment
-				open={show}
-				handleClose={() => setShow(false)}
-			/>
+			{
+				role === UserTypes.TEACHER &&
+				<CreateAssignment
+					open={openCA}
+					setOpen={setOpenCA}
+				/>
+			}
 		</>
 	)
 }

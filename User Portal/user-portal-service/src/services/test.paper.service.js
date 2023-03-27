@@ -1,4 +1,5 @@
 const TestPaper = require("../models/test.question.model");
+const User = require("../models/user.model");
 
 /**
  * The function checks to see if the request has all the parameters needed to 
@@ -49,7 +50,7 @@ const verifyUpdateRequest = async (data, id) => {
     const test = await TestPaper.findById(id);
     if (test) {
         const today = new Date(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()); // Getting the date without time component
-        const dueDate = new Date(test.dueDate + ' 00:00: 00');
+        const dueDate = new Date(test.dueDate);
         if (today.getTime() <= dueDate.getTime()) {
             return {
                 isVerified: true,
@@ -99,7 +100,7 @@ const update = async (data, id) => {
 }
 
 const getTest = async (id) => {
-    const test = await TestPaper.findById(id);
+    const test = await TestPaper.findById(id).populate('createdBy', 'name', User);
     if (test) {
         return {
             success: true, data: test, message: "Fetched test successfully."
@@ -111,41 +112,4 @@ const getTest = async (id) => {
     }
 }
 
-const getAllTests = async (courses) => {
-    const tests = await TestPaper.find({
-        courseId: { '$in': courses }
-    });
-
-    if (tests) {
-        return {
-            success: true, data: tests, message: "Fetched all tests successfully.", hits: tests.length
-        }
-    } else {
-        return {
-            success: false, data: null, message: "Sorry, cannot fetch tests.", hits: 0
-        }
-    }
-}
-
-const getAllReleasedTests = async (courses) => {
-    const tests = await TestPaper.find({
-        courseId: { '$in': courses }
-    });
-
-    if (tests) {
-        const today = new Date(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()); // Getting the date without time component
-        const releasedTests = tests.filter(test => {
-            const releaseDate = new Date(test.releaseDate + ' 00:00:00');
-            return today >= releaseDate;
-        });
-        return {
-            success: true, data: releasedTests, message: "Fetched all tests successfully.", hits: releasedTests.length
-        }
-    } else {
-        return {
-            success: false, data: null, message: "Sorry, cannot fetch tests.", hits: 0
-        }
-    }
-}
-
-module.exports = { verifyCreateRequest, create, verifyUpdateRequest, update, getTest, getAllTests, getAllReleasedTests };
+module.exports = { verifyCreateRequest, create, verifyUpdateRequest, update, getTest };

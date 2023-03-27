@@ -17,7 +17,8 @@ import { UserTypes } from '@/constants/Constants';
 
 const TestPage = ({ role }: { role: UserTypes }) => {
 	const searchTerm = useSelector(selectSearchTerm);
-	const [showFilter, setShowFilter] = useState(false);
+
+	const [showFilter, setShowFilter] = useState(true);
 	const [openCT, setOpenCT] = useState(false);
 	const dispatch = useDispatch();
 	const handleOpenCT = () => {
@@ -26,6 +27,7 @@ const TestPage = ({ role }: { role: UserTypes }) => {
 	const handleSearchTermChange = (e: any) => {
 		dispatch(updateSearchTerm(e.target.value));
 	}
+
 	return (
 		<>
 			<Box sx={{ padding: "20px 30px", backgroundColor: "white" }}>

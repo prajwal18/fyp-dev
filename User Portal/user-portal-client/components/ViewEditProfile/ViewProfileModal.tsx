@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   DialogActions, Button, Dialog,
   Box, Stack, Typography, Table, TableBody, TableRow, TableCell
@@ -8,11 +8,11 @@ import {
 // MUI ICON
 import EditIcon from '@mui/icons-material/Edit';
 // MUI ICON
-import { selectUser } from '@/redux/general/general.slice';
+import { selectOpenProfile, selectUser, updateOpenProfile } from '@/redux/general/general.slice';
 
 import { baseURL } from '@/utils/endpoints';
 import { CustomImage } from '../Common/components/ProfileImage';
-import {selectSelectedMember } from '@/redux/people/people.slice';
+import { selectSelectedMember } from '@/redux/people/people.slice';
 
 
 
@@ -26,18 +26,21 @@ const CustomStyleHeading = ({ title }: { title: string }) => {
 
 
 
-const HeadSection = ({ handleOpenEdit, userName }: { handleOpenEdit: () => void, userName: string }) => {
+const HeadSection = ({ handleOpenEdit, userName }: { handleOpenEdit?: () => void, userName: string }) => {
   return (
     <Stack direction={'row'} gap={4} alignItems='center' justifyContent='space-between'>
       <Typography sx={{ color: 'rgba(0,0,0,0.5)', fontSize: "22px", fontWeight: "700" }}>View Profile - {userName}</Typography>
-      <Stack sx={{
-        justifyContent: 'center', alignItems: 'center', padding: '20px', background: 'rgba(28, 175, 229, 0.1)', borderRadius: "50%",
-        cursor: 'pointer', '&:hover': { background: 'rgba(28, 175, 229, 0.5)' }, '&:active': { background: 'rgba(28, 175, 229, 0.7)' }
-      }}
-        onClick={handleOpenEdit}
-      >
-        <EditIcon />
-      </Stack>
+      {
+        handleOpenEdit &&
+        <Stack sx={{
+          justifyContent: 'center', alignItems: 'center', padding: '20px', background: 'rgba(28, 175, 229, 0.1)', borderRadius: "50%",
+          cursor: 'pointer', '&:hover': { background: 'rgba(28, 175, 229, 0.5)' }, '&:active': { background: 'rgba(28, 175, 229, 0.7)' }
+        }}
+          onClick={handleOpenEdit}
+        >
+          <EditIcon />
+        </Stack>
+      }
     </Stack>
   )
 }
@@ -118,11 +121,16 @@ const InformationSection = ({ user }: { user: any }) => {
 }
 
 
-const ContentSection = ({ handleOpenEdit }: { handleOpenEdit: () => void }) => {
+const ContentSection = ({ handleOpenEdit }: { handleOpenEdit?: () => void }) => {
   const user = useSelector(selectUser);
   return (
     <Stack spacing={4} sx={{ padding: "15px 30px" }}>
-      <HeadSection handleOpenEdit={handleOpenEdit} userName={user?.name || ''} />
+      {
+        handleOpenEdit ?
+          <HeadSection handleOpenEdit={handleOpenEdit} userName={user?.name || ''} />
+          :
+          <HeadSection userName={user?.name || ''} />
+      }
       <Stack direction='row' gap={5}>
 
         <ImageCourseSection user={user} />
@@ -142,13 +150,20 @@ const ActionButtons = ({ handleClose }: { handleClose: () => void }) => {
   );
 }
 
-const ViewProfileModal = ({ open, setOpen, handleOpenEdit }: { open: boolean, setOpen: (value: any) => void, handleOpenEdit: () => void }) => {
+const ViewProfileModal = ({ handleOpenEdit }: { handleOpenEdit?: () => void }) => {
+  const open = useSelector(selectOpenProfile);
+  const dispatch = useDispatch();
   const handleClose = () => {
-    setOpen(false);
+    dispatch(updateOpenProfile(false));
   }
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="xl" fullWidth={false}>
-      <ContentSection handleOpenEdit={handleOpenEdit} />
+      {
+        handleOpenEdit ?
+          <ContentSection handleOpenEdit={handleOpenEdit} />
+          :
+          <ContentSection />
+      }
       <ActionButtons
         handleClose={handleClose}
       />

@@ -1,8 +1,14 @@
 const UserRole = ["Student", "Teacher"];
+const QuestionTypes = ["QNA", "MCQ", "MCQ_CHOOSE_ALL"]
 
 const TestPaperType = {
-    ALL: 'ALL',
     TEST_PAPER: 'TEST_PAPER',
+    SUBMITTED: 'SUBMITTED',
+    GRADED: 'GRADED'
+}
+
+const AssignmentType = {
+    ASSIGNMENT: 'ASSIGNMENT',
     SUBMITTED: 'SUBMITTED',
     GRADED: 'GRADED'
 }
@@ -12,4 +18,7 @@ const TestAns_AssignmentSub_Type = {
     SUBMITTED: 'SUBMITTED'
 }
 
-module.exports = { UserRole, TestPaperType, TestAns_AssignmentSub_Type }
+module.exports = {
+    UserRole, QuestionTypes, TestPaperType,
+    TestAns_AssignmentSub_Type, AssignmentType
+}

@@ -14,7 +14,8 @@ export function GenerateCustSelect({ formik, name, label, id, options }: { formi
                     <Select
                         labelId={`${id}-label`}
                         id={id}
-                        value={formik.values[name]}
+                        defaultValue=''
+                        value={formik?.values?.[name] || ''}
                         name={name}
                         label={label}
                         onChange={formik.handleChange}

@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '@/redux/general/general.slice';
 import { GenerateCustTextArea, GenerateCustTextField } from '../Common/form/CustTextFieldNErrorMsg';
 import { baseURL } from '@/utils/endpoints';
-import { updateSessionNTokenAC } from '@/redux/general/actions';
+import { fetchUserAC, updateSessionNTokenAC } from '@/redux/general/actions';
 
 // Form Section
 const FormSectionHeader = ({ children }: { children: string }) => {
@@ -136,12 +136,13 @@ const EditProfileModal = ({ open, setOpen }: { open: boolean, setOpen: (value: a
         enableReinitialize: true,
         validateOnChange: true,
         onSubmit: async (values) => {
+            console.log(values);
             try {
                 const response = await apiCallNResp(() => httpUpdateUser(values, user._id));
                 if (response && response.success) {
                     toast.success(response.data.user.name + ' updated successfully.');
-                    console.log('Updated: ',response.data.newSession);
                     dispatch(updateSessionNTokenAC(response.data.newSession));
+                    dispatch(fetchUserAC());
                     handleClose();
                 }
             } catch (error: any) {

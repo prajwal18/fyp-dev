@@ -88,7 +88,13 @@ export const UpdateTestModal = ({ open, setOpen, formik, testData }: { open: boo
         setOpen(false);
     }
 
+    const handleSubmit = async (e: any) => {
+        formik.handleSubmit(e);
+        setTimeout(() => {handleClose()}, 100);
+    }
+
     useEffect(() => {
+        console.log(formik.values);
         if (testDataCopy && testDataCopy.dueDate && testDataCopy.releaseDate) {
             testDataCopy.dueDate = testDataCopy.dueDate.split('T')[0];
             testDataCopy.releaseDate = testDataCopy.releaseDate.split('T')[0];
@@ -99,23 +105,25 @@ export const UpdateTestModal = ({ open, setOpen, formik, testData }: { open: boo
     }, [testData]); // Don't include formik
 
     return (
-        <Dialog
-            open={open}
-            onClose={handleClose}
-            maxWidth={'md'}
-            fullWidth={false}
-            aria-labelledby="Create-edit-test-head-data"
-        >
-            <DialogTitle id="Create-edit-test-head-data" sx={{ fontSize: "24px" }}>
-                Create New Test
-            </DialogTitle>
-            <Box component={'form'} onSubmit={formik.handleSubmit} sx={{ padding: "10px 30px", minWidth: "400px" }}>
-                {
-                    formik &&
-                    <FormComponent formik={formik} />
-                }
-            </Box>
-        </Dialog>
+        <>
+            {
+                formik && formik.values.courseId &&
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    maxWidth={'md'}
+                    fullWidth={false}
+                    aria-labelledby="Create-edit-test-head-data"
+                >
+                    <DialogTitle id="Create-edit-test-head-data" sx={{ fontSize: "24px" }}>
+                        Create New Test
+                    </DialogTitle>
+                    <Box component={'form'} onSubmit={handleSubmit} sx={{ padding: "10px 30px", minWidth: "400px" }}>
+                        <FormComponent formik={formik} />
+                    </Box>
+                </Dialog>
+            }
+        </>
     );
 }
 

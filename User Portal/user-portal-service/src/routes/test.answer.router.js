@@ -4,6 +4,9 @@ const router = express.Router();
 const { authenticationMiddleware, authorizeStudent, authorizeTeacher } = require("../middleware/auth");
 const testAnswerController = require("../controllers/test.answer.controller");
 
+// Check if test answer exists
+router.get('/check', authenticationMiddleware, testAnswerController.testAnswerExists)
+// Check if test answer exists
 
 // Create test 
 router.post('/create', authenticationMiddleware, authorizeStudent, testAnswerController.createTestAnswer);
@@ -27,11 +30,7 @@ router.put('/grade', authenticationMiddleware, authorizeTeacher, testAnswerContr
 router.get('/get-test', authenticationMiddleware, testAnswerController.getTest);
 // Get test Details
 
-// Get all tests of a course
-// Must provide course details like so
-// .../all-test?type=SUBMITTED || GRADED & courseIds= a list of course id's seperated by comma ,
-router.get('/all-test', authenticationMiddleware, testAnswerController.getAllTests);
-// Get all tests for a user/course
+router.get('/get-all-specific', authenticationMiddleware, testAnswerController.getAllSpecificTests);
 
 
 module.exports = router;

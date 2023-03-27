@@ -4,6 +4,7 @@ import {
   MenuItem, Select, Stack, Button
 } from "@mui/material";
 import { UserTypes } from '@/constants/Constants';
+import { joinCoursesCS } from '@/utils/filterFunctions';
 
 // MUI Icon
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
@@ -20,13 +21,6 @@ const PeopleFilter = ({ showFilter }: { showFilter: boolean }) => {
   const searchParam = useSelector(selectSearchParams);
 
   const dispatch = useDispatch();
-
-  const joinCoursesCS = (courses: Array<any>) => {
-    const coursesIds = courses.map(course => {
-      return course.value
-    });
-    return coursesIds.join(',');
-  }
 
   const handleResetFilter = useCallback(() => {
     if (courses?.length) {

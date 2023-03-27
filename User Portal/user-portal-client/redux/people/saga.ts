@@ -26,21 +26,20 @@ function* fetchPaginationData(action: ActionT): Generator<any, any, any> {
     const pagination = yield select(selectPagination);
     const searchTerm = yield select(selectSearchTerm);
     const { courses, role } = yield select(selectSearchParams);
-
     const query = `?courseIds=${courses}&role=${role}&searchTerm=${searchTerm}&skip=${pagination.skip}&take=${pagination.take}`;
-    const response = yield(apiCallNResp(() => httpGetAllMembers(query)));
-    if(response?.success) {
-        yield put(updatePagination({skip:0, take: pagination.take, total: response.hits}));
+    const response = yield (apiCallNResp(() => httpGetAllMembers(query)));
+    if (response?.success) {
+        yield put(updatePagination({ skip: 0, take: pagination.take, total: response.hits }));
     }
 }
-function* fetchAllMembers(action: ActionT):Generator<any, any, any> {
+function* fetchAllMembers(action: ActionT): Generator<any, any, any> {
     const pagination = yield select(selectPagination);
     const searchTerm = yield select(selectSearchTerm);
     const { courses, role } = yield select(selectSearchParams);
 
     const query = `?courseIds=${courses}&role=${role}&searchTerm=${searchTerm}&skip=${pagination.skip}&take=${pagination.take}`;
-    const response = yield(apiCallNResp(() => httpGetAllMembers(query)));
-    if(response?.success) {
+    const response = yield (apiCallNResp(() => httpGetAllMembers(query)));
+    if (response?.success) {
         yield put(updateMembers(response.data));
     }
 }
@@ -49,7 +48,7 @@ function* fetchAllMembers(action: ActionT):Generator<any, any, any> {
 
 function* PeopleSaga() {
     yield takeEvery(actionTypes.FETCH_ALL_MEMBERS, fetchAllMembers);
-    yield takeEvery(actionTypes.FETCH_PAGINATION_DATA, fetchPaginationData);
+    yield takeEvery(actionTypes.FETCH_PAGINATION_DATA_PEOPLE, fetchPaginationData);
 }
 
 export default PeopleSaga;

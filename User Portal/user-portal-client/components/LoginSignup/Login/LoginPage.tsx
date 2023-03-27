@@ -107,7 +107,6 @@ const LoginSection = ({ formik }: { formik: any }) => {
 const LoginPage = () => {
     const router = useRouter();
     const dispatch = useDispatch();
-      
 
     const formik = useFormik({
         initialValues: InitialValues,
@@ -120,8 +119,7 @@ const LoginPage = () => {
                 if (response && response.success) {
                     toast.success('Login successful.');
                     formik.resetForm();
-                    dispatch(updateSessionNTokenAC(response.data));
-                    router.push(`/${response.data.role}/Dashboard`);
+                    dispatch(updateSessionNTokenAC({...response.data, callback: router.push}));
                 }
             } catch (error: any) {
                 toast.error(error.message);

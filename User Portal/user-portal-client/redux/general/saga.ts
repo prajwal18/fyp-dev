@@ -50,6 +50,9 @@ function* updateSessionNToken(action: ActionT): Generator<any, any, any> {
 
     cookies.set('user_token', token, { path: '/' });
     cookies.set('user_session', session, { path: '/' });
+    if(action.payload?.callback){
+        action.payload.callback(`/${session.role}/Dashboard`);
+    }
 }
 
 function* removeSessionNToken(action: ActionT):Generator<any, any, any> {

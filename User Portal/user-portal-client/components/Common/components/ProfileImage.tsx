@@ -3,16 +3,20 @@ import profilePic from "@/public/Images/uploadImg.png";
 import { useEffect, useState } from "react";
 
 const ProfileImage = ({ src }: { src?: string }) => {
+    const [srcImage, setSrcImage] = useState<any>('');
+    useEffect(() => {
+        setSrcImage(src);
+    }, [src])
     return (
         <>
             <Image
-                src={src || profilePic}
+                src={srcImage || profilePic}
                 alt="profile"
+                height={50}
+                width={50}
                 style={{ height: "50px", width: "50px", borderRadius: "50%", objectFit: "cover" }}
                 onError={(e: any) => {
-                    console.log('Error: ', e, '\nImage Link:', src)
-                    e.target.src = profilePic;  // Provide an alternate image reference here
-                    e.target.onError = null;
+                    setSrcImage(profilePic);
                 }}
             />
         </>

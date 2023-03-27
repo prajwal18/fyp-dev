@@ -11,6 +11,7 @@ export const apiCallNResp = async (fn: () => any) => {
     try {
         const response = await fn();
         if (response.data.success) {
+            console.log('Response: ', response.data)
             return response.data;
         } else {
             toast.error(response.data.message);
@@ -18,7 +19,6 @@ export const apiCallNResp = async (fn: () => any) => {
         }
     } catch (error: any) {
         toast.error(error.message);
-        console.log('Error:', error.message);
         return null;
     }
 }

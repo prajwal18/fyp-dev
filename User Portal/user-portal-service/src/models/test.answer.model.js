@@ -52,6 +52,9 @@ const testAnswerPaperSchema = mongoose.Schema({
         marks: {
             type: Number, required: [true, 'Specify the marks associated with the question']
         },
+        choices: {
+            type: [String]
+        },
         correctAnswer: {
             type: [String]
         },
@@ -59,9 +62,6 @@ const testAnswerPaperSchema = mongoose.Schema({
             type: [String]
             // For every type of question, the answer will be stored in an array.
             // For MCQ_CHOOSE_ONE and QNA type question the array will contain one string
-        },
-        feedback: {
-            type: String
         },
         marksObtained: {
             type: Number,
