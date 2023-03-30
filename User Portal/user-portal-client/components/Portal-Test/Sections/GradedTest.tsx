@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     Stack, Tabs, Tab,
-    Box, Button
+    Box,
 } from '@mui/material';
 import { GradeTestTable, HideInstructionsBtn, TestInstructions, TestQuestions, TestTitle } from '../Common/TestCommonComponents';
-import { MockTestData } from '@/constants/TempDataDeleteLater';
-import { TestQuestionListType } from '@/constants/Constants';
-import { useDispatch, useSelector } from 'react-redux';
+import { TestQuestionListType, UserTypes } from '@/constants/Constants';
+import { useSelector } from 'react-redux';
 import { selectSelectedAnswerPaper } from '@/redux/test/test.slice';
 import { selectUser } from '@/redux/general/general.slice';
+import EditGrading from '@/components/Common/EditGrading';
+import { useRouter } from 'next/router';
 
 
 const GradedTestPaperSection = ({ answerPaper }: { answerPaper: any }) => {
@@ -40,8 +41,17 @@ const GradedTestPaperSection = ({ answerPaper }: { answerPaper: any }) => {
     )
 }
 const TestResults = ({ answerPaper }: { answerPaper: any }) => {
+    const user = useSelector(selectUser);
+    const { push } = useRouter();
+    const handleEditGrading = useCallback(() => {
+        push(`/Teacher/GradeAssignment?id=${answerPaper._id}`)
+    }, [push, answerPaper])
     return (
         <Box>
+            {
+                user && user.role === UserTypes.TEACHER &&
+                <EditGrading handleEdit={handleEditGrading} />
+            }
             <GradeTestTable answerPaper={answerPaper} />
         </Box>
     );

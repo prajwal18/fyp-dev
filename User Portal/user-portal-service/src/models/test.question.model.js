@@ -21,7 +21,7 @@ const testQuestionSchema = mongoose.Schema({
                 if(testQuestionSchema.createdAt) {
                     return v.getTime() >= testQuestionSchema.createdAt.getTime();
                 } else {
-                    return v.getTime() >= Date.now();
+                    return v.getTime() >= new Date(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate());
                 }
             },
             message: "Release date should be after the test was created."

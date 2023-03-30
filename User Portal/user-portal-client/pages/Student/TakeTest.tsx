@@ -7,14 +7,13 @@ import { useRouter } from 'next/router';
 import { selectUser } from '@/redux/general/general.slice';
 import { fetchUserAC } from '@/redux/general/actions';
 import { selectSelectedAnswerPaper } from '@/redux/test/test.slice';
-import { apiCallNResp } from '@/utils/apiCallNResp';
 import { fetchSelectedAnswerPaperAC } from '@/redux/test/actions';
 import { httpCheckTestAnswerExists, httpCreateTestAnswer } from '@/service/test.answer.service';
 
 
 const TakeTest = () => {
     const user = useSelector(selectUser);
-    const selectedAnswerPaper = useSelector(selectSelectedAnswerPaper);
+    const answerPaper = useSelector(selectSelectedAnswerPaper);
 
     const [proceed, setProceed] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -39,13 +38,11 @@ const TakeTest = () => {
                         testPaperId: query?.id?.toString() || '',
                         submittedBy: user._id
                     }
-                    apiCallNResp(() => httpCreateTestAnswer(data))
+                    httpCreateTestAnswer(data)
+                    .then((response:any) => response.data)
                     .then((response:any) => {
-                        console.log('Create Response:', response)
                         if(response.success){
-                            dispatch(fetchSelectedAnswerPaperAC(response.data._id));
-                        } else {
-                            toast.error(response.message);
+                            dispatch(fetchSelectedAnswerPaperAC({id: response.data._id}));
                         }
                     }).catch((error: any) => {
                         toast.error(error.message);
@@ -62,11 +59,11 @@ const TakeTest = () => {
 
     
     useEffect(() => {
-        if (selectedAnswerPaper?.testPaperId && selectedAnswerPaper.testPaperId._id && query.id && selectedAnswerPaper.testPaperId._id === query.id) {
+        if (answerPaper?.testPaperId && answerPaper.testPaperId._id && query.id && answerPaper.testPaperId._id === query.id) {
             setLoading(false);
             setProceed(true);
         }
-    }, [selectedAnswerPaper, query]);
+    }, [answerPaper, query]);
 
     useEffect(() => {
         dispatch(fetchUserAC());

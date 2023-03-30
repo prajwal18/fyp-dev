@@ -387,7 +387,7 @@ export const TestQuestions = ({ testQuestions, type, handleOnAnswer, handleAssig
             {
                 testQuestions.map((question: any, index: number) => {
                     return (
-                        <React.Fragment key={question.id}>
+                        <React.Fragment key={index}>
                             {
                                 renderTestQuestions(question, index)
                             }

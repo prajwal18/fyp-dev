@@ -23,7 +23,7 @@ const TestTableHeadData = (testType: string) => {
     ];
   } else {
     list = [
-      { name: 'Title' }, { name: 'Course' }, { name: 'Type' }, { name: 'Due Date' }, { name: 'Full Marks' }, { name: 'Marks Obtained' }, { name: 'Actions' }
+      { name: 'Title' }, { name: 'Course' }, { name: 'Type' }, { name: 'Due Date' }, { name: 'Full Marks' }, { name: 'Actions' }
     ];
   }
   return list;
@@ -34,13 +34,13 @@ const TestTableKeyValues = (testType: string) => {
   if ([TestType.SUBMITTED.toString(), TestType.GRADED.toString()].includes(testType)) {
     list = ['title', 'course', 'type', 'dueDate', 'submittedBy', 'fullMarks', 'marksObtained'];
   } else {
-    list = ['title', 'course', 'type', 'dueDate', 'fullMarks', 'marksObtained'];
+    list = ['title', 'course', 'type', 'dueDate', 'fullMarks'];
   }
   return list;
 }
 
 const TestTableContainer = () => {
-  const [allTestsFormaeted, setAllTestsFormatted] = useState([]);
+  const [allTestsFormatted, setAllTestsFormatted] = useState([]);
   const user = useSelector(selectUser);
   const allTests = useSelector(selectAllTests);
   const pagination = useSelector(selectPagination);
@@ -103,11 +103,10 @@ const TestTableContainer = () => {
           return {
             _id: test._id,
             title: test.title,
-            course: test.courseId.name,
+            course: test?.courseId?.name,
             type: TestType.TEST_PAPER,
-            dueDate: test.dueDate.split('T')[0],
+            dueDate: test?.dueDate?.split('T')[0],
             fullMarks: test.fullMark,
-            marksObtained: 0,
             routeLink: user.role === 'Teacher' ? `/Teacher/CreateTest?id=${test._id}` : `/Student/TakeTest?id=${test._id}`
           }
         })
@@ -122,11 +121,6 @@ const TestTableContainer = () => {
     dispatch(updateAllTests([]));
   }, [dispatch, asPath]);
 
-
-  useEffect(() => {
-    console.log("Hello Over here:", allTestsFormaeted);
-  }, [allTestsFormaeted])
-
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer>
@@ -135,7 +129,7 @@ const TestTableContainer = () => {
           <TableBodySection
             skip={pagination.skip || 0}
             includeSN={false}
-            dataList={allTestsFormaeted}
+            dataList={allTestsFormatted}
             keyValues={TestTableKeyValues(searchParams.testType)}
             actionData={[
               {

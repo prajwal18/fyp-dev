@@ -14,7 +14,7 @@ const assignmentSchema = mongoose.Schema({
                 if(assignmentSchema.createdAt) {
                     return v.getTime() >= assignmentSchema.createdAt.getTime();
                 } else {
-                    return v.getTime() >= Date.now();
+                    return v.getTime() >= new Date(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate());
                 }
             },
             message: "Release date should be after the assignment was created."

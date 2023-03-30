@@ -20,7 +20,7 @@ const create = asyncWrapper(async (req, res, next) => {
 // Update Assignment
 const update = asyncWrapper(async (req, res, next) => {
     const { id } = req.query;
-    const { isVerified, isVerifiedMessage } = await assignmentService.verifyUpdateRequest(req.body, id); // Will verify the request and return data if the request is valid to upadate a assignment
+    const { isVerified, isVerifiedMessage } = await assignmentService.verifyUpdateRequest(id); // Will verify the request and return data if the request is valid to upadate a assignment
     if (isVerified) {
         const { success, data, message } = await assignmentService.update(req.body, id);
         if (success) {

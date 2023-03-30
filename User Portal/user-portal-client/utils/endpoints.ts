@@ -14,8 +14,6 @@ const endpoints = {
         create: baseURL + "/test/create",
         update: baseURL + "/test/update",
         getTest: baseURL + "/test/get-test",
-        allTest: baseURL + "/test/all-test",
-        allReleasedTest: baseURL + "/test/all-released-test"
     },
 
     testAnswer: {
@@ -31,8 +29,6 @@ const endpoints = {
         create: baseURL + "/assignment/create",
         update: baseURL + "/assignment/update",
         getAssignment: baseURL + "/assignment/get-assignment",
-        allAssignment: baseURL + "/assignment/all-assignment",
-        allReleasedAssignment: baseURL + "/assignment/all-released-assignment"
     },
 
     submittedAssignment: {
@@ -41,7 +37,7 @@ const endpoints = {
         update: baseURL + "/assignment-submission/update",
         grade: baseURL + "/assignment-submission/grade",
         getSubmission: baseURL + "/assignment-submission/get-submission",
-        allSubmission: baseURL + "/assignment-submission/all-submission"
+        getAllSpecific: baseURL + "/assignment-submission/get-all-specific"
     }
 }
 

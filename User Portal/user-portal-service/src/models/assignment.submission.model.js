@@ -12,12 +12,14 @@ const submissionSchema = mongoose.Schema({
         required: true
     },
     submissionFile: {
-        type: String,
-        required: [true, 'Provide your assignment file. Format: .pdf']
+        type: String
     },
     submissionDate: {
         type: Date,
         required: [true, "Provide the date of submission."]
+    },
+    studentComment: {
+        type: String,
     },
     remark: {
         type: String,
@@ -38,8 +40,11 @@ const submissionSchema = mongoose.Schema({
     }
 });
 
+submissionSchema.index({ assignmentId: 1, submittedBy: 1}, { unique: true });
+
 // Create timestamps. Automatically generate createdAt & updatedAt
 submissionSchema.set("timestamps", true);
+
 
 
 module.exports = new mongoose.model("AssignmentSubmission", submissionSchema);

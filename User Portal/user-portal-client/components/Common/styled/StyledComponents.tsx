@@ -32,7 +32,7 @@ export const BorderedBox = styled(Box)`
     border-radius: 5px;
 `;
 export const BoldTableCell = styled(TableCell)`
-    font-weight: 700;
+    font-weight: 700!important;
     min-width: 250px;
 `;
 export const BWTableRow = styled(TableRow)

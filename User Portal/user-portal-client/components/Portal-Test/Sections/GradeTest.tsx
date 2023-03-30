@@ -18,6 +18,7 @@ import { httpGradeTestAnswer } from '@/service/test.answer.service';
 import { toast } from 'react-toastify';
 import { selectUser } from '@/redux/general/general.slice';
 import { fetchSelectedAnswerPaperAC } from '@/redux/test/actions';
+import { useRouter } from 'next/router';
 
 // Validation Schema for Grade Test
 const validationSchema = yup.object().shape({
@@ -136,6 +137,7 @@ const TestTabs = ({ value, setValue }: { value: number, setValue: (value: any) =
 }
 
 const RenderTabPanel = ({ page, answerPaper }: { page: number, answerPaper: any }) => {
+    const { push } = useRouter();
     const user = useSelector(selectUser);
     const dispatch = useDispatch();
     const formik = useFormik({
@@ -155,6 +157,7 @@ const RenderTabPanel = ({ page, answerPaper }: { page: number, answerPaper: any 
                 if (response.success) {
                     toast.success(response.message);
                     dispatch(fetchSelectedAnswerPaperAC({id: response.data._id}))
+                    push("/Teacher/Test");
                 }
             } catch (error: any) {
                 toast.error(error.message);

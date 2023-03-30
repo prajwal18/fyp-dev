@@ -6,12 +6,12 @@ const {
     create,
     update,
     grade,
-    getSubmission, 
-    allSubmission
+    getSubmission,
+    getAllSpecific
 } = endpoints.submittedAssignment;
 
 export const httpCheckSubmittedAssignmentExists = (submissionId: string, studentId: string) => {
-    const url = `${check}?submissionId=${submissionId}&studentId=${studentId}`;
+    const url = `${check}?assignmentId=${submissionId}&studentId=${studentId}`;
     return axiosWithToken('get', url);
 }
 
@@ -34,7 +34,7 @@ export const httpGetSubmittedAssignment = (id: string) => {
     return axiosWithToken('get', url);
 }
 
-export const httpGetAllSubmittedAssignment = (query: string) => {
-    const url = `${allSubmission}${query}`;
+export const httpGetAllSpecificAssignment = (query: string) => {
+    const url = `${getAllSpecific}${query}`;
     return axiosWithToken('get', url);
 }

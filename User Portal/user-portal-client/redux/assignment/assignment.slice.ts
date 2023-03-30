@@ -13,6 +13,9 @@ const options = {
         updateSelectedAssignment: (state: AssignmentIST, action: ActionT) => {
             return { ...state, selectedAssignment: action.payload }
         },
+        updateAllAssignemnts: (state: AssignmentIST, action: ActionT) => {
+            return { ...state, allAssignments: action.payload }
+        },
         updateSelectedSubmittedAssignment: (state: AssignmentIST, action: ActionT) => {
             return { ...state, selectedSubmittedAssignment: action.payload }
         },
@@ -38,6 +41,9 @@ export const assignmentSlice = createSlice(options);
 export const selectSelectedAssignment = (state: any) => {
     return state.assignment.selectedAssignment;
 }
+export const selectAllAssignments = (state:any) => {
+    return state.assignment.allAssignments;
+}
 export const selectSelectedSubmittedAssignment = (state: any) => {
     return state.assignment.selectedSubmittedAssignment;
 }
@@ -57,7 +63,8 @@ export const selectSearchParams = (state: any) => {
 export const {
     updateSelectedAssignment, updateSearchTerm,
     updatePagination, updateSearchParams,
-    resetState, updateSelectedSubmittedAssignment
+    resetState, updateSelectedSubmittedAssignment,
+    updateAllAssignemnts
 } = assignmentSlice.actions;
 // Exporting the action creator functions
 

@@ -11,7 +11,7 @@ router.post('/create', authenticationMiddleware, authorizeTeacher, assignmentCon
 // Update Assignment
 // To update the assignment, you need to provied it's id like so
 // .../update?id=<--- Assignment's id --->
-router.post('/update', authenticationMiddleware, authorizeTeacher, assignmentController.update );
+router.put('/update', authenticationMiddleware, authorizeTeacher, assignmentController.update );
 // Update Assignment
 
 // Get assignment Details

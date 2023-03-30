@@ -9,11 +9,11 @@ const { base64ToPdf, removePdf } = require("../utils/read.write.pdf");
 
 // Check to see if the assignment submission of a specific student for a specific assignment exists
 const checkSubmissionExist = async (assignmentId, studentId) => {
-    const submission = await Submission.findOne({ assignmentId, submisttedBy: studentId });
+    const submission = await Submission.findOne({ assignmentId, submittedBy: studentId });
     if (submission) {
         return {
             submissionExists: true,
-            data: test._id,
+            data: submission._id,
             message: "Assignment submission for the students exists."
         }
     } else {
@@ -26,30 +26,36 @@ const checkSubmissionExist = async (assignmentId, studentId) => {
 }
 
 // Verify Request
-const verifyCreateRequest = async ({ assignmentId, studentId, submissionFile, ...rest }) => {
-    const assignment = await Assignment.findById(assignmentId);
+const verifyCreateRequest = async ({ assignmentId, submittedBy, ...rest }) => {
+    if (assignmentId && submittedBy) {
+        const assignment = await Assignment.findById(assignmentId);
 
-    if (assignment) {
-        const today = new Date(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()); // Getting the date without time component
-        const dueDate = new Date(assignment.dueDate);
+        if (assignment) {
+            const today = new Date(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()); // Getting the date without time component
+            const dueDate = new Date(assignment.dueDate);
 
-        if (today.getTime() <= dueDate.getTime()) {
-            return {
-                isVerified: true,
-                isVerifiedMessage: null
+
+            if (today.getTime() <= dueDate.getTime()) {
+                return {
+                    isVerified: true,
+                    isVerifiedMessage: null
+                }
+
+            } else {
+                return {
+                    isVerified: false,
+                    isVerifiedMessage: 'You cannot submit a assignment past it\'s due date'
+                }
             }
+
         } else {
             return {
                 isVerified: false,
-                isVerifiedMessage: 'You cannot take a assignment past it\'s due date'
+                isVerifiedMessage: 'Sorry cannot find the associated assignment paper.'
             }
         }
-
     } else {
-        return {
-            isVerified: false,
-            isVerifiedMessage: 'Sorry cannot find the associated assignment paper.'
-        }
+        return { isVerified: false, isVerifiedMessage: "Provide all the necessary parameters." }
     }
 }
 // Verify Request
@@ -92,11 +98,12 @@ const verifyGradeRequest = async (data, id) => {
 
 // Create assignment submission
 const create = async (data) => {
-    if(data.submissionFile){
+    if (data.submissionFile) {
         const filePath = await base64ToPdf(data.submissionFile, "submissions");
         data.submissionFile = filePath;
     }
-    const submission = await Submission.create({ ...data, submissionDate: new Date() });
+    const submissionDate = new Date();
+    const submission = await Submission.create({ ...data, submissionDate });
     if (submission) {
         return {
             success: true, data: submission, message: "Assignment submission done successfully."
@@ -112,10 +119,10 @@ const create = async (data) => {
 // Update assignment submission
 const update = async (data, id) => {
     const submission = await Submission.findById(id);
-    if(data.submissionFile){
+    if (data.submissionFile) {
         const filePath = await base64ToPdf(data.submissionFile, "submissions");
         data.submissionFile = filePath;
-        if(submission.submissionFile){
+        if (submission.submissionFile) {
             removePdf(submission.submissionFile);
         }
     }

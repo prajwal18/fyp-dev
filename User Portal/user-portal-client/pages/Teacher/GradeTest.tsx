@@ -50,7 +50,7 @@ const GradeTest = () => {
 
 
   useEffect(() => {
-    if (selectedAnswerPaper?.testPaperId && selectedAnswerPaper.testPaperId._id && query.id && selectedAnswerPaper.testPaperId._id === query.id) {
+    if (selectedAnswerPaper?.testPaperId && selectedAnswerPaper.testPaperId._id && query.id && selectedAnswerPaper._id === query.id) {
       setLoading(false);
       setProceed(true);
     }

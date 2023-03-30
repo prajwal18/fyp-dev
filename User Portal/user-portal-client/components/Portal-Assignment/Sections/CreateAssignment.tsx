@@ -1,167 +1,146 @@
 import React, { useEffect, useState } from 'react';
 import {
     Box, Dialog, DialogTitle,
-    Grid, TextField, FormControl,
-    InputLabel, Select, MenuItem,
-    Stack, Button
+    Grid, TextField, Button, Stack
 } from '@mui/material';
 
-// PDF related
-import { Document, Page } from "react-pdf";
-// PDF related
 
-import { useDispatch, useSelector } from 'react-redux';
-import { selectCourses, selectUser } from '@/redux/general/general.slice';
-import { useRouter } from 'next/router';
-import { useFormik } from 'formik';
-import { apiCallNResp } from '@/utils/apiCallNResp';
+import { useSelector } from 'react-redux';
+import { selectCourses } from '@/redux/general/general.slice';
 import convertToBase64 from '@/utils/convertToBase64';
-import { toast } from 'react-toastify';
-import { fetchUserAC } from '@/redux/general/actions';
 import { GenerateCustSelect } from '@/components/Common/form/CustSelect';
-import { GenerateCustTextArea, GenerateCustTextField } from '@/components/Common/form/CustTextFieldNErrorMsg';
-
-// const PdfDisplay = () => {
-//     const [numPages, setNumPages] = useState<any>(null);
-//     const [pageNumber, setPageNumber] = useState(1);
-
-//     function onDocumentLoadSuccess({ numPages }: { numPages: any }) {
-//         setNumPages(numPages);
-//     }
-
-//     return (
-//         <div>
-//             <Document file="https://www.e-verify.gov/sites/default/files/everify/guides/InstructionsCreatePDFofE-VerifyManual.pdf" onLoadSuccess={onDocumentLoadSuccess}>
-//                 <Page pageNumber={pageNumber} />
-//             </Document>
-//             <p>
-//                 Page {pageNumber} of {numPages}
-//             </p>
-//         </div>
-//     );
-// }
+import { GenerateCustTextArea, GenerateCustTextField, ErrorMessage } from '@/components/Common/form/CustTextFieldNErrorMsg';
+import { baseURL } from '@/utils/endpoints';
+import Link from 'next/link';
+import { UploadFileComponent } from '../Common/AssignmentTableComponents';
 
 
-const FormComponent = ({ formik }: { formik: any }) => {
 
-    const [manual, setManual] = useState<any>('');
+
+const ChangeSubmission = ({ formik, assignmentData }: { formik: any, assignmentData: any }) => {
+    const [change, setChange] = useState(false);
+    const handleChangeSubmission = () => { setChange(true) };
+    const handleCancel = () => {
+        formik.setFieldValue(assignmentData?.assignmentData || '');
+        setChange(false);
+    }
+    return (
+        <>
+            {
+                change ?
+                    <Box>
+                        <Stack sx={{ padding: "5px" }} direction="row" justifyContent="flex-end">
+                            <Button onClick={handleCancel} color="error" variant='contained'>cancel</Button>
+                        </Stack>
+                        <UploadFileComponent formik={formik} name="manual" label="Upload Manual" />
+                    </Box>
+                    :
+                    <Stack sx={{ paddingBottom: "10px" }} justifyContent="space-between" direction={"row"} spacing={2}>
+                        <Button onClick={handleChangeSubmission} color="primary" variant='outlined'>Update Manual</Button>
+                        <Link
+                            href={`${baseURL}${assignmentData.manual}`}
+                            target="_blank" rel="noopener noreferrer"
+                            style={{ textDecoration: "none", color: "white" }}
+                        >
+                            <Button variant="contained">View Manual</Button>
+                        </Link>
+                    </Stack>
+            }
+        </>
+    )
+}
+
+
+const FormComponent = ({ formik, isEditing, assignmentData }: { formik: any, isEditing: boolean, assignmentData?: any }) => {
     const courses = useSelector(selectCourses);
 
     const handleUpload = async (e: any) => {
-        formik.setFieldValue("manual", e.target.files[0]);
         let base64File = await convertToBase64(e.target.files[0]);
-        setManual(base64File);
-        console.log(base64File);
+        formik.setFieldValue("manual", base64File);
     }
-
-    useEffect(() => {
-        console.log(manual);
-    }, [manual])
 
     return (
         <Box>
-            <Grid container spacing={4} mb={4}>
-                <Grid item xs={7}>
-                    <Stack gap={2}>
-                        {/* Filter by Course */}
-                        <GenerateCustSelect
-                            formik={formik}
-                            name='courseId'
-                            label='Course'
-                            id='select-course'
-                            options={courses}
-                        />
-                        {/* Filter by Course */}
-                        <GenerateCustTextField
-                            formik={formik}
-                            name='title'
-                            label='Assignment Title'
-                        />
-                        <GenerateCustTextField
-                            formik={formik}
-                            name='releaseDate'
-                            label='Release Date'
-                            type="date"
-                        />
-                        <GenerateCustTextField
-                            formik={formik}
-                            name='dueDate'
-                            label='Due Date'
-                            type="date"
-                        />
-                        <GenerateCustTextField
-                            formik={formik}
-                            name='fullMark'
-                            label='Full Marks'
-                        />
-                        <GenerateCustTextArea
-                            formik={formik}
-                            name='description'
-                            label='Description'
-                            rows={2}
-                        />
-                        <TextField
-                            label='Upload Pdf' type="file" fullWidth focused
-                            onChange={handleUpload}
-                        />
-                        <Button type="submit" variant='contained'>Submit</Button>
-                    </Stack>
+            <Grid container spacing={3} mb={4}>
+                <Grid item xs={6}>
+                    <GenerateCustTextField
+                        formik={formik}
+                        name='title'
+                        label='Assignment Title'
+                    />
                 </Grid>
-                <Grid item xs={5}>
-                    <Stack direction='row' alignItems='center' sx={{ border: '2px dashed rgba(0,0,0,0.2)', padding: "10px" }}>
-                        
-                    </Stack>
+                <Grid item xs={6}>
+                    {/* Filter by Course */}
+                    <GenerateCustSelect
+                        formik={formik}
+                        name='courseId'
+                        label='Course'
+                        id='select-course'
+                        options={courses}
+                    />
+                    {/* Filter by Course */}
+                </Grid>
+
+                <Grid item xs={6}>
+                    <GenerateCustTextField
+                        formik={formik}
+                        name='releaseDate'
+                        label='Release Date'
+                        type="date"
+                    />
+                </Grid>
+                <Grid item xs={6}>
+                    <GenerateCustTextField
+                        formik={formik}
+                        name='dueDate'
+                        label='Due Date'
+                        type="date"
+                    />
+                </Grid>
+
+                <Grid item xs={6} sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                    <GenerateCustTextField
+                        formik={formik}
+                        name='fullMark'
+                        label='Full Marks'
+                    />
+                    {
+                        isEditing ?
+                            (assignmentData && assignmentData.manual ?
+                                <ChangeSubmission formik={formik} assignmentData={assignmentData} />
+                                :
+                                <UploadFileComponent formik={formik} name="manual" label="Upload Manual" />)
+                            :
+                            <Box>
+                                <TextField
+                                    label='Upload Pdf' type="file" fullWidth focused
+                                    inputProps={{ accept: 'application/pdf' }} onChange={handleUpload}
+                                />
+                                {formik.touched?.manual && formik.errors.manual && <ErrorMessage message={formik.errors?.manual} />}
+                            </Box>
+                    }
+                </Grid>
+
+                <Grid item xs={6}>
+                    <GenerateCustTextArea
+                        formik={formik}
+                        name='description'
+                        label='Description'
+                        rows={3}
+                    />
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Button type="submit" variant='contained' sx={{ width: "100%" }}>{
+                        isEditing ? 'Update' : 'Submit'
+                    }</Button>
                 </Grid>
             </Grid>
         </Box>
     )
 }
 
-const CreateAssignment = ({ open, setOpen, isEditing, assignmentData }: { open: boolean, setOpen: (value: any) => void, isEditing?: boolean, assignmentData?: any }) => {
-    const user = useSelector(selectUser);
-
-    const dispatch = useDispatch();
-    const { push } = useRouter();
-
-    const handleClose = () => {
-        formik.resetForm();
-        setOpen(false);
-    }
-    const formik = useFormik({
-        initialValues: {},
-        enableReinitialize: true,
-        validateOnChange: true,
-        onSubmit: async (values) => {
-            try {
-                const response = await apiCallNResp(() => {/* Do something */ });
-                if (response.success) {
-                    toast.success('Test created successfully.');
-                    //dispatch(updateSelectedTest(response.data));
-                    //push(`/Teacher/CreateTest?id=${response.data._id}`)
-                }
-            } catch (error: any) {
-                toast.error(error.message);
-            }
-        }
-    });
-
-    useEffect(() => {
-        dispatch(fetchUserAC());
-    }, [dispatch]);
-
-    useEffect(() => {
-        if (user._id && !isEditing) {
-            formik.setFieldValue('createdBy', user._id);
-        }
-    }, [user]); // Don't include formik
-
-    useEffect(() => {
-        if (isEditing && assignmentData) {
-            Object.keys({}).map((key: string) => {
-                formik.setFieldValue(key, assignmentData[key]);
-            });
-        }
-    }, [isEditing, assignmentData]); // Don't include formik
+const CreateAssignment = ({ open, formik, handleClose, isEditing, assignmentData }: { open: boolean, formik: any, handleClose: () => void, isEditing: boolean, assignmentData?: any }) => {
 
     return (
         <Dialog
@@ -179,8 +158,8 @@ const CreateAssignment = ({ open, setOpen, isEditing, assignmentData }: { open: 
                         'Create New Assignment'
                 }
             </DialogTitle>
-            <Box component='form' onSubmit={() => { }} style={{ padding: "20px 40px", minWidth: "800px" }}>
-                <FormComponent formik={formik} />
+            <Box component='form' onSubmit={formik.handleSubmit} style={{ padding: "20px 40px", minWidth: "800px" }}>
+                <FormComponent formik={formik} isEditing={isEditing} assignmentData={assignmentData} />
             </Box>
         </Dialog>
     )

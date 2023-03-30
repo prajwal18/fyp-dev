@@ -5,14 +5,17 @@ const submissionExists = asyncWrapper(async (req, res, next) => {
     const { assignmentId, studentId } = req.query;
     if (assignmentId && studentId) {
         const { submissionExists, data, message } = await assignmentSubmissionService.checkSubmissionExist(assignmentId, studentId);
+        console.log("\n\n\n", submissionExists, message, "\n\n\n");
         res.json({ success: submissionExists, data: data, message: message });
     } else {
         throw new Error("Provide assignmentId and studentId. Cannot find the assignment submission.");
     }
 });
 
+
+
 const create = asyncWrapper(async (req, res, next) => {
-    const { isVerified, isVerifiedMessage } = assignmentSubmissionService.verifyCreateRequest(req.body); // Will verify the request and returns data(request body) if the request is valid to create a new assignment.
+    const { isVerified, isVerifiedMessage } = await assignmentSubmissionService.verifyCreateRequest(req.body); // Will verify the request and returns data(request body) if the request is valid to create a new assignment.
     if (isVerified) {
         const { success, data, message } = await assignmentSubmissionService.create(req.body);
         if (success) {
@@ -42,7 +45,7 @@ const update = asyncWrapper(async (req, res, next) => {
 
 const grade = asyncWrapper(async (req, res, next) => {
     const { id } = req.query;
-    const { isVerified, isVerifiedMessage } = assignmentSubmissionService.verifyGradeRequest(req.body, id); // Will verify the request and return data if the request is valid to upadate a assignment.
+    const { isVerified, isVerifiedMessage } = await assignmentSubmissionService.verifyGradeRequest(req.body, id); // Will verify the request and return data if the request is valid to upadate a assignment.
     if (isVerified) {
         const { success, data, message } = await assignmentSubmissionService.grade(req.body, id);
         if (success) {

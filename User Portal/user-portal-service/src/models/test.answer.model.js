@@ -71,6 +71,9 @@ const testAnswerPaperSchema = mongoose.Schema({
     }]
 });
 
+
+testAnswerPaperSchema.index({ testPaperId: 1, submittedBy: 1}, { unique: true });
+
 //Below line will automatically generate createdAt & updatedAt
 testAnswerPaperSchema.set("timestamps", true);
 

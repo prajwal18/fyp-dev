@@ -1,16 +1,16 @@
-import GradeAssignmentContainer from '@/components/Portal-Assignment/Sections/GradeAssignmentPage'
+import GradedAssignmentContainer from '@/components/Portal-Assignment/Sections/GradedAssignmentPage';
 import { fetchSelectedSubmittedAssignmentAC } from '@/redux/assignment/actions';
 import { selectSelectedSubmittedAssignment } from '@/redux/assignment/assignment.slice';
 import { fetchUserAC } from '@/redux/general/actions';
 import { selectUser } from '@/redux/general/general.slice';
 import { httpGetSubmittedAssignment } from '@/service/assignment.submission.service';
 import { useRouter } from 'next/router';
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import PageNotFound from '../404';
 
-function GradeAssignment() {
+const GradedAssignment = () => {
   const user = useSelector(selectUser);
   const submittedAssignment = useSelector(selectSelectedSubmittedAssignment);
 
@@ -29,11 +29,17 @@ function GradeAssignment() {
       httpGetSubmittedAssignment(query.id)
         .then((response: any) => response.data)
         .then((response: any) => {
-          if (response.success) {
+          if (response.success && response.data?.isGraded) {
             dispatch(fetchSelectedSubmittedAssignmentAC({ id: response.data._id }));
             setProceed(true);
-            setLoading(false)
-          } else {
+            setLoading(false);
+          }
+          else if (!response?.data?.isGraded) {
+            toast.error('Sorry, the Assignment Submission has not been graded yet.');
+            setLoading(false);
+            setProceed(false);
+          }
+          else {
             toast.error(response.message);
             setLoading(false);
             setProceed(false);
@@ -63,10 +69,10 @@ function GradeAssignment() {
     <>
       {
         loading ?
-          <p>Loading ...</p>
+          <>Loading ...</>
           :
           proceed ?
-            <GradeAssignmentContainer />
+            <GradedAssignmentContainer />
             :
             <PageNotFound />
       }
@@ -74,4 +80,4 @@ function GradeAssignment() {
   )
 }
 
-export default GradeAssignment
+export default GradedAssignment;

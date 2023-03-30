@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import {
     Box, Stack, Button
 } from '@mui/material';
@@ -7,15 +7,15 @@ import {
     TestQuestions, TestInstructions
 } from '../Common/TestCommonComponents';
 import { TestQuestionListType, TypesOfQuestions } from "@/constants/Constants";
-// Mock Data
-import { MockTestData } from "@/constants/TempDataDeleteLater";
+// 
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import { apiCallNResp } from "@/utils/apiCallNResp";
 import { useSelector } from "react-redux";
 import { selectSelectedAnswerPaper } from "@/redux/test/test.slice";
 import { httpUpdateTestAnswer } from "@/service/test.answer.service";
-// Mock Data
+import { useRouter } from "next/router";
+// 
 
 
 const SaveNSubmitBtns = ({ formik }: { formik: any }) => {
@@ -37,6 +37,7 @@ const SaveNSubmitBtns = ({ formik }: { formik: any }) => {
 
 const TakeTestContainer = () => {
     const answerPaper = useSelector(selectSelectedAnswerPaper);
+    const { push } = useRouter();
 
     const formik = useFormik({
         initialValues: {
@@ -44,11 +45,11 @@ const TakeTestContainer = () => {
         },
         enableReinitialize: true,
         onSubmit: async (values: any) => {
-            console.log(JSON.stringify(values));
             try {
                 const response = await apiCallNResp(() => httpUpdateTestAnswer(values, answerPaper._id));
                 if (response.success) {
                     toast.success(response.message);
+                    push("/Student/Test");
                 }
             } catch (error: any) {
                 toast.error(error.message);

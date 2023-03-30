@@ -74,6 +74,7 @@ export type TestIST = {
 // People initial state and initial state type
 export const AssignmentIS = {
     selectedAssignment: {},
+    allAssignments: null,
     selectedSubmittedAssignment: {},
     pagination: IVPagination,
     searchTerm: '',
@@ -84,6 +85,7 @@ export const AssignmentIS = {
 }
 export type AssignmentIST = {
     selectedAssignment: any,
+    allAssignments: any,
     selectedSubmittedAssignment: any,
     pagination: PaginationST,
     searchTerm: string,
