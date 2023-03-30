@@ -91,7 +91,16 @@ const TakeTestContainer = () => {
     useEffect(() => {
         if (answerPaper?._id) {
             if (answerPaper?.questions.length) {
-                formik.setFieldValue('questions', answerPaper.questions);
+                let questions = JSON.parse(JSON.stringify(answerPaper.testPaperId.questions));
+                let newQuestion = questions.map((question:any) => {
+                    let ans = answerPaper.questions.filter((answer:any) => answer._id === question._id)[0];
+                    if(ans) {
+                        return {...question, answer: ans.answer}
+                    } else {
+                        return {...question, answer: ['']}
+                    }
+                })
+                formik.setFieldValue('questions', newQuestion);
             } else {
                 let questions = JSON.parse(JSON.stringify(answerPaper.testPaperId.questions));
                 let newQuestions = questions.map((question: any) => ({ ...question, answer: [] }));

@@ -6,6 +6,7 @@ const {
     create,
     update,
     grade,
+    deleteAS,
     getSubmission,
     getAllSpecific
 } = endpoints.submittedAssignment;
@@ -27,6 +28,11 @@ export const httpUpdateSubmittedAssignment = (data: any, id:string) => {
 export const httpGradeSubmittedAssignment = (data:any, id:string) => {
     const url = `${grade}?id=${id}`;
     return axiosWithToken('put', url, data);
+}
+
+export const httpDeleteSubmittedAssignment = (id: string) => {
+    const url = `${deleteAS}?id=${id}`;
+    return axiosWithToken('delete', url);
 }
 
 export const httpGetSubmittedAssignment = (id: string) => {

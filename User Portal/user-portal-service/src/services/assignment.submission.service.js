@@ -154,6 +154,23 @@ const grade = async (data, id) => {
 }
 // Grade assignment submission
 
+// Delete assignment submission
+const deleteSubmission = async (id) => {
+    const submission = await Submission.findById(id);
+    if(submission.submissionFile){
+        removePdf(submission.submissionFile);
+    }
+    const deletedSubmission = await Submission.findByIdAndDelete(id);
+    if(deletedSubmission) {
+        return { success: true, data: deletedSubmission, message: "Successfully delete Assignment Submission." }
+    } else {
+        return {success: false, data:null, message: "Sorry, cannot delete Assignment Submission."}
+    }
+
+}
+// Delete assignment submission
+
+
 // Get assignment submission
 const getSubmission = async (id) => {
     const submission = await Submission.findById(id)
@@ -292,5 +309,5 @@ const getAllSpecificAssignments = async (courses, type, searchTerm, skip, take, 
 module.exports = {
     checkSubmissionExist, verifyCreateRequest, verifyUpdateRequest,
     verifyGradeRequest, create, update, grade, getSubmission,
-    getAllSpecificAssignments
+    getAllSpecificAssignments, deleteSubmission
 };

@@ -9,6 +9,9 @@ import { selectUser } from '@/redux/general/general.slice';
 import { UserTypes } from '@/constants/Constants';
 import EditGrading from '@/components/Common/EditGrading';
 import { useRouter } from 'next/router';
+import { apiCallNResp } from '@/utils/apiCallNResp';
+import { httpDeleteSubmittedAssignment } from '@/service/assignment.submission.service';
+import { toast } from 'react-toastify';
 
 
 
@@ -38,12 +41,20 @@ const AssignmentResults = ({ submittedAssignment }: { submittedAssignment: any }
     const { push } = useRouter();
     const handleEditGrading = useCallback(() => {
         push(`/Teacher/GradeAssignment?id=${submittedAssignment._id}`)
+    }, [push, submittedAssignment]);
+
+    const handleDeleteSubmission = useCallback(async () => {
+        const response = await apiCallNResp(() => httpDeleteSubmittedAssignment(submittedAssignment._id));
+        if(response.success){
+            toast.success(response.message);
+            push(`/Teacher/Assignment`);
+        }
     }, [push, submittedAssignment])
     return (
         <Box>
             {
                 user && user.role === UserTypes.TEACHER &&
-                <EditGrading handleEdit={handleEditGrading} />
+                <EditGrading handleEdit={handleEditGrading} handleDelete={handleDeleteSubmission} />
             }
             <AssignmentSubmissionTable submittedAssignment={submittedAssignment} />
         </Box>

@@ -21,6 +21,7 @@ const endpoints = {
         create: baseURL + "/test-answer/create",
         update: baseURL + "/test-answer/update",
         grade: baseURL + "/test-answer/grade",
+        deleteTA: baseURL + "/test-answer/delete",
         getTest: baseURL + "/test-answer/get-test",
         getAllSpecific: baseURL + "/test-answer/get-all-specific"
     },
@@ -36,6 +37,7 @@ const endpoints = {
         create: baseURL + "/assignment-submission/create",
         update: baseURL + "/assignment-submission/update",
         grade: baseURL + "/assignment-submission/grade",
+        deleteAS: baseURL + "/assignment-submission/delete",
         getSubmission: baseURL + "/assignment-submission/get-submission",
         getAllSpecific: baseURL + "/assignment-submission/get-all-specific"
     }

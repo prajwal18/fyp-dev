@@ -24,6 +24,12 @@ router.put('/update', authenticationMiddleware, authorizeStudent, testAnswerCont
 router.put('/grade', authenticationMiddleware, authorizeTeacher, testAnswerController.gradeTestAnswer);
 // Grade test
 
+// Delete Test answer paper
+// To delete the test, you need to provide it's id like os
+// .../delete?id=<-- Test's id -->
+router.delete("/delete", authenticationMiddleware, authorizeTeacher, testAnswerController.deleteTestAnswer)
+
+
 // Get test Details
 // To fetch test details, you need to provide it's id like so
 // .../get-test?id=<--- test's id --->

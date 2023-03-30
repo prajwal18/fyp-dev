@@ -168,12 +168,13 @@ const RenderTabPanel = ({ page, answerPaper }: { page: number, answerPaper: any 
     useEffect(() => {
         if (answerPaper?._id) {
             if (answerPaper?.questions.length) {
-                let questions = JSON.parse(JSON.stringify(answerPaper.questions));
+                let questions = JSON.parse(JSON.stringify(answerPaper.testPaperId.questions));
                 let newQuestions = questions.map((question: any) => {
-                    if (question.answer.length) {
-                        return { ...question, marksObtained: question?.marksObtained || 0 }
+                    let ans = answerPaper.questions.filter((answer:any) => answer._id === question._id)[0];
+                    if(ans) {
+                        return {...question, answer: ans.answer, marksObtained: ans?.marksObtained || 0}
                     } else {
-                        return { ...question, answer: [''], marksObtained: question?.marksObtained || 0 }
+                        return {...question, answer: [''], marksObtained: ans?.marksObtained || 0}
                     }
                 });
                 formik.setFieldValue('questions', newQuestions);

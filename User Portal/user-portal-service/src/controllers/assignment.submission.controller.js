@@ -59,6 +59,20 @@ const grade = asyncWrapper(async (req, res, next) => {
 
 })
 
+const deleteSubmission = asyncWrapper(async (req, res, next) => {
+    const { id } = req.query;
+    if (id) {
+        const { success, data, message } = await assignmentSubmissionService.deleteSubmission(id);
+        if (success) {
+            res.json({ success, data, message });
+        } else {
+            throw new Error(message);
+        }
+    } else {
+        throw new Error('Cannot find the assignment. Sorry!');
+    }
+})
+
 const getSubmission = asyncWrapper(async (req, res, next) => {
     const { id } = req.query;
     if (id) {
@@ -95,4 +109,4 @@ const getAllSpecificAssignments = asyncWrapper(async (req, res, next) => {
 });
 
 
-module.exports = { submissionExists, create, update, grade, getSubmission, getAllSpecificAssignments };
+module.exports = { submissionExists, create, update, grade, getSubmission, getAllSpecificAssignments, deleteSubmission };

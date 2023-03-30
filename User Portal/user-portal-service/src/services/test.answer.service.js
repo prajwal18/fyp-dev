@@ -155,6 +155,15 @@ const grade = async (data, id) => {
 }
 
 
+const deleteTestAnswer = async (id) => {
+    const test = await TestAnswer.findByIdAndDelete(id);
+    if (test) {
+        return { success: true, data: test, message: "Successfully delete test answer paper." }
+    } else {
+        return { success: false, data: null, message: "Sorry, cannot delete Test answer paper." }
+    }
+}
+
 const getTest = async (id) => {
     const test = await TestAnswer.findById(id)
         .populate({
@@ -289,5 +298,5 @@ const getAllSpecificTests = async (courses, type, searchTerm, skip, take, userId
 module.exports = {
     verifyCreateRequest, verifyUpdateRequest, verifyGradeRequest,
     create, update, grade, getTest, checkTestAnswerExist,
-    getAllSpecificTests
+    getAllSpecificTests, deleteTestAnswer
 };

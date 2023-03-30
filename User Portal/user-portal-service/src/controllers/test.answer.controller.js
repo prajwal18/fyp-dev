@@ -59,6 +59,20 @@ const gradeTestAnswer = asyncWrapper(async (req, res, next) => {
 
 })
 
+const deleteTestAnswer = asyncWrapper(async (req, res, next) => {
+    const { id } = req.query;
+    if (id) {
+        const { success, data, message } = await testAnswerService.deleteTestAnswer(id);
+        if(success){
+            res.json({ success, data, message })
+        } else {
+            throw new Error(message);
+        }
+    } else {
+        throw new Error("Please specify the test answer paper you want to delete.");
+    }
+})
+
 const getTest = asyncWrapper(async (req, res, next) => {
     const { id } = req.query;
     if (id) {
@@ -100,5 +114,5 @@ const getAllSpecificTests = asyncWrapper(async (req, res, next) => {
 module.exports = {
     createTestAnswer, updateTestAnswer, gradeTestAnswer,
     getTest, testAnswerExists,
-    getAllSpecificTests
+    getAllSpecificTests, deleteTestAnswer
 };

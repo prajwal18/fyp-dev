@@ -6,7 +6,8 @@ const {
     create,
     update,
     grade,
-    getTest, 
+    getTest,
+    deleteTA, 
     getAllSpecific
 } = endpoints.testAnswer;
 
@@ -27,6 +28,11 @@ export const httpUpdateTestAnswer = (data: any, id:string) => {
 export const httpGradeTestAnswer = (data:any, id:string) => {
     const url = `${grade}?id=${id}`;
     return axiosWithToken('put', url, data);
+}
+
+export const httpDeleteTestAnswer = (id:string) => {
+    const url = `${deleteTA}?id=${id}`;
+    return axiosWithToken('delete', url);
 }
 
 export const httpGetTestAnswer = (id: string) => {

@@ -25,6 +25,11 @@ router.put("/update", authenticationMiddleware, authorizeStudent, assignmentSubm
 router.put("/grade", authenticationMiddleware, authorizeTeacher, assignmentSubmissionController.grade);
 // Grade assignment submission
 
+// Delete assignment submission
+// To delete the assignment submission, you need to provide it's id like so.
+// .../delete?id=<--- assignment submission's id --->
+router.delete("/delete", authenticationMiddleware, authorizeTeacher, assignmentSubmissionController.deleteSubmission);
+
 // Get specific submission
 // provide submission id as such .../get-submission?id=<--- submission id --->
 router.get('/get-submission', authenticationMiddleware, assignmentSubmissionController.getSubmission);

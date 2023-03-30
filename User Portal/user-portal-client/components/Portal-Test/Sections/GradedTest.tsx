@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
     Stack, Tabs, Tab,
     Box,
@@ -10,10 +10,35 @@ import { selectSelectedAnswerPaper } from '@/redux/test/test.slice';
 import { selectUser } from '@/redux/general/general.slice';
 import EditGrading from '@/components/Common/EditGrading';
 import { useRouter } from 'next/router';
+import { apiCallNResp } from '@/utils/apiCallNResp';
+import { httpDeleteTestAnswer } from '@/service/test.answer.service';
+import { toast } from 'react-toastify';
 
 
 const GradedTestPaperSection = ({ answerPaper }: { answerPaper: any }) => {
     const [show, setShow] = useState(true);
+    // const [answerSheet, setAnswerSheet] = useState([]);
+    // useEffect(() => {
+    //     if (answerPaper?._id) {
+    //         if (answerPaper?.questions.length) {
+    //             let questions = JSON.parse(JSON.stringify(answerPaper.testPaperId.questions));
+    //             let newQuestions = questions.map((question: any) => {
+    //                 let ans = answerPaper.questions.filter((answer: any) => answer._id === question._id)[0];
+    //                 if (ans) {
+    //                     return { ...question, answer: ans.answer, marksObtained: ans?.marksObtained || 0 }
+    //                 } else {
+    //                     return { ...question, answer: [''], marksObtained: ans?.marksObtained || 0 }
+    //                 }
+    //             });
+    //             setAnswerSheet(newQuestions);
+    //         } else {
+    //             let questions = JSON.parse(JSON.stringify(answerPaper.testPaperId.questions));
+    //             let newQuestions = questions.map((question: any) => ({ ...question, answer: [''], marksObtained: 0 }));
+    //             setAnswerSheet(newQuestions);
+    //         }
+    //     }
+    // }, [answerPaper]);
+
     return (
         <Box>
             <Stack direction='row' gap={2} mb={2}>
@@ -44,13 +69,20 @@ const TestResults = ({ answerPaper }: { answerPaper: any }) => {
     const user = useSelector(selectUser);
     const { push } = useRouter();
     const handleEditGrading = useCallback(() => {
-        push(`/Teacher/GradeAssignment?id=${answerPaper._id}`)
+        push(`/Teacher/GradeTest?id=${answerPaper._id}`)
+    }, [push, answerPaper])
+    const handleDeleteSubmission = useCallback(async () => {
+        const response = await apiCallNResp(() => httpDeleteTestAnswer(answerPaper._id));
+        if(response.success){
+            toast.success(response.message);
+            push(`/Teacher/Test`);
+        }
     }, [push, answerPaper])
     return (
         <Box>
             {
                 user && user.role === UserTypes.TEACHER &&
-                <EditGrading handleEdit={handleEditGrading} />
+                <EditGrading handleEdit={handleEditGrading} handleDelete={handleDeleteSubmission} />
             }
             <GradeTestTable answerPaper={answerPaper} />
         </Box>
