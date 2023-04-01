@@ -220,7 +220,6 @@ const SignUpPage = () => {
         enableReinitialize: true,
         validateOnChange: true,
         onSubmit: async (values) => {
-            console.log(values);
             try {
                 const response = await apiCallNResp(() => httpUserRegistration(values));
                 if (response && response.success) {

@@ -96,3 +96,86 @@ export type AssignmentIST = {
 }
 // People initial state and initial state type
 
+
+
+// Stats initial state 
+export const StatIS = {
+    headInfo: {},
+    searchParam: {
+        testCourses: '',
+        assignmentCourses: ''
+    },
+    testProgress: {
+        courses: '',
+        students: '',
+        take: 10
+    },
+    assignmentProgress: {
+        courses: '',
+        students: '',
+        take: 10
+    },
+    testData: {
+        datasets: null,
+        labels: null
+    },
+    assignmentData: {
+        datasets: null,
+        labels: null
+    },
+    courseStat: {
+        total: 0,
+        registered: 0
+    },
+    assignmentStat: {
+        course: '', total: 0, submitted: 0, graded: 0
+    },
+    testStat: {
+        course: '', total: 0, submitted: 0, graded: 0
+    },
+    students: null
+}
+export type StatIST = {
+    headInfo: any,
+    searchParam: {
+        testCourses: string,
+        assignmentCourses: string
+    },
+    testProgress: {
+        courses: string,
+        students: string,
+        take: number
+    },
+    assignmentProgress: {
+        courses: string,
+        students: string,
+        take: number
+    },
+    testData: {
+        datasets: any,
+        labels: any
+    },
+    assignmentData: {
+        datasets: any,
+        labels: any
+    },
+    courseStat: {
+        total: number,
+        registered: number
+    },
+    assignmentStat: {
+        course: string,
+        total: number,
+        submitted: number,
+        graded: number
+    },
+    testStat: {
+        course: string,
+        total: number,
+        submitted: number,
+        graded: number
+    },
+    students: any
+}
+// Stats initial state
+

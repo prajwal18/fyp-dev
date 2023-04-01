@@ -76,7 +76,6 @@ const AssignmenTableContainer = ({ handleOpen, handleEdit }: { handleOpen: (valu
   const { push, asPath } = useRouter();
 
   useEffect(() => {
-    console.log("In Table: ", searchParams);
     if (searchParams?.courses !== '' && searchParams?.assignmentType !== '') {
       dispatch(fetchPaginationDataAC());
     }
@@ -127,13 +126,13 @@ const AssignmenTableContainer = ({ handleOpen, handleEdit }: { handleOpen: (valu
       else if (searchParams.assignmentType === AssignmentType.ASSIGNMENT) {
         tempAssignments = allAssignments.map((assignment: any) => {
           return {
-            _id: assignment._id,
-            title: assignment.title,
-            course: assignment.courseId.name,
+            _id: assignment?._id,
+            title: assignment?.title,
+            course: assignment?.courseId?.name,
             type: AssignmentType.ASSIGNMENT,
-            dueDate: assignment.dueDate.split('T')[0],
-            fullMarks: assignment.fullMark,
-            routeLink: user.role === 'Teacher' ? `` : `/Student/SubmitAssignment?id=${assignment._id}`
+            dueDate: assignment?.dueDate?.split('T')[0],
+            fullMarks: assignment?.fullMark,
+            routeLink: user.role === 'Teacher' ? `` : `/Student/SubmitAssignment?id=${assignment?._id}`
           }
         })
       }

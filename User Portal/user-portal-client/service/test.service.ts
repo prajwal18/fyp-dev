@@ -6,8 +6,6 @@ const {
     create,
     update,
     getTest,
-    allTest,
-    allReleasedTest
 } = endpoints.test;
 
 export const httpCreateTest = (data: any) => {
@@ -21,15 +19,5 @@ export const httpUpdateTest = (data: any, id:string) => {
 
 export const httpGetTest = (id: string) => {
     const url = `${getTest}?id=${id}`;
-    return axiosWithToken('get', url);
-}
-
-export const httpGetAllTest = (query: string) => {
-    const url = `${allTest}${query}`;
-    return axiosWithToken('get', url);
-}
-
-export const httpGetAllReleasedTest = (query: string) => {
-    const url = `${allReleasedTest}${query}`;
     return axiosWithToken('get', url);
 }

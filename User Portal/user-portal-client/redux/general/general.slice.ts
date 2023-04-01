@@ -48,7 +48,10 @@ export const selectOpenProfile = (state: any) => {
 
 
 // Exporting the action creator functions
-export const { updateUser, updateCourses, updateIncludeSidebar, updateOpenProfile, resetState } = generalSlice.actions;
+export const {
+    updateUser, updateCourses, updateIncludeSidebar,
+    updateOpenProfile, resetState
+} = generalSlice.actions;
 // Exporting the action creator functions
 
 // Exporting the reducer as the default export

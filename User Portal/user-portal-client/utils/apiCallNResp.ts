@@ -11,7 +11,6 @@ export const apiCallNResp = async (fn: () => any) => {
     try {
         const response = await fn();
         if (response.data.success) {
-            console.log('Response: ', response.data)
             return response.data;
         } else {
             toast.error(response.data.message);

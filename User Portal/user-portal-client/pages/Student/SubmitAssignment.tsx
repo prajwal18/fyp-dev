@@ -9,6 +9,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import PageNotFound from '../404';
+import { apiCallNResp } from '@/utils/apiCallNResp';
 
 const delay = (time: number) => new Promise((resolve: any) => setTimeout(resolve, time));
 
@@ -39,11 +40,11 @@ const SubmitAssignment = () => {
               assignmentId: query?.id?.toString() || '',
               submittedBy: user._id
             }
-            await delay(1000);
             const response = await httpCreateSubmittedAssignment(data).then(response => response.data);
-            await delay(1000);
             if (response.success) {
               dispatch(fetchSelectedSubmittedAssignmentAC({ id: response.data._id }));
+            } else if (!response.message.includes("E11000 duplicate key error collection")) {
+              toast.error(response.message);
             }
           }
 
@@ -66,7 +67,7 @@ const SubmitAssignment = () => {
       setProceed(true);
     }
   }, [submittedAssignment, query]);
-  
+
   useEffect(() => {
     dispatch(fetchUserAC());
   }, [])

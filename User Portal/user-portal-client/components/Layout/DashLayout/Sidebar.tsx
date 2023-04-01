@@ -6,7 +6,6 @@ import {
     Button, Typography, Box, Stack
 } from "@mui/material";
 import styled from 'styled-components';
-import Cookies from "universal-cookie";
 
 // MUI Icons
 import MenuIcon from '@mui/icons-material/Menu'; // Hamburger Icon

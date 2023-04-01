@@ -33,7 +33,6 @@ const SelectCorrectAnswer = ({ choices, mcqType, handleRemove, formik }: { choic
     // const [correctAnswers, setCorrectAnswer] = useState<Array<string>>([]);
     const [mcqChoices, setMcqChoices] = useState<Array<any>>([]);
     const handleMCQChoiceCheck = (index: number) => {
-        console.log(index)
         let newMCQChoices = JSON.parse(JSON.stringify(mcqChoices));
         newMCQChoices.splice(index, 1, { ...mcqChoices[index], checked: !mcqChoices[index].checked });
         setMcqChoices(newMCQChoices);
@@ -74,7 +73,6 @@ const SelectCorrectAnswer = ({ choices, mcqType, handleRemove, formik }: { choic
                     <>
                         {
                             mcqChoices.map((choice: any, index: number) => {
-                                console.log(choice, index);
                                 return (
                                     <Stack direction='row' spacing={2} key={index}>
                                         <FormControlLabel

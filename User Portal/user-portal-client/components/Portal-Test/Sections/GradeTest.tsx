@@ -153,7 +153,6 @@ const RenderTabPanel = ({ page, answerPaper }: { page: number, answerPaper: any 
             try {
                 const submitData = { ...values, gradedBy: user._id }
                 const response = await apiCallNResp(() => httpGradeTestAnswer(submitData, answerPaper._id));
-                console.log(response);
                 if (response.success) {
                     toast.success(response.message);
                     dispatch(fetchSelectedAnswerPaperAC({id: response.data._id}))

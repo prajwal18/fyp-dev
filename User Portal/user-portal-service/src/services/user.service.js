@@ -75,7 +75,6 @@ const updateUser = async (id, data) => {
     const userData = JSON.parse(JSON.stringify(data));  // Making a deep copy of an object
     delete userData.password;                           // Cannot update password here
 
-    console.log("\n\n\n", userData, "\n\n\n");
     if (userData.profilePicture) {
         const imageData = userData.profilePicture;
         delete userData.profilePicture;

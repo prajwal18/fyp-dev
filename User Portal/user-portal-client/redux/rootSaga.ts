@@ -5,6 +5,7 @@ import GeneralSaga from "./general/saga";
 import PeopleSaga from "./people/saga";
 import TestSaga from "./test/saga";
 import AssignmentSaga from "./assignment/saga";
+import StatSaga from "./stat/saga";
 // importing all the sagas for different slices
 
 export default function* rootSaga() {
@@ -23,7 +24,10 @@ export default function* rootSaga() {
         PeopleSaga(),
 
         // Test
-        TestSaga()
+        TestSaga(),
+
+        // Statistics
+        StatSaga()
 
     ]);
 }

@@ -94,7 +94,6 @@ export const UpdateTestModal = ({ open, setOpen, formik, testData }: { open: boo
     }
 
     useEffect(() => {
-        console.log(formik.values);
         if (testDataCopy && testDataCopy.dueDate && testDataCopy.releaseDate) {
             testDataCopy.dueDate = testDataCopy.dueDate.split('T')[0];
             testDataCopy.releaseDate = testDataCopy.releaseDate.split('T')[0];

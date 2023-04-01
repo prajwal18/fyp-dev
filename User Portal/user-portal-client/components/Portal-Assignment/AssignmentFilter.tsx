@@ -4,7 +4,7 @@ import {
   MenuItem, Select, Stack, Button
 
 } from "@mui/material";
-import { joinCoursesCS } from '@/utils/filterFunctions';
+import { joinDDListValues } from '@/utils/filterFunctions';
 
 // MUI Icon
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
@@ -25,7 +25,7 @@ const AssignmentFilter = ({ showFilter }: { showFilter: any }) => {
 
   const handleResetFilter = useCallback(() => {
     if (courses?.length) {
-      setSelectedCourse(joinCoursesCS(courses));
+      setSelectedCourse(joinDDListValues(courses));
       setSelectedAssignmentType(AssignmentType.ASSIGNMENT);
     }
   }, [courses]);
@@ -33,8 +33,8 @@ const AssignmentFilter = ({ showFilter }: { showFilter: any }) => {
 
   useEffect(() => {
     if (courses?.length) {
-      dispatch(updateSearchParams({ assignmentType: AssignmentType.ASSIGNMENT, courses: joinCoursesCS(courses) }));
-      setSelectedCourse(joinCoursesCS(courses));
+      dispatch(updateSearchParams({ assignmentType: AssignmentType.ASSIGNMENT, courses: joinDDListValues(courses) }));
+      setSelectedCourse(joinDDListValues(courses));
     }
   }, [courses, dispatch]);
 
@@ -91,7 +91,7 @@ const AssignmentFilter = ({ showFilter }: { showFilter: any }) => {
                       setSelectedCourse(e.target.value);
                     }}
                   >
-                    <MenuItem value={joinCoursesCS(courses)}>All</MenuItem>
+                    <MenuItem value={joinDDListValues(courses)}>All</MenuItem>
                     {
                       courses.map((course: any, index: number) => {
                         return (

@@ -136,7 +136,6 @@ const EditProfileModal = ({ open, setOpen }: { open: boolean, setOpen: (value: a
         enableReinitialize: true,
         validateOnChange: true,
         onSubmit: async (values) => {
-            console.log(values);
             try {
                 const response = await apiCallNResp(() => httpUpdateUser(values, user._id));
                 if (response && response.success) {

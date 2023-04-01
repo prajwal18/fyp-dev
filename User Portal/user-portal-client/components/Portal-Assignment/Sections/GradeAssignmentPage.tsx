@@ -99,7 +99,6 @@ const GradeAssignmentContainer = () => {
                     gradedBy: user._id
                 }
                 const response = await apiCallNResp(() => httpGradeSubmittedAssignment(sendData, submittedAssignment._id));
-                console.log(response);
                 if (response.success) {
                     dispatch(fetchSelectedSubmittedAssignmentAC({ id: submittedAssignment._id }));
                     toast.success(response.message);

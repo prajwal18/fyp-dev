@@ -22,7 +22,6 @@ const createTestAnswer = asyncWrapper(async (req, res, next) => {
             throw new Error(message);
         }
     } else {
-        console.log("\n\n\n", isVerified)
         throw new Error(isVerifiedMessage);
 
     }
@@ -63,7 +62,7 @@ const deleteTestAnswer = asyncWrapper(async (req, res, next) => {
     const { id } = req.query;
     if (id) {
         const { success, data, message } = await testAnswerService.deleteTestAnswer(id);
-        if(success){
+        if (success) {
             res.json({ success, data, message })
         } else {
             throw new Error(message);
@@ -111,8 +110,9 @@ const getAllSpecificTests = asyncWrapper(async (req, res, next) => {
 
 
 
+
 module.exports = {
     createTestAnswer, updateTestAnswer, gradeTestAnswer,
-    getTest, testAnswerExists,
-    getAllSpecificTests, deleteTestAnswer
+    getTest, testAnswerExists, getAllSpecificTests,
+    deleteTestAnswer
 };

@@ -40,6 +40,15 @@ const endpoints = {
         deleteAS: baseURL + "/assignment-submission/delete",
         getSubmission: baseURL + "/assignment-submission/get-submission",
         getAllSpecific: baseURL + "/assignment-submission/get-all-specific"
+    },
+
+    stats: {
+        headInfo: baseURL + "/stats/head-info",
+        courseStat: baseURL + "/stats/course-stat",
+        assignmentStat: baseURL + "/stats/assignment-stat",
+        testStat: baseURL + "/stats/test-stat",
+        testProgress: baseURL + "/stats/test-progress",
+        assignmentProgress: baseURL + "/stats/assignment-progress"
     }
 }
 

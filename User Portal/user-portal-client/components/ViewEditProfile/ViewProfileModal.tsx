@@ -46,7 +46,6 @@ const HeadSection = ({ handleOpenEdit, userName }: { handleOpenEdit?: () => void
 }
 
 const ImageCourseSection = ({ user }: { user: any }) => {
-  console.log('Image Section: ', user.profilePicture);
   return (
     <Stack sx={{ minWidth: "200px", maxWidth: "250px" }} spacing={3}>
       <CustomImage

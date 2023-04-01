@@ -52,7 +52,6 @@ const AssignmentPage = ({ role }: { role: UserTypes }) => {
 	}
 
 	const handleEditAssignment = (data: any) => {
-		console.log(data);
 		dispatch(fetchSelectedAssignmentAC({ id: data._id }));
 		setIsEditing(true);
 		setOpenCA(true);

@@ -19,7 +19,6 @@ const base64toImg = (base64string, folderName) => {
             fs.mkdirSync(absolutePathToFolder, { recursive: true });
         }
         
-        console.log(absolutePath);
         fs.writeFileSync(absolutePath, buffer);
         return `/public/${folderName}/${fileName}`;
     }else {

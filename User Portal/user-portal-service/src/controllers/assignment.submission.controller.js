@@ -5,7 +5,6 @@ const submissionExists = asyncWrapper(async (req, res, next) => {
     const { assignmentId, studentId } = req.query;
     if (assignmentId && studentId) {
         const { submissionExists, data, message } = await assignmentSubmissionService.checkSubmissionExist(assignmentId, studentId);
-        console.log("\n\n\n", submissionExists, message, "\n\n\n");
         res.json({ success: submissionExists, data: data, message: message });
     } else {
         throw new Error("Provide assignmentId and studentId. Cannot find the assignment submission.");

@@ -1,7 +1,6 @@
 import { HandleChangePageType, HandleChangeRowsPerPageType } from "../../../constants/CustomTypes";
 
 export const handleChangePage: HandleChangePageType = (pagination, actionCreator, dispatch) => (event, newPage) => {
-    console.log({...pagination, skip: pagination.take*newPage});
     dispatch(actionCreator({...pagination, skip: pagination.take*newPage}));
 }
 

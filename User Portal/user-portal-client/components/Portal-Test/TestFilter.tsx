@@ -4,7 +4,7 @@ import {
   MenuItem, Select, Stack, Button
 
 } from "@mui/material";
-import { joinCoursesCS } from '@/utils/filterFunctions';
+import { joinDDListValues } from '@/utils/filterFunctions';
 
 // MUI Icon
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
@@ -25,7 +25,7 @@ const TestFilter = ({ showFilter }: { showFilter: boolean }) => {
 
   const handleResetFilter = useCallback(() => {
     if (courses?.length) {
-      setSelectedCourse(joinCoursesCS(courses));
+      setSelectedCourse(joinDDListValues(courses));
       setSelectedTestType(TestType.TEST_PAPER);
     }
   }, [courses])
@@ -33,8 +33,8 @@ const TestFilter = ({ showFilter }: { showFilter: boolean }) => {
 
   useEffect(() => {
     if (courses?.length) {
-      dispatch(updateSearchParams({ testType: TestType.TEST_PAPER, courses: joinCoursesCS(courses) }));
-      setSelectedCourse(joinCoursesCS(courses));
+      dispatch(updateSearchParams({ testType: TestType.TEST_PAPER, courses: joinDDListValues(courses) }));
+      setSelectedCourse(joinDDListValues(courses));
     }
   }, [courses, dispatch]);
 
@@ -89,7 +89,7 @@ const TestFilter = ({ showFilter }: { showFilter: boolean }) => {
                       setSelectedCourse(e.target.value);
                     }}
                   >
-                    <MenuItem value={joinCoursesCS(courses)}>All</MenuItem>
+                    <MenuItem value={joinDDListValues(courses)}>All</MenuItem>
                     {
                       courses.map((course: any, index: number) => {
                         return (

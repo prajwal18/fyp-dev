@@ -27,8 +27,7 @@ router.put('/grade', authenticationMiddleware, authorizeTeacher, testAnswerContr
 // Delete Test answer paper
 // To delete the test, you need to provide it's id like os
 // .../delete?id=<-- Test's id -->
-router.delete("/delete", authenticationMiddleware, authorizeTeacher, testAnswerController.deleteTestAnswer)
-
+router.delete("/delete", authenticationMiddleware, authorizeTeacher, testAnswerController.deleteTestAnswer);
 
 // Get test Details
 // To fetch test details, you need to provide it's id like so

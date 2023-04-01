@@ -284,7 +284,6 @@ const getAllSpecificAnswerPapers = async (courses, type, searchTerm, skip, take,
 }
 
 const getAllSpecificTests = async (courses, type, searchTerm, skip, take, userId, role) => {
-
     if (type === TestPaperType.TEST_PAPER) {
         return getAllSpecificTestPapers(courses, searchTerm, skip, take, role)
     }

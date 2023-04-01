@@ -5,7 +5,6 @@ const uuid = require('uuid');
 const base64ToPdf = (base64String, folderName) => {
     const [metaData, pdfData] = base64String.split(';base64,');
     if(pdfData){
-        console.log("\n\n\nWhat up is this working\n\n\n");
         const extension = '.pdf';
         const buffer = Buffer.from(pdfData, "base64");
         const fileName = uuid.v4() + extension;
