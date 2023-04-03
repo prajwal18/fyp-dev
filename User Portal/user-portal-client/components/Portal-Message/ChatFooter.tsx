@@ -24,7 +24,7 @@ const CustomTextField = ({ value, onChange }: { value: string, onChange: (value:
   )
 }
 
-const ChatFooter = ({ conversationId, user }: { conversationId: string, user: any }) => {
+const ChatFooter = ({ conversationId, receiverId, user, socket }: { conversationId: string, receiverId: string, user: any, socket: any }) => {
   const [text, setText] = useState('');
   const dispatch = useDispatch();
   const handleChange = (e: any) => {
@@ -35,9 +35,10 @@ const ChatFooter = ({ conversationId, user }: { conversationId: string, user: an
     if (text !== '') {
       const data = { user: user._id, message: text };
       const response = await apiCallNResp(() => httpUpdateConversation(data, conversationId));
-      if(response?.success){
+      if (response?.success) {
         setText('');
-        dispatch(fetchConversationAC({id: response.data._id}));
+        dispatch(fetchConversationAC({ id: response.data._id }));
+        socket.emit('message', { senderId: user._id, receiverId, conversationId })
       }
     }
   }

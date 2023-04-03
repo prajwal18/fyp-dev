@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
     Box, Stack, Typography
 } from '@mui/material';
@@ -9,9 +9,7 @@ import SendIcon from '@mui/icons-material/Send';
 import ProfileImage from '../Common/components/ProfileImage';
 import { useDispatch, useSelector } from 'react-redux';
 import { baseURL } from '@/utils/endpoints';
-import { selectCourses } from '@/redux/general/general.slice';
-import { fetchAllCourseMembersAC, fetchConversationAC } from '@/redux/message/actions';
-import { selectReceiver, selectUsers, updateReceiver } from '@/redux/message/message.slice';
+import { selectOnlineUsers, updateConversation, updateReceiver } from '@/redux/message/message.slice';
 
 // Styled Components
 const UserProfileContainer = styled(Stack)`
@@ -42,29 +40,30 @@ const ChatBarHeader = () => {
     );
 }
 
-const UserProfile = ({ user, receiverId }: { user: any, receiverId: string }) => {
+const UserProfile = ({ user, currentReceiverId, active }: { user: any, currentReceiverId: string, active: boolean }) => {
     const dispatch = useDispatch();
     const handleClick = () => {
+        dispatch(updateConversation({}));
         dispatch(updateReceiver(user));
     }
     return (
         <UserProfileContainer
             direction='row'
             spacing={2}
-            selected={user?._id === receiverId}
+            selected={user?._id === currentReceiverId}
             onClick={handleClick}
         >
             <ProfileImage
                 src={baseURL + (user?.profilePicture || '/abc.jpg')}
             />
 
-            <Typography sx={{ fontSize: "20px" }}>{user?.name}</Typography>
+            <Typography sx={{ fontSize: "20px", color: active ? 'rgb(0, 165, 56)' : 'white' }}>{user?.name}</Typography>
         </UserProfileContainer>
     );
 }
 
-const ChatBar = ({ users, receiver }: {users: Array<any>, receiver: any}) => {
-
+const ChatBar = ({ users, receiver }: { users: Array<any>, receiver: any }) => {
+    const onlineUsers = useSelector(selectOnlineUsers);
     return (
         <Stack sx={{ width: "30%", borderRight: "2px solid grey" }}>
             <ChatBarHeader />
@@ -81,11 +80,16 @@ const ChatBar = ({ users, receiver }: {users: Array<any>, receiver: any}) => {
                 className='hideScrollBar'
             >
                 {
-                    users?.length && users.map((user: any) => (
-                        <React.Fragment key={user._id}>
-                            <UserProfile user={user} receiverId={receiver?._id || ''} />
-                        </React.Fragment>
-                    ))
+                    users?.length && users.map((user: any) => {
+                        return (
+                            <React.Fragment key={user._id}>
+                                <UserProfile
+                                    user={user} currentReceiverId={receiver?._id || ''}
+                                    active={onlineUsers?.find((onlineUser: any) => onlineUser.userId === user._id) ? true : false}
+                                />
+                            </React.Fragment>
+                        )
+                    })
                 }
             </Stack>
         </Stack>

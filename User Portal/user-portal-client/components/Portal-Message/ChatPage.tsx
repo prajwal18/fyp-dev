@@ -12,7 +12,7 @@ import { httpCheckConversationExists } from '@/service/conversation.service';
 import { toast } from 'react-toastify';
 import { httpCreateConversation } from '@/service/conversation.service';
 
-const ChatPage = () => {
+const ChatPage = ({ socket }: { socket: any }) => {
   const users = useSelector(selectUsers);
   const user = useSelector(selectUser);
   const receiver = useSelector(selectReceiver);
@@ -73,6 +73,7 @@ const ChatPage = () => {
           receiver={receiver}
           conversation={conversation}
           lastMessageRef={lastMessageRef}
+          socket={socket}
         />
       </Stack>
     </Box >

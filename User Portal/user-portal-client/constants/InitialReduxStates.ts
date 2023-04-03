@@ -12,12 +12,14 @@ export const GeneralIS = {
     includeSidebar: false,
     openProfile: false,
     user: {},
+    onlineUsers: null,
     courses: null
 };
 export type GeneralIST = {
     includeSidebar: boolean,
     openProfile: boolean,
     user: any,
+    onlineUsers: any,
     courses: any
 };
 // General Initial State and Initial StateType

@@ -48,7 +48,7 @@ const ReceiverMsg = ({ text, name }: { text: string, name: string }) => {
     )
 }
 
-const ChatBody = ({ user, receiver, conversation, lastMessageRef }: { user: any, receiver: any, conversation: any, lastMessageRef:any }) => {
+const ChatBody = ({ user, receiver, conversation, lastMessageRef, socket }: { user: any, receiver: any, conversation: any, lastMessageRef:any, socket: any }) => {
     return (
         <Stack spacing={1} sx={{ width: "70%", background: "rgba(0,0,0,0.7)", padding: "20px" }}>
             {
@@ -83,7 +83,9 @@ const ChatBody = ({ user, receiver, conversation, lastMessageRef }: { user: any,
                     </Stack>
                     <ChatFooter
                         conversationId={conversation._id}
+                        receiverId={receiver._id}
                         user={user}
+                        socket={socket}
                     />
                 </>
             }

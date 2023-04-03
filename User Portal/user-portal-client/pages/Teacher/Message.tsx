@@ -1,9 +1,9 @@
 import React from 'react';
-import ChatPage from '@/components/Portal-Message/ChatPage';
+import MessagePage from '@/components/Portal-Message/MessagePage';
 
 const Message = () => {
   return (
-    <ChatPage />
+    <MessagePage />
   )
 }
 
