@@ -8,6 +8,7 @@ const assignmentSubmissionRouter = require('./assignment.submission.router');
 const testRouter = require("./test.router");
 const testAnswerRouter = require("./test.answer.router");
 const statsRouter = require("./stats.router");
+const conversationRouter = require("./conversation.router");
 // Importing router for the different entities
 
 
@@ -19,5 +20,6 @@ router.use('/assignment-submission', assignmentSubmissionRouter);
 router.use('/test', testRouter);
 router.use('/test-answer', testAnswerRouter);
 router.use('/stats', statsRouter);
+router.use('/conversation', conversationRouter);
 
 module.exports = router;

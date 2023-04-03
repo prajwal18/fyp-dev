@@ -1,5 +1,4 @@
-import { call, put, takeEvery, select } from "redux-saga/effects";
-import Cookies from "universal-cookie";
+import { put, takeEvery, select } from "redux-saga/effects";
 
 import { actionTypes } from "./types";
 import { apiCallNResp } from "@/utils/apiCallNResp";

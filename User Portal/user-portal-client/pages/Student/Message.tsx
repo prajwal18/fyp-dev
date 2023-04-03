@@ -1,12 +1,8 @@
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/router';
+import React from 'react';
+import ChatPage from '@/components/Portal-Message/ChatPage';
 const Message = () => {
-  const {asPath} = useRouter();
-  useEffect(() => {
-    console.log('As Path', asPath)
-  }, [asPath])
   return (
-    <div></div>
+    <ChatPage />
   )
 }
 

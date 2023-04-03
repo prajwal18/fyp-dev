@@ -179,3 +179,16 @@ export type StatIST = {
 }
 // Stats initial state
 
+
+// People initial state and initial state type
+export const MessageIS = {
+    users: null,
+    receiver: {},
+    conversation: null // This will be an array
+}
+export type MessageIST = {
+    users: any,
+    receiver: any,
+    conversation: any
+}
+// People initial state and initial state type

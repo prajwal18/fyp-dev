@@ -6,6 +6,7 @@ import PeopleReducer from '@/redux/people/people.slice';
 import TestReducer from '@/redux/test/test.slice';
 import AssignmentReducer from '@/redux/assignment/assignment.slice';
 import StatReducer from '@/redux/stat/stat.slice';
+import MessageReducer from '@/redux/message/message.slice';
 // Importing all the reducers
 
 const rootReducer = combineReducers({
@@ -16,8 +17,8 @@ const rootReducer = combineReducers({
     // General
     general: GeneralReducer,
 
-    // Courses
-    // courses: CourseReducer,
+    // Message
+    message: MessageReducer,
 
     // People
     people: PeopleReducer,
@@ -27,8 +28,6 @@ const rootReducer = combineReducers({
 
     // Statistics
     stat: StatReducer
-
-
 
 });
 

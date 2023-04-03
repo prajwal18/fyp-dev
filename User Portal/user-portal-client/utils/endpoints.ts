@@ -49,6 +49,13 @@ const endpoints = {
         testStat: baseURL + "/stats/test-stat",
         testProgress: baseURL + "/stats/test-progress",
         assignmentProgress: baseURL + "/stats/assignment-progress"
+    },
+
+    conversation: {
+        check: baseURL + "/conversation/check",
+        create: baseURL + "/conversation/create",
+        update: baseURL + "/conversation/update",
+        getConversation: baseURL + "/conversation/get-conversation"
     }
 }
 
