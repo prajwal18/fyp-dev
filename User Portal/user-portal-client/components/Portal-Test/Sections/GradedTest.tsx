@@ -84,7 +84,7 @@ const TestResults = ({ answerPaper }: { answerPaper: any }) => {
                 user && user.role === UserTypes.TEACHER &&
                 <EditGrading handleEdit={handleEditGrading} handleDelete={handleDeleteSubmission} />
             }
-            <GradeTestTable answerPaper={answerPaper} />
+            <GradeTestTable user={user} answerPaper={answerPaper} />
         </Box>
     );
 }

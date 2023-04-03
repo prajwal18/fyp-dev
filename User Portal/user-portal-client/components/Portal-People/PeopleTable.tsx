@@ -13,14 +13,19 @@ import { selectMembers, selectPagination, selectSearchParams, selectSearchTerm, 
 import { handleChangePage, handleChangeRowsPerPage } from '../Common/table/PaginationFunctions';
 import { fetchAllMembersAC, fetchPaginationDataAC } from '@/redux/people/actions';
 import { ViewProfileModalOnly } from '../ViewEditProfile/ViewProfileModal';
+import { updateReceiver } from '@/redux/message/message.slice';
+import { useRouter } from 'next/router';
+import { selectUser } from '@/redux/general/general.slice';
 
 const PeopleTableContainer = () => {
     const [openView, setOpenView] = useState(false);
+    const user = useSelector(selectUser);
     const members = useSelector(selectMembers);
     const pagination = useSelector(selectPagination);
     const searchTerm = useSelector(selectSearchTerm);
     const searchParam = useSelector(selectSearchParams);
     const dispatch = useDispatch();
+    const { push } = useRouter();
 
     useEffect(() => {
         if (searchParam.courses !== '' && searchParam.role !== '') {
@@ -55,7 +60,10 @@ const PeopleTableContainer = () => {
                                 },
                                 {
                                     name: TableActionTypes.MESSAGE,
-                                    callback: (data) => { console.log('People Message Callback: ', data) }
+                                    callback: (data) => { 
+                                        dispatch(updateReceiver(data));
+                                        push(`/${user.role}/Message`);
+                                     }
                                 }
                             ]}
                         />

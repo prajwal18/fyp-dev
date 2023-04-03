@@ -8,7 +8,6 @@ import ChatPage from './ChatPage';
 import * as io from 'socket.io-client';
 import { selectReceiver, selectUsers, updateOnlineUsers, updateReceiver } from '@/redux/message/message.slice';
 import { fetchConversationAC } from '@/redux/message/actions';
-import { toast } from 'react-toastify';
 const socket = io.connect(baseURL);
 // Socket io to establish two way communication between server and client
 

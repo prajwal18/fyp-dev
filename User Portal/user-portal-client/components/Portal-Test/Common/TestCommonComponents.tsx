@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import parse from 'html-react-parser';
 import {
     Typography, Box, TextField,
@@ -18,13 +18,17 @@ import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
 import EditIcon from '@mui/icons-material/Edit';
 // MUI Icons
-import { TypesOfQuestions, TestQuestionListType } from '@/constants/Constants';
+import { TypesOfQuestions, TestQuestionListType, UserTypes } from '@/constants/Constants';
 import { BoldTableCell, BorderedBox, BWTableRow, DarkBtn } from "@/components/Common/styled/StyledComponents";
 import { UpdateTestModal } from "./CreateTestModal";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSelectedTestPaperAC } from "@/redux/test/actions";
 import { useRouter } from "next/router";
 import { GenerateCustTextArea, GenerateCustTextField } from "@/components/Common/form/CustTextFieldNErrorMsg";
+import { selectMembers } from "@/redux/people/people.slice";
+import { selectUsers, updateReceiver } from "@/redux/message/message.slice";
+import { fetchAllMembersAC } from "@/redux/people/actions";
+import { fetchAllCourseMembersAC } from "@/redux/message/actions";
 
 export const TestTitleViewEdit = ({ formik, testData }: { formik: any, testData: any }) => {
     const [proceed, setProceed] = useState(false);
@@ -136,7 +140,7 @@ const RenderGradedCheckbox = ({ choice, correctChoice, userAnswer }: { choice: s
                     alignItems='center'
                     sx={{ padding: "10px" }}
                 >
-                    <FormControlLabel control={<Checkbox />} label={choice} disabled checked={true}/>
+                    <FormControlLabel control={<Checkbox />} label={choice} disabled checked={true} />
                     <CheckCircleIcon sx={{ color: "#81b21b" }} />
                 </Stack>
             )
@@ -159,7 +163,7 @@ const RenderGradedCheckbox = ({ choice, correctChoice, userAnswer }: { choice: s
                 alignItems='center'
                 sx={{ padding: "10px" }}
             >
-                <FormControlLabel control={<Checkbox />} label={choice} disabled checked={true}/>
+                <FormControlLabel control={<Checkbox />} label={choice} disabled checked={true} />
                 <CancelIcon sx={{ color: "#AC0D0F" }} />
             </Stack>
         )
@@ -350,7 +354,7 @@ export const TestQuestionContainerGrade = ({ question, type, index, handleAssign
                         sx={{ width: "100px" }}
                         variant="standard"
                         value={question?.marksObtained || 0}
-                        onChange={TestQuestionListType.GRADE_TEST ? (e:any) => handleAssignMarks(e.target.value) : () => { }}
+                        onChange={TestQuestionListType.GRADE_TEST ? (e: any) => handleAssignMarks(e.target.value) : () => { }}
                         disabled={TestQuestionListType.GRADED_TEST === type}
                     />
                 </Stack>
@@ -490,7 +494,20 @@ export const GradeTestForm = ({ formik }: { formik: any }) => {
     );
 }
 
-export const GradeTestTable = ({ answerPaper }: { answerPaper: any }) => {
+export const GradeTestTable = ({ user, answerPaper }: { user: any, answerPaper: any }) => {
+    const dispatch = useDispatch();
+    const users = useSelector(selectUsers);
+    const { push } = useRouter();
+    useEffect( () => {
+        dispatch(fetchAllCourseMembersAC());
+    }, [])
+    const handleMessage = (id: string) => {
+        if(users?.length){
+            const member = users.find((member: any) => member._id === id);
+            dispatch(updateReceiver(member));
+            push(`/${user.role}/Message`);
+        }
+    }
     return (
         <TableContainer>
             <Table>
@@ -514,7 +531,21 @@ export const GradeTestTable = ({ answerPaper }: { answerPaper: any }) => {
                     </BWTableRow>
                     <BWTableRow>
                         <BoldTableCell>Submitted By</BoldTableCell>
-                        <TableCell>{answerPaper?.submittedBy?.name}</TableCell>
+                        {
+                            user?.role === UserTypes.TEACHER ?
+                                <TableCell>
+                                    <Stack direction='row' alignItems='center' gap={1}>
+                                        <Box>{answerPaper?.submittedBy?.name}</Box>
+                                        <Button variant="text" onClick={() => handleMessage(answerPaper?.submittedBy?._id)}>
+                                            <SendIcon color="info" />
+                                        </Button>
+                                    </Stack>
+                                </TableCell>
+                                :
+                                <TableCell>{answerPaper?.submittedBy?.name}</TableCell>
+
+
+                        }
                     </BWTableRow>
                     <BWTableRow>
                         <BoldTableCell>Full Marks</BoldTableCell>
@@ -538,14 +569,22 @@ export const GradeTestTable = ({ answerPaper }: { answerPaper: any }) => {
                             </BWTableRow>
                             <BWTableRow>
                                 <BoldTableCell>{'Message your Teacher'}</BoldTableCell>
-                                <TableCell>
-                                    <Stack direction='row' alignItems='center' gap={1}>
-                                        <Typography>{answerPaper?.gradedBy?.name}</Typography>
-                                        <Button variant="text">
-                                            <SendIcon color="info" />
-                                        </Button>
-                                    </Stack>
-                                </TableCell>
+                                {
+                                    user?.role === UserTypes.STUDENT ?
+                                        <TableCell>
+                                            <Stack direction='row' alignItems='center' gap={1}>
+                                                <Typography>{answerPaper?.gradedBy?.name}</Typography>
+                                                <Button variant="text" onClick={() => handleMessage(answerPaper?.gradedBy?._id)}>
+                                                    <SendIcon color="info" />
+                                                </Button>
+                                            </Stack>
+                                        </TableCell>
+                                        :
+                                        <TableCell>
+                                            <Typography>{answerPaper?.gradedBy?.name}</Typography>
+                                        </TableCell>
+
+                                }
                             </BWTableRow>
                         </>
                     }

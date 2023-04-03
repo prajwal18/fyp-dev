@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
     TableContainer, Table, TableBody, TableCell,
     Typography, Stack, Button, Box, TextField
@@ -5,6 +6,7 @@ import {
 import Lottie from "lottie-react";
 // MUI ICONS
 import DownloadIcon from '@mui/icons-material/Download';
+import SendIcon from '@mui/icons-material/Send';
 // MUI ICONS
 // Styled component
 import { BoldTableCell, BWTableRow } from '@/components/Common/styled/StyledComponents';
@@ -15,6 +17,12 @@ import Link from 'next/link';
 import { baseURL } from '@/utils/endpoints';
 import convertToBase64 from '@/utils/convertToBase64';
 import { ErrorMessage } from '@/components/Common/form/CustTextFieldNErrorMsg';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUsers, updateReceiver } from '@/redux/message/message.slice';
+import { useRouter } from 'next/router';
+import { fetchAllCourseMembersAC } from '@/redux/message/actions';
+import { selectUser } from '@/redux/general/general.slice';
+import { UserTypes } from '@/constants/Constants';
 
 
 
@@ -118,10 +126,25 @@ export const AssignmentInfoTable = ({ submittedAssignment }: { submittedAssignme
 }
 
 export const AssignmentToBeGraded = ({ submittedAssignment }: { submittedAssignment: any }) => {
+    const dispatch = useDispatch();
+    const user = useSelector(selectUser);
+    const users = useSelector(selectUsers);
+    const { push } = useRouter();
+
+    useEffect(() => {
+        dispatch(fetchAllCourseMembersAC());
+    }, [])
+
+    const handleMessage = (id: string) => {
+        if (users?.length) {
+            const member = users.find((member: any) => member._id === id);
+            dispatch(updateReceiver(member));
+            push(`/${user.role}/Message`);
+        }
+    }
     const handleNoSubmissionFile = () => {
         toast.info("Sorry, no submission file present.");
     }
-
     return (
         <TableContainer>
             <Table>
@@ -145,7 +168,19 @@ export const AssignmentToBeGraded = ({ submittedAssignment }: { submittedAssignm
                     </BWTableRow>
                     <BWTableRow>
                         <BoldTableCell>Submitted By</BoldTableCell>
-                        <TableCell>{submittedAssignment?.submittedBy?.name}</TableCell>
+                        {
+                            user.role === UserTypes.TEACHER ?
+                                <TableCell>
+                                    <Stack direction='row' alignItems='center' gap={1}>
+                                        <Box>{submittedAssignment?.submittedBy?.name}</Box>
+                                        <Button variant="text" onClick={() => handleMessage(submittedAssignment?.submittedBy?._id)}>
+                                            <SendIcon color="info" />
+                                        </Button>
+                                    </Stack>
+                                </TableCell>
+                                :
+                                <TableCell>{submittedAssignment?.submittedBy?.name}</TableCell>
+                        }
                     </BWTableRow>
 
                     <BWTableRow>
@@ -190,7 +225,22 @@ export const AssignmentToBeGraded = ({ submittedAssignment }: { submittedAssignm
     );
 }
 
-export const AssignmentSubmissionTable = ({ submittedAssignment }: { submittedAssignment: any }) => {
+export const AssignmentSubmissionTable = ({ user, submittedAssignment }: { user: any, submittedAssignment: any }) => {
+    const dispatch = useDispatch();
+    const users = useSelector(selectUsers);
+    const { push } = useRouter();
+
+    useEffect(() => {
+        dispatch(fetchAllCourseMembersAC());
+    }, [])
+
+    const handleMessage = (id: string) => {
+        if (users?.length) {
+            const member = users.find((member: any) => member._id === id);
+            dispatch(updateReceiver(member));
+            push(`/${user.role}/Message`);
+        }
+    }
     const handleNoSubmissionFile = () => {
         toast.info("Sorry, no submission file present.");
     }
@@ -225,7 +275,19 @@ export const AssignmentSubmissionTable = ({ submittedAssignment }: { submittedAs
                         </BWTableRow>
                         <BWTableRow>
                             <BoldTableCell>Submitted By</BoldTableCell>
-                            <TableCell>{submittedAssignment?.submittedBy?.name}</TableCell>
+                            {
+                                user.role === UserTypes.TEACHER ?
+                                    <TableCell>
+                                        <Stack direction='row' alignItems='center' gap={1}>
+                                            <Box>{submittedAssignment?.submittedBy?.name}</Box>
+                                            <Button variant="text" onClick={() => handleMessage(submittedAssignment?.submittedBy?._id)}>
+                                                <SendIcon color="info" />
+                                            </Button>
+                                        </Stack>
+                                    </TableCell>
+                                    :
+                                    <TableCell>{submittedAssignment?.submittedBy?.name}</TableCell>
+                            }
                         </BWTableRow>
 
                         <BWTableRow>
@@ -267,7 +329,19 @@ export const AssignmentSubmissionTable = ({ submittedAssignment }: { submittedAs
 
                         <BWTableRow>
                             <BoldTableCell>Graded By</BoldTableCell>
-                            <TableCell>{submittedAssignment?.gradedBy?.name}</TableCell>
+                            {
+                                user.role === UserTypes.STUDENT ?
+                                    <TableCell>
+                                        <Stack direction='row' alignItems='center' gap={1}>
+                                            <Box>{submittedAssignment?.gradedBy?.name}</Box>
+                                            <Button variant="text" onClick={() => handleMessage(submittedAssignment?.gradedBy?._id)}>
+                                                <SendIcon color="info" />
+                                            </Button>
+                                        </Stack>
+                                    </TableCell>
+                                    :
+                                    <TableCell>{submittedAssignment?.gradedBy?.name}</TableCell>
+                            }
                         </BWTableRow>
                         <BWTableRow>
                             <BoldTableCell>{"Teacher\'s Remark"}</BoldTableCell>

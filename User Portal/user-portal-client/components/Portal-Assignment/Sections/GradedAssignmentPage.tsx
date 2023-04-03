@@ -56,7 +56,7 @@ const AssignmentResults = ({ submittedAssignment }: { submittedAssignment: any }
                 user && user.role === UserTypes.TEACHER &&
                 <EditGrading handleEdit={handleEditGrading} handleDelete={handleDeleteSubmission} />
             }
-            <AssignmentSubmissionTable submittedAssignment={submittedAssignment} />
+            <AssignmentSubmissionTable user={user} submittedAssignment={submittedAssignment} />
         </Box>
     );
 }

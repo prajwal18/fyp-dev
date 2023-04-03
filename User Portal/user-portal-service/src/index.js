@@ -65,15 +65,10 @@ socketIO.on('connection', (socket) => {
         if (users.find(user => user.userId === data.receiverId)) {
             const specificUsers = users.filter(user => user.userId === data.receiverId);
             // socket.broadcast.emit('messageSent', { senderId: data.senderId, conversationId: data.conversationId })
-            
+
             specificUsers.forEach(user => {
                 socket.to(user.socketId).emit('messageSent', { senderId: data.senderId, conversationId: data.conversationId })
             })
-            // if (specificUsers?.length) {
-            //     specificUsers.forEach(user => {
-
-            //     })
-            // }
         }
     });
 

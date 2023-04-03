@@ -18,6 +18,7 @@ import {
 import {
     httpGetAllMembers
 } from '@/service/user.service';
+import { selectUser } from "../general/general.slice";
 // Custom axios calls 
 
 // Generator Functions
@@ -32,6 +33,7 @@ function* fetchPaginationData(action: ActionT): Generator<any, any, any> {
     }
 }
 function* fetchAllMembers(action: ActionT): Generator<any, any, any> {
+    const user =  yield select(selectUser);
     const pagination = yield select(selectPagination);
     const searchTerm = yield select(selectSearchTerm);
     const { courses, role } = yield select(selectSearchParams);
@@ -39,7 +41,8 @@ function* fetchAllMembers(action: ActionT): Generator<any, any, any> {
     const query = `?courseIds=${courses}&role=${role}&searchTerm=${searchTerm}&skip=${pagination.skip}&take=${pagination.take}`;
     const response = yield (apiCallNResp(() => httpGetAllMembers(query)));
     if (response?.success) {
-        yield put(updateMembers(response.data));
+        const data = response.data.filter((member: any) => member._id !== user._id)
+        yield put(updateMembers(data));
     }
 }
 // Generator Functions
