@@ -23,11 +23,20 @@ const CourseContent = ({ data }: { data: any }) => {
                     </Stack>
                     <Stack direction='row' spacing={2}>
                         <Typography sx={{ fontWeight: "700" }}>Faculty:</Typography>
-                        <Typography>{data.faculty}</Typography>
+                        <Typography>{data?.faculty?.name}</Typography>
                     </Stack>
                     <Stack direction='row' spacing={2}>
                         <Typography sx={{ fontWeight: "700" }}>Created At:</Typography>
                         <Typography>{new Date(data.createdAt).toDateString()}</Typography>
+                    </Stack>
+
+                    <Stack direction='row' spacing={2}>
+                        <Typography sx={{ fontWeight: "700" }}>Teachers:</Typography>
+                        <Typography>{data.teachers}</Typography>
+                    </Stack>
+                    <Stack direction='row' spacing={2}>
+                        <Typography sx={{ fontWeight: "700" }}>Students:</Typography>
+                        <Typography>{data.students}</Typography>
                     </Stack>
 
                     <Stack direction='row' spacing={2} mt={2} sx={{ padding: "10px", border: "1px solid grey", borderRadius: "5px" }}>

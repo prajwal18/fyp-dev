@@ -27,7 +27,7 @@ import { setPaginationDataAC, deleteAdminAC } from '../../../redux/admins/action
 // Redux Operations
 
 // Filler image
-import MyImg from '../../../constants/FillerImg';
+import {MyImg} from '../../../constants/FillerImg';
 // Filler image
 
 import { baseURL } from '../../../utils/endpoints';
@@ -69,7 +69,7 @@ const AdminTable = ({ data, pagination, handleShow, handleEdit }: TableType) => 
     }
 
     // Provide a filler image for admins without profile picture
-    const solveMissingProfile = (data: any) => {
+    const setProfileImg = (data: any) => {
         if (data.profilePicture) {
             return { ...data, profile: <MyImg src={`${baseURL}${data.profilePicture}`} /> };
         } else {
@@ -83,7 +83,7 @@ const AdminTable = ({ data, pagination, handleShow, handleEdit }: TableType) => 
                 <Table>
                     <TableHeadSection HeadData={AdminHeadData} />
                     <TableBodySection
-                        dataList={admins && admins.map(solveMissingProfile)}
+                        dataList={admins && admins.map(setProfileImg)}
                         keyValues={['profile', 'name', 'email', 'contact']}
                         handleShow={handleShow}
                         handleEdit={handleEdit}

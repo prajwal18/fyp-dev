@@ -62,25 +62,27 @@ function* fetchTestStat(action: ActionT): Generator<any, any, any> {
 }
 function* updateStudentData(action: ActionT): Generator<any, any, any> {
     const rawData = action.payload;
-    const students = rawData.map((item:any) => {
-        return {name: item.name, value: item._id}
+    const students = rawData.map((item: any) => {
+        return { name: item.name, value: item._id }
     });
     yield put(updateStudents(students));
 }
 function* fetchStudents(action: ActionT): Generator<any, any, any> {
     const courses = yield select(selectCourses);
     const courseIds = joinDDListValues(courses);
-    const query = `?courseIds=${courseIds}&role=Student&searchTerm=&skip=0&take=0`;
-    const response = yield (apiCallNResp(() => httpGetAllMembers(query)));
-    if(response.success){
-        yield updateStudentData({type: action.type, payload: response.data})
+    if (courseIds !== '') {
+        const query = `?courseIds=${courseIds}&role=Student&searchTerm=&skip=0&take=0`;
+        const response = yield (apiCallNResp(() => httpGetAllMembers(query)));
+        if (response.success) {
+            yield updateStudentData({ type: action.type, payload: response.data })
+        }
     }
 }
 function* fetchTestProgressData(action: ActionT): Generator<any, any, any> {
     const testProgress = yield select(selectTestProgress);
     const query = `?courseIds=${testProgress.courses}&studentIds=${testProgress.students}&take=${testProgress.take}`;
     const response = yield (apiCallNResp(() => httpGetTestProgress(query)));
-    if(response.success){
+    if (response.success) {
         yield put(updateTestData(response.data));
     }
 }
@@ -88,7 +90,7 @@ function* fetchAssignmentProgressData(action: ActionT): Generator<any, any, any>
     const assignmentProgress = yield select(selectAssignmentProgress);
     const query = `?courseIds=${assignmentProgress.courses}&studentIds=${assignmentProgress.students}&take=${assignmentProgress.take}`;
     const response = yield (apiCallNResp(() => httpGetAssignmentProgress(query)));
-    if(response.success){
+    if (response.success) {
         yield put(updateAssignmentData(response.data));
     }
 }

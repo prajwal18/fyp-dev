@@ -10,7 +10,7 @@ import PhoneIcon from '@mui/icons-material/Phone'; // Contact
 import FormatListNumberedOutlinedIcon from '@mui/icons-material/FormatListNumberedOutlined'; //Total Courses
 import HandymanIcon from '@mui/icons-material/Handyman'; // Actions
 // MUI Icon
-import { TableHeadPropsType, PaginationStateType, TableType } from '../../../constants/CustomTypes';
+import { TableHeadPropsType, TableType } from '../../../constants/CustomTypes';
 
 // Table Head and Body
 import TableHeadSection from '../../common/table/TableHeadSection';
@@ -29,22 +29,11 @@ import {
 } from '../../../redux/students/actions'; // Importing action creators
 // Redux Operations
 
-// Filler image
-import MyImg from '../../../constants/FillerImg';
-// Filler image
-import { baseURL } from '../../../utils/endpoints';
 
+import { httpCheckUserDocuments } from '../../../services/student.service';
+import ConfirmDeleteModal from '../../common/modal/ConfirmDeleteModal';
+import { setProfileImg } from '../../common/ProfilePicture';
 
-
-// Provide a filler image for student's without profile picture
-const solveMissingProfile = (data: any) => {
-    if (data.profilePicture) {
-        return { ...data, profile: <MyImg src={`${baseURL}${data.profilePicture}`} /> };
-    } else {
-        return { ...data, profile: <MyImg /> }
-    }
-}
-// Provide a filler image for student's without profile picture
 
 const StudentHeadData: Array<TableHeadPropsType> = [
     {
@@ -79,40 +68,62 @@ const StudentHeadData: Array<TableHeadPropsType> = [
 
 const StudentTable = ({ data, pagination, handleShow, handleEdit }: TableType) => {
     const students = data;
+    const [confirmDelete, setConfirmDelete] = useState(false);
+    const [delUserId, setDelUserId] = useState<any>(null);
     // Dispatch function redux
     const dispatch = useDispatch();
     // Dispatch function redux
     const handleDelete = (id: string) => {
-        //dispatch(deleteStudentAC(id))
-        toast.warn('Delete functionality is not available right now.');
+        httpCheckUserDocuments(id)
+            .then((response: any) => response.data)
+            .then((response: any) => {
+                if (response.success) {
+                    toast.warn(response.message);
+                    setConfirmDelete(true);
+                    setDelUserId(id);
+                } else {
+                    dispatch(deleteStudentAC(id));
+                }
+            })
+            .catch((error: any) => { toast.error(error.message) })
+    }
+
+    const handleConfirmDelete = () => {
+        if (delUserId) {
+            dispatch(deleteStudentAC(delUserId));
+            setConfirmDelete(false);
+        }
     }
 
     return (
-        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-            <TableContainer>
-                <Table>
-                    <TableHeadSection HeadData={StudentHeadData} />
-                    <TableBodySection
-                        dataList={students && students.map(solveMissingProfile)}
-                        keyValues={['profile', 'name', 'email', 'contact', 'totalCourses']}
-                        handleShow={handleShow}
-                        handleEdit={handleEdit}
-                        handleDelete={handleDelete}
-                        skip={pagination.skip}
-                    />
-                </Table>
-            </TableContainer>
-            <Divider />
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={pagination.total}
-                rowsPerPage={pagination.take}
-                page={pagination.skip / pagination.take}
-                onPageChange={handleChangePage(pagination, setPaginationDataAC, dispatch)}
-                onRowsPerPageChange={handleChangeRowsPerPage(pagination, setPaginationDataAC, dispatch)}
-            />
-        </Paper>
+        <>
+            <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                <TableContainer>
+                    <Table>
+                        <TableHeadSection HeadData={StudentHeadData} />
+                        <TableBodySection
+                            dataList={students && students.map(setProfileImg)}
+                            keyValues={['profile', 'name', 'email', 'contact', 'totalCourses']}
+                            handleShow={handleShow}
+                            handleEdit={handleEdit}
+                            handleDelete={handleDelete}
+                            skip={pagination.skip}
+                        />
+                    </Table>
+                </TableContainer>
+                <Divider />
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={pagination.total}
+                    rowsPerPage={pagination.take}
+                    page={pagination.skip / pagination.take}
+                    onPageChange={handleChangePage(pagination, setPaginationDataAC, dispatch)}
+                    onRowsPerPageChange={handleChangeRowsPerPage(pagination, setPaginationDataAC, dispatch)}
+                />
+            </Paper>
+            <ConfirmDeleteModal open={confirmDelete} setOpen={setConfirmDelete} handleDelete={handleConfirmDelete} />
+        </>
     )
 }
 

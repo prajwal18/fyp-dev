@@ -20,8 +20,8 @@ router.get("/all-faculties", authenticationMiddleware, authorizeAdmin, facultyCo
 // Fetch all Faculties for DropDown
 router.get("/dd-faculties", authenticationMiddleware, authorizeAdmin, facultyController.getDDFaculties);
 
-// Delete course
-// ----------------- DELETE COURSE API -----------------
+// Delete Faculty api
+router.delete("/delete", authenticationMiddleware, authorizeAdmin, facultyController.deleteFaculty);
 
 
 

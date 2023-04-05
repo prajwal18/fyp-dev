@@ -55,7 +55,6 @@ const ManageFaculty = () => {
         dispatch(setSearchTermAC(event.target.value));
     }
     const handleShow = (data: any) => {
-        console.log('Data Faculty: ', data);
         setOpenView(true);
     };
     const handleEdit = (data: any) => {

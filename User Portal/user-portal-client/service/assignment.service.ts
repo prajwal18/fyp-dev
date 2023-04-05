@@ -1,11 +1,11 @@
-import axios from "axios";
 import endpoints from "@/utils/endpoints";
 import { axiosWithToken } from "@/utils/apiCallNResp";
 
 const {
     create,
     update,
-    getAssignment
+    getAssignment,
+    deleteAssignment
 } = endpoints.assignment;
 
 export const httpCreateAssignment = (data: any) => {
@@ -20,4 +20,9 @@ export const httpUpdateAssignment = (data: any, id:string) => {
 export const httpGetAssignment = (id: string) => {
     const url = `${getAssignment}?id=${id}`;
     return axiosWithToken('get', url);
+}
+
+export const httpDeleteAssignment = (id: string) => {
+    const url = `${deleteAssignment}?id=${id}`;
+    return axiosWithToken('delete', url)
 }

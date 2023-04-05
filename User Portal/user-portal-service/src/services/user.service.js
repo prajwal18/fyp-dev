@@ -168,7 +168,38 @@ const getAllCourseMembers = async (courses, roles, searchTerm, skip, take) => {
     }
 }
 
+// Send OTP
+const sendOtp = async (email) => {
+    
+}
+// Send OTP
 
 
 
-module.exports = { loginUser, validateRequest, registerUser, updateUser, getUserDetail, changePassword, getAllCourseMembers }
+
+// Verify otp and change password
+const verifyNChangePassword = async (email, otp, newPassword) => {
+    const user = await User.findOne({ email });
+    if (user) {
+        const correctOTP = user.password;
+        if (correctOTP === otp) {
+            const hashedPassword = await encryptPassword(newPassword);
+            const updatedUser = await User.findByIdAndUpdate(user._id, hashedPassword);
+            return {
+                success: true, data: null, message: "Password updated successfully"
+            }
+        } else {
+            return { success: false, data: null, message: "Incorrect OTP." }
+        }
+    } else {
+        return { success: false, data: null, message: "Sorry, cannot find user." }
+    }
+}
+// Verify otp and change password
+
+
+module.exports = {
+    loginUser, validateRequest, registerUser, updateUser,
+    getUserDetail, changePassword, getAllCourseMembers,
+    verifyNChangePassword, 
+}

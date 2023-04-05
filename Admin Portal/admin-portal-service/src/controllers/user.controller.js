@@ -148,10 +148,44 @@ const removeUserFromCourse = asyncWrapper(async (req, res, next) => {
 });
 
 
+// Check user documents
+const checkDocuments = asyncWrapper(async (req, res, next) => {
+    const { id } = req.query;
+    if (id) {
+        const { success, data, message } = await userService.checkDocuments(id);
+        if (success) {
+            res.json({ success, data, message });
+        } else {
+            throw new Error(message);
+        }
+    } else {
+        throw new Error("Sorry, cannot find user");
+    }
+})
+// Check user documents
+
+// Delete user
+const deleteUser = asyncWrapper(async (req, res, next) => {
+    const { id } = req.query;
+    if (id) {
+        const { success, data, message } = await userService.deleteUser(id);
+        if (success) {
+            res.json({ success, data, message });
+        } else {
+            throw new Error(message);
+        }
+    } else {
+        throw new Error("Sorry, cannot find user");
+    }
+})
+// Delete user
+
+
 
 module.exports = {
     userRegistration, userUpdate,
     userDetail, changePassword,
     getAllTeachers, getAllStudents,
-    addUserToCourse, removeUserFromCourse
+    addUserToCourse, removeUserFromCourse,
+    checkDocuments, deleteUser
 }

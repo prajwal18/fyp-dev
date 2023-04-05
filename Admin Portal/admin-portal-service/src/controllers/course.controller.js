@@ -33,6 +33,22 @@ const update = asyncWrapper(async (req, res, next) => {
 });
 // Update Course
 
+// Delete Faculty
+const deleteCourse = asyncWrapper(async (req, res, next) => {
+    const id = req.query.id;
+    if (id) {
+        const { success, data, message } = await courseService.deleteCourse(id);
+        if (success) {
+            res.json({ success, data, message });
+        } else {
+            throw new Error(message);
+        }
+    } else {
+        throw new Error("Cannot find course, Select one.");
+    }
+})
+// Delete Faculty
+
 // Get single course Detail
 const getCourseDetail = asyncWrapper(async (req, res, next) => {
     const id = req.query.id;
@@ -80,5 +96,6 @@ const getFacultyCourses = asyncWrapper(async (req, res, next) => {
 
 module.exports = {
     create, update, getCourseDetail,
-    getAllCourses, getFacultyCourses
+    getAllCourses, getFacultyCourses,
+    deleteCourse
 };

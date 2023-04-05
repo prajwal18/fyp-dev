@@ -14,6 +14,10 @@ import { selectUser } from '@/redux/general/general.slice';
 import { useRouter } from 'next/router';
 import { fetchAllSpecificAssignmentsAC, fetchPaginationDataAC } from '@/redux/assignment/actions';
 import { fetchUserAC } from '@/redux/general/actions';
+import { toast } from 'react-toastify';
+import { apiCallNResp } from '@/utils/apiCallNResp';
+import { httpDeleteSubmittedAssignment } from '@/service/assignment.submission.service';
+import { httpDeleteAssignment } from '@/service/assignment.service';
 
 
 const AssignmentTableHeadData = (assignmentType: string) => {
@@ -40,7 +44,7 @@ const AssignmentTableKeyValues = (assignmentType: string) => {
   return list;
 }
 
-const AssignmentTableActionData = (assignmentType: string, push: any, role: string, handleOpen: (value: any) => void, handleEdit: (value:any) => void) => {
+const AssignmentTableActionData = (assignmentType: string, push: any, role: string, handleOpen: (value: any) => void, handleEdit: (value: any) => void, refetch: () => void) => {
   let list = [];
   if ([AssignmentType.SUBMITTED.toString(), AssignmentType.GRADED.toString()].includes(assignmentType) || role === UserTypes.STUDENT) {
     list = [
@@ -49,6 +53,20 @@ const AssignmentTableActionData = (assignmentType: string, push: any, role: stri
         callback: (data: any) => { push(data.routeLink); }
       }
     ]
+    if (role === UserTypes.TEACHER) {
+
+      list.push({
+        name: TableActionTypes.DELETE,
+        callback: async (data: any) => {
+          const response = await apiCallNResp(() => httpDeleteSubmittedAssignment(data._id));
+          if (response.success) {
+            toast.success(response.message);
+            push(`/Teacher/Assignment`);
+            refetch();
+          }
+        }
+      });
+    }
   }
   else {
     list = [
@@ -59,6 +77,16 @@ const AssignmentTableActionData = (assignmentType: string, push: any, role: stri
       {
         name: TableActionTypes.EDIT,
         callback: handleEdit
+      },
+      {
+        name: TableActionTypes.DELETE,
+        callback: async (data: any) => {
+          const response = await apiCallNResp(() => httpDeleteAssignment(data._id));
+          if (response.success) {
+            toast.success(response.message);
+            refetch();
+          }
+        }
       }
     ]
   }
@@ -74,6 +102,11 @@ const AssignmenTableContainer = ({ handleOpen, handleEdit }: { handleOpen: (valu
   const searchParams = useSelector(selectSearchParams);
   const dispatch = useDispatch();
   const { push, asPath } = useRouter();
+
+  const refetch = () => {
+    setAllAssignmentsFormatted([]);
+    dispatch(fetchPaginationDataAC())
+  }
 
   useEffect(() => {
     if (searchParams?.courses !== '' && searchParams?.assignmentType !== '') {
@@ -157,7 +190,7 @@ const AssignmenTableContainer = ({ handleOpen, handleEdit }: { handleOpen: (valu
               includeSN={false}
               dataList={allAssignmentsFormatted}
               keyValues={AssignmentTableKeyValues(searchParams.assignmentType)}
-              actionData={AssignmentTableActionData(searchParams.assignmentType, push, user.role, handleOpen, handleEdit)}
+              actionData={AssignmentTableActionData(searchParams.assignmentType, push, user.role, handleOpen, handleEdit, refetch)}
             />
           </Table>
           <Divider />

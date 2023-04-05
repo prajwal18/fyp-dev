@@ -2,9 +2,9 @@ import { axiosWithToken } from "../utils/apiCallNResp";
 import endpoints from "../utils/endpoints";
 
 const {
-    create, edit,
-    deleteFaculty, getAllFaculties,
-    getAllDDFaculties, getDetail
+    create, edit, deleteFaculty, 
+    getAllFaculties, getAllDDFaculties, 
+    getDetail
 } = endpoints.faculty;
 
 export const httpGetAllFaculty = (query: string) => {

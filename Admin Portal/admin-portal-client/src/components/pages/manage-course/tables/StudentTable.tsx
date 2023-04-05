@@ -12,7 +12,7 @@ import { handleChangePage, handleChangeRowsPerPage } from "../../../common/table
 
 // Redux operations
 import {
-    fetchSelectedStudentAC, setPaginationDataAC, 
+    fetchSelectedStudentAC, setPaginationDataAC,
     fetchCourseStudentPaginationAC, fetchCourseStudentAC,
     setCourseStudentSearchTermAC
 } from '../../../../redux/students/actions';
@@ -24,24 +24,13 @@ import StudentTeacherVM from '../../../common/modal/ViewStudentTeacherModal';
 
 import { TableHeadPropsType } from "../../../../constants/CustomTypes";
 import TableHeadSection from "../../../common/table/TableHeadSection";
-import MyImg from "../../../../constants/FillerImg";
+import { MyImg } from "../../../../constants/FillerImg";
 import { baseURL } from "../../../../utils/endpoints";
 import { selectSelectedCourse, selectSelectionPurpose } from "../../../../redux/courses/courses.slice";
 import { UserTypes } from "../../../../constants/Constants";
 import TeacherStudentBody from "./TeacherStudentBody";
+import { setProfileImg } from "../../../common/ProfilePicture";
 
-
-
-
-// Provide a filler image for student's without profile picture
-const solveMissingProfile = (data: any) => {
-    if (data.profilePicture) {
-        return { ...data, profile: <MyImg src={`${baseURL}${data.profilePicture}`} /> };
-    } else {
-        return { ...data, profile: <MyImg /> }
-    }
-}
-// Provide a filler image for student's without profile picture
 
 
 // Student Table for Faculty Section
@@ -113,7 +102,7 @@ const StudentTable = () => {
                         <Table>
                             <TableHeadSection HeadData={StudentHeadData} />
                             <TeacherStudentBody
-                                dataList={students && students.map(solveMissingProfile)}
+                                dataList={students && students.map(setProfileImg)}
                                 handleShow={handleShow} role={UserTypes.STUDENT}
                             />
                         </Table>

@@ -39,14 +39,14 @@ import { TableHeadPropsType } from "../../../../constants/CustomTypes";
 import TableHeadSection from "../../../common/table/TableHeadSection";
 import AddEditCourse from "../../manage-course/AddEditModal";
 import CourseViewModal from "../../manage-course/CourseViewModal";
-import { selectSelectedFaculty, updateSelectedFaculty } from "../../../../redux/faculties/faculties.slice";
+import { selectSelectedFaculty } from "../../../../redux/faculties/faculties.slice";
 
 
 
 
 // Course Table for Faculty Section
 const CourseHeadData: Array<TableHeadPropsType> = [
-    { name: "S.N" }, { name: "Course" }, { name: "Users" }, { name: "Actions" },
+    { name: "S.N" }, { name: "Course" }, { name: "Actions" },
 ];
 const CourseTable = () => {
     // Retriving the states from redux
@@ -211,13 +211,6 @@ const TableBodySection = ({ skip, dataList, handleShow, handleEdit }: any) => {
 
                         <TableCell>
                             {row.name}
-                        </TableCell>
-
-                        <TableCell>
-                            <Stack spacing={1}>
-                                <Typography>Teachers: 12</Typography>
-                                <Typography>Students: 230</Typography>
-                            </Stack>
                         </TableCell>
 
                         <TableCell>

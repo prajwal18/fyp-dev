@@ -1,4 +1,5 @@
 const Faculty = require("../models/faculty.model");
+const Course = require("../models/course.model");
 
 // Create faculty
 const create = async (facultyData) => {
@@ -53,4 +54,24 @@ const getDDFaculties = async () => {
     }
 }
 
-module.exports = { create, update, getFacultyDetail, getAllFaculties, getDDFaculties } 
+// Delete Faculty
+const deleteFaculty = async (id) => {
+    const courses = await Course.find({
+        faculty: id
+    });
+    if(courses?.length){
+        return {
+            success: false, data: null, message: "Sorry, cannot delete faculty with courses."
+        }
+    } else {
+        const deletedFaculty = await Faculty.findByIdAndDelete(id);
+        if(deletedFaculty){
+            return { success: true, data: deletedFaculty, message: 'Faculty deleted successfully' }
+        } else {
+            return { success: false, data: null, message: 'Sorry, cannot find the faculty.' }
+        }
+    }
+}
+// Delete Faculty
+
+module.exports = { create, update, getFacultyDetail, getAllFaculties, getDDFaculties, deleteFaculty } 

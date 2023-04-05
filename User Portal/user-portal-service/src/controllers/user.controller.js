@@ -90,15 +90,15 @@ const changePassword = asyncWrapper(async (req, res, next) => {
 
 
 // Get all course members
-const getAllCourseMembers = asyncWrapper(async(req, res, next) => {
+const getAllCourseMembers = asyncWrapper(async (req, res, next) => {
     const { courseIds, role, searchTerm, skip, take } = req.query;
     const courses = courseIds.split(',');
     const roles = role.split(',');
 
-    if(courses.length && roles.length){
-        const {success, data, message, hits} = await userService.getAllCourseMembers(courses, roles, searchTerm, skip, take);
-        if(success) {
-            res.json({success, data, message, hits});
+    if (courses.length && roles.length) {
+        const { success, data, message, hits } = await userService.getAllCourseMembers(courses, roles, searchTerm, skip, take);
+        if (success) {
+            res.json({ success, data, message, hits });
         } else {
             throw new Error(message);
         }
@@ -108,6 +108,42 @@ const getAllCourseMembers = asyncWrapper(async(req, res, next) => {
 });
 // Get all course members
 
+// send OTp 
+const sendOtp = asyncWrapper(async (req, res, next) => {
+    const { email } = req.body;
+    if (email) {
+        const { success, data, message } = await userService.sendOtp(email);
+        if (success) {
+            res.json({ success, data, message });
+        } else {
+            throw new Error(message);
+        }
+    } else {
+        throw new Error('Cannot find users, provide your email.');
+    }
+});
+// send OTp 
+
+// Verify otp and change password
+const verifyNChangePassword = asyncWrapper(async (req, res, next) => {
+    const { email, otp, newPassword } = req.body;
+    if (email || otp || newPassword) {
+        const { success, data, message } = await userService.verifyNChangePassword(email, otp, newPassword);
+        if (success) {
+            res.json({ success, data, message });
+        } else {
+            throw new Error(message);
+        }
+    } else {
+        throw new Error('Sorry, cannot complete transaction.');
+    }
+});
+// Verify otp and change password
 
 
-module.exports = { userLogin, userRegistration, userUpdate, userDetail, changePassword, getAllCourseMembers }
+
+module.exports = {
+    userLogin, userRegistration, userUpdate,
+    userDetail, changePassword, getAllCourseMembers,
+    sendOtp, verifyNChangePassword
+}

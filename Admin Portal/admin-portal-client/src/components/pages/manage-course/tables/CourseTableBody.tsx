@@ -68,7 +68,6 @@ const TableBodySection = ({ skip, dataList, handleShow, handleEdit, handleDelete
 
                         <TableCell>
                             <Stack spacing={1}>
-                                <Typography>Total:889</Typography>
                                 <Stack direction='row' spacing={2}>
                                     <Button variant="contained" color="success" onClick={() => handleAddUser(row._id)}>
                                         <AddIcon />

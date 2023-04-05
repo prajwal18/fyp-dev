@@ -82,5 +82,4 @@ const authorizeTeacher = asyncWrapper(async (req, res, next) => {
     throw new Error("You're not authorized to view this page.");
   }
 });
-
 module.exports = { authenticationMiddleware, authorizeSameUser, authorizeStudent, authorizeTeacher };

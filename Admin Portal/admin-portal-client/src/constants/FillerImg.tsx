@@ -1,19 +1,34 @@
+import { useEffect, useState } from "react";
 import profilePic from "../assets/images/profilePic.png";
-const MyImg = ({ src }: { src?: string }) => {
+
+export const MyImg = ({ src }: { src?: string }) => {
     return (
         <>
-            <img 
-                src={src || profilePic} 
-                alt="profile" 
-                style={{ height: "50px", width: "50px", borderRadius: "50%", objectFit: "cover" }} 
-                onError={(e: any) => {
-                    console.log('Error: ', e, '\nImage Link:', src)
-                    e.target.src = profilePic;  // Provide an alternate image reference here
-                    e.target.onError = null;
-                }}
+            <CustImage
+                src={src || 'abc.jpg'}
+                style={{ height: "50px", width: "50px", borderRadius: "50%", objectFit: "cover" }}
+                alt="Profile"
             />
         </>
     );
 }
 
-export default MyImg;
+export const CustImage = ({ src, style, alt }: { src: string, style: any, alt: string }) => {
+    const [srcPic, setSrcPic] = useState<any>(null);
+    useEffect(() => {
+        setSrcPic(src)
+    }, [src])
+    return (
+        <>
+            <img
+                src={srcPic}
+                alt={alt}
+                style={style}
+                onError={(e: any) => {
+                    setSrcPic(profilePic);
+                }}
+            />
+        </>
+    );
+
+}

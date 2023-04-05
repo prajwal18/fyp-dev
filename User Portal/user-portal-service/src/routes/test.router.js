@@ -22,6 +22,9 @@ router.get('/get-test', authenticationMiddleware, testController.getTest);
 // Get test Details
 
 
+// Delete a test
+router.delete('/delete', authenticationMiddleware, authorizeTeacher, testController.deleteTest);
+
 
 
 

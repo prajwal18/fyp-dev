@@ -22,7 +22,7 @@ router.get("/faculty-courses", authenticationMiddleware, authorizeAdmin, courseC
 
 // Delete course
 // ----------------- DELETE COURSE API -----------------
-
+router.delete("/delete", authenticationMiddleware, authorizeAdmin, courseController.deleteCourse);
 
 
 /*

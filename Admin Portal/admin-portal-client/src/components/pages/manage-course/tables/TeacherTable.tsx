@@ -25,23 +25,12 @@ import StudentTeacherVM from '../../../common/modal/ViewStudentTeacherModal';
 import { TableHeadPropsType } from "../../../../constants/CustomTypes";
 import { UserTypes } from "../../../../constants/Constants";
 import TableHeadSection from "../../../common/table/TableHeadSection";
-import MyImg from "../../../../constants/FillerImg";
+import { MyImg } from "../../../../constants/FillerImg";
 import { baseURL } from "../../../../utils/endpoints";
 import { selectSelectedCourse, selectSelectionPurpose } from "../../../../redux/courses/courses.slice";
 import TeacherStudentBody from "./TeacherStudentBody";
+import { setProfileImg } from "../../../common/ProfilePicture";
 
-
-
-
-// Provide a filler image for teacher's without profile picture
-const solveMissingProfile = (data: any) => {
-    if (data.profilePicture) {
-        return { ...data, profile: <MyImg src={`${baseURL}${data.profilePicture}`} /> };
-    } else {
-        return { ...data, profile: <MyImg /> }
-    }
-}
-// Provide a filler image for teacher's without profile picture
 
 
 // Teacher Table for Faculty Section
@@ -76,7 +65,7 @@ const TeacherTable = () => {
     const handleCloseView = () => {
         setOpenView(false);
     };
-    
+
 
     // Reset on each visit
     useEffect(() => {
@@ -113,7 +102,7 @@ const TeacherTable = () => {
                         <Table>
                             <TableHeadSection HeadData={TeacherHeadData} />
                             <TeacherStudentBody
-                                dataList={teachers && teachers.map(solveMissingProfile)}
+                                dataList={teachers && teachers.map(setProfileImg)}
                                 handleShow={handleShow} role={UserTypes.TEACHER}
                             />
                         </Table>

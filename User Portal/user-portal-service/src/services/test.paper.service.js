@@ -1,4 +1,6 @@
 const TestPaper = require("../models/test.question.model");
+const TestAnswer = require("../models/test.answer.model");
+const { deleteTestAnswer } = require("./test.answer.service");
 const User = require("../models/user.model");
 
 /**
@@ -99,6 +101,23 @@ const update = async (data, id) => {
     }
 }
 
+const deleteTest = async (id) => {
+    const testAnswerpapers = await TestAnswer.find({
+        testPaperId: id
+    });
+    if(testAnswerpapers?.length) {
+        testAnswerpapers.forEach(testAnswer => {
+            deleteTestAnswer(testAnswer._id)
+        })
+    }
+    const test = await TestPaper.findByIdAndDelete(id);
+    if (test) {
+        return { success: true, data: test, message: "Successfully delete Test paper." }
+    } else {
+        return { success: false, data: null, message: "Sorry, cannot delete Test paper." }
+    }
+}
+
 const getTest = async (id) => {
     const test = await TestPaper.findById(id).populate('createdBy', 'name', User);
     if (test) {
@@ -112,4 +131,4 @@ const getTest = async (id) => {
     }
 }
 
-module.exports = { verifyCreateRequest, create, verifyUpdateRequest, update, getTest };
+module.exports = { verifyCreateRequest, create, verifyUpdateRequest, update, getTest, deleteTest };

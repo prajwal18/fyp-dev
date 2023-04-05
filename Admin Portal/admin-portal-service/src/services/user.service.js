@@ -1,9 +1,15 @@
 //Importing User model
 const User = require("../models/user.model");
 const Course = require("../models/course.model");
+const Assignment = require("../models/assignment.model");
+const Submission = require("../models/assignment.submission.model")
+const Test = require("../models/test.question.model");
+const TestAnswer = require("../models/test.answer.model");
+const Conversation = require("../models/conversation.model");
 const { UserRole } = require("../constants/enum");
 //Importing password creation and comparision functions
 const { encryptPassword } = require("../utils/encrypt.decrypt.password");
+const conversationModel = require("../models/conversation.model");
 
 
 // Validate Request for user registration
@@ -64,7 +70,7 @@ const updateUser = async (id, data) => {
 
 // Get user Detail
 const getUserDetail = async (id) => {
-    const user = await User.findById(id);
+    const user = await User.findById(id, '-password');
     if (user) {
         return { success: true, data: user, message: "User's data fetched successfully." }
     } else {
@@ -209,7 +215,7 @@ const fetchCourseUsers = async (skip, take, searchTerm, course, purpose, role) =
             const users = await User.find({
                 name: { '$regex': searchTerm, "$options": "i" },
                 role: role,
-                "courses": {"$in": course}
+                "courses": { "$in": course }
             }).skip(skip).limit(take);
 
             if (users) {
@@ -226,11 +232,95 @@ const fetchCourseUsers = async (skip, take, searchTerm, course, purpose, role) =
 
 
 
+// Check doucuments
+const checkDocuments = async (id) => {
+    const user = await User.findById(id);
+    // User role [0] ==> Student, [1] ==> Teacher
+    if (user) {
+        if (user.role === UserRole[0]) {
+            const submissions = await Submission.find({
+                submittedBy: id
+            });
+            const testAnswers = await TestAnswer.find({
+                submittedBy: id
+            })
+
+            if (submissions?.length || testAnswers?.length) {
+                return { success: true, data: null, message: `User has ${submissions?.length || 0} assignment submissions and ${testAnswers?.length || 0} test submissions.` }
+            } else {
+                return { success: false, data: null, message: 'User has no associated documents.' }
+            }
+        } else {
+            const assignments = await Assignment.find({
+                createdBy: id
+            });
+            const tests = await Test.find({
+                createdBy: id
+            });
+            const submissions = await Submission.find({
+                gradedBy: id
+            });
+            const testAnswers = await TestAnswer.find({
+                gradedBy: id
+            })
+
+            if (assignments?.length || tests?.length || submissions?.length || testAnswers?.length) {
+                return { success: true, data: null, message: `User has created ${assignments?.length || 0} assignments and ${tests?.length || 0} tests. .User has graded ${submissions?.length || 0} assignment submissions and ${testAnswers?.length || 0} test submissions.` }
+            } else {
+                return { success: false, data: null, message: 'User has no associated documents.' }
+            }
+        }
+    } else {
+        return { success: false, data: null, message: "Cannot find user" }
+    }
+}
+// Check doucuments
+
+
+// Delete user
+const deleteUser = async (id) => {
+    await Conversation.deleteMany({
+        users: { '$in': [id] }
+    });
+    const tests = await Test.find({ createdBy: id });
+    const testPaperIds = tests?.map(test => test._id) || [];
+    const assignments = await Assignment.find({ createdBy: id });
+    const assignmentIds = assignments?.map(assignment => assignment._id) || [];
+
+
+    /// Deleting user's associated documents
+    await TestAnswer.deleteMany({
+        '$or': [{ submittedBy: id }, { gradedBy: id }, { testPaperId: { '$in': testPaperIds } }]
+    });
+    await Submission.deleteMany({
+        '$or': [{ submittedBy: id }, { gradedBy: id }, { assignmentId: { '$in': assignmentIds } }]
+    })
+    await Test.deleteMany({
+        createdBy: id
+    });
+    await Assignment.deleteMany({
+        createdBy: id
+    });
+    /// Deleting user's associated documents
+
+    
+    const deletedUser = await User.findByIdAndDelete(id);
+    if (deletedUser) {
+        return { success: true, data: deletedUser, message: "User deleted successfully." }
+    } else {
+        return { success: false, data: null, message: "User deleted successfully." }
+    }
+}
+// Delete user
+
+
 module.exports = {
     validateRequest, registerUser,
     updateUser, getUserDetail,
     getAllUsers, changePassword,
     fetchAllStudents, fetchAllTeachers,
     addUserToCourse, removeUserFromCourse,
-    fetchCourseUsers
+    fetchCourseUsers, checkDocuments,
+    deleteUser
+
 }

@@ -32,6 +32,22 @@ const update = asyncWrapper(async (req, res, next) => {
 });
 // Update Faculty
 
+// Delete Faculty
+const deleteFaculty = asyncWrapper(async (req, res, next) => {
+    const id = req.query.id;
+    if (id) {
+        const { success, data, message } = await facultyService.deleteFaculty(id);
+        if (success) {
+            res.json({ success, data, message });
+        } else {
+            throw new Error(message);
+        }
+    } else {
+        throw new Error("Cannot find faculty, Select one.");
+    }
+})
+// Delete Faculty
+
 // Get specific Faculty
 const getFacultyDetail = asyncWrapper(async (req, res, next) => {
     const id = req.query.id;
@@ -71,4 +87,4 @@ const getDDFaculties = asyncWrapper(async(req, res, next) => {
 })
 // Get all Faculties for dropDown
 
-module.exports = { create, update, getFacultyDetail, getAllFaculties, getDDFaculties };
+module.exports = { create, update, getFacultyDetail, getAllFaculties, getDDFaculties, deleteFaculty };

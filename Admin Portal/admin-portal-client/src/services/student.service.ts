@@ -4,7 +4,8 @@ import endpoints from "../utils/endpoints";
 const {
     register, update,
     getDetail, changePassword,
-    getAllStudents, deleteStudent
+    getAllStudents, deleteStudent,
+    checkDocuments
 } = endpoints.student;
 
 export const httpGetAllStudent = (query: string) => {
@@ -31,6 +32,11 @@ export const httpChangePWStudent = (id: string, data: any) => {
 export const httpDeleteStudent = (id: string) => {
     const url = `${deleteStudent}?id=${id}`;
     return axiosWithToken('delete', url);
+}
+
+export const httpCheckUserDocuments = (id: string) => {
+    const url = `${checkDocuments}?id=${id}`;
+    return axiosWithToken('get', url);
 }
 
 /**

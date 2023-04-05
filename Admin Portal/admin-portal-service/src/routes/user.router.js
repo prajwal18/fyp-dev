@@ -32,6 +32,15 @@ router.put("/enroll", authenticationMiddleware, authorizeAdmin, userController.a
 // Remove user from course
 router.put("/disenroll", authenticationMiddleware, authorizeAdmin, userController.removeUserFromCourse );
 
+// Check for user's documents
+router.get("/check-documents", authenticationMiddleware, authorizeAdmin, userController.checkDocuments);
+
+
+// Delete user
+router.delete("/delete", authenticationMiddleware, authorizeAdmin, userController.deleteUser);
+// Delete user
+
+
 /*
 Note: To update and retirve user's information, a middleware is needed
 to authorize the same user access.

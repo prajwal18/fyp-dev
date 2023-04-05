@@ -1,4 +1,6 @@
+const { UserRole } = require("../constants/enum");
 const Course = require("../models/course.model");
+const User = require("../models/user.model");
 
 // Create Course
 const create = async (courseData) => {
@@ -24,9 +26,29 @@ const update = async (id, courseData) => {
 
 // Get specific course deatil
 const getCourseDetail = async (id) => {
-    const course = await Course.findById(id);
+    const course = await Course.findById(id).populate('faculty', 'name');
+    const teachers = await User.count({
+        courses: { '$in': [id] },
+        role: UserRole[1]
+    });
+    const students = await User.count({
+        courses: { '$in': [id] },
+        role: UserRole[0]
+    });
     if (course) {
-        return { success: true, data: course, message: "Fetched course successfully." }
+        return {
+            success: true,
+            data: {
+                _id: course._id,
+                name: course.name,
+                faculty: course.faculty,
+                description: course.description,
+                createdAt: course.createdAt,
+                teachers: teachers,
+                students: students
+            },
+            message: "Fetched course successfully."
+        }
     }
 }
 // Get specific course deatil
@@ -61,7 +83,31 @@ const getFacultyCourses = async (skip, take, searchTerm, facultyId) => {
 // Get all courses data
 
 
+// Delete Course
+const deleteCourse = async (id) => {
+    const users = await User.find({
+        courses: {
+            '$in': [id]
+        }
+    });
+    if (users?.length) {
+        return {
+            success: false, data: null, message: `Sorry, cannot delete course with (${users.length}) users.`
+        }
+    } else {
+        const deletedCourse = await Course.findByIdAndDelete(id);
+        if (deletedCourse) {
+            return { success: true, data: deletedCourse, message: 'Course deleted successfully' }
+        } else {
+            return { success: false, data: null, message: 'Sorry, cannot find the course.' }
+        }
+    }
+}
+// Delete Course
+
+
 module.exports = {
     create, update, getCourseDetail,
-    getAllCourses, getFacultyCourses
+    getAllCourses, getFacultyCourses,
+    deleteCourse
 };

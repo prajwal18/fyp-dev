@@ -24,6 +24,7 @@ import { handleChangePage, handleChangeRowsPerPage } from "../../common/table/Pa
 // Redux Operations
 import { selectPaginationData, selectAllCourses, updateSelectedCourse } from '../../../redux/courses/courses.slice'; // Importing selector functions from course.slice
 import {
+    deleteCourseAC,
     fetchAllCoursesAC, fetchPaginationDataAC,
     setPaginationDataAC
 } from '../../../redux/courses/actions'; // Importing action creators
@@ -59,8 +60,7 @@ const CourseTable = ({ data, pagination, handleShow, handleEdit }: TableType) =>
     const dispatch = useDispatch();
     // Dispatch function redux
     const handleDelete = (id: string) => {
-        //dispatch(deleteStudentAC(id))
-        toast.warn('Delete functionality is not available right now.');
+        dispatch(deleteCourseAC(id))
     }
     
     return (

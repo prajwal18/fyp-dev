@@ -21,5 +21,7 @@ router.get('/get-assignment', authenticationMiddleware, assignmentController.get
 // Get assignment Details
 
 
+router.delete('/delete', authenticationMiddleware, authorizeTeacher, assignmentController.deleteAssignment);
+
 
 module.exports = router;

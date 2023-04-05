@@ -1,4 +1,5 @@
 export const baseURL = process.env.REACT_APP_BASE_URL1;
+export const userBaseURL = process.env.REACT_APP_BASE_URL2;
 const endpoints = {
     // To manage the various entities
     admin: {
@@ -15,7 +16,8 @@ const endpoints = {
         getDetail: baseURL + "/user/get-details",
         changePassword: baseURL + "/user/change-password",
         getAllStudents: baseURL + "/user/all-students",
-        deleteStudent: baseURL + "/user/"
+        deleteStudent: baseURL + "/user/delete",
+        checkDocuments: baseURL + "/user/check-documents"
     },
     teacher: {
         register: baseURL + "/user/auth/register",
@@ -23,13 +25,14 @@ const endpoints = {
         getDetail: baseURL + "/user/get-details",
         changePassword: baseURL + "/user/change-password",
         getAllTeachers: baseURL + "/user/all-teachers",
-        deleteTeacher: baseURL + "/user/"
+        deleteTeacher: baseURL + "/user/delete",
+        checkDocuments: baseURL + "/user/check-documents"
     },
     faculty: {
         create: baseURL + "/faculty/create",
         edit: baseURL + "/faculty/update",
         getDetail: baseURL + "/faculty/faculty-details",
-        deleteFaculty: baseURL + "/faculty/",
+        deleteFaculty: baseURL + "/faculty/delete",
         getAllFaculties: baseURL + "/faculty/all-faculties",
         getAllDDFaculties: baseURL + "/faculty/dd-faculties"
     },
@@ -42,7 +45,7 @@ const endpoints = {
         addUser: baseURL + "/user/enroll",
         removeUser: baseURL + "/user/disenroll",
 
-        deleteCourse: baseURL + "/course/",
+        deleteCourse: baseURL + "/course/delete",
         facultyCourses: baseURL + "/course/faculty-courses",
     },
     // To manage the various entities

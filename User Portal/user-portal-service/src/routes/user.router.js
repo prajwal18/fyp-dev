@@ -23,9 +23,15 @@ router.get("/get-details", authenticationMiddleware, authorizeSameUser, userCont
 // Note must provide user's id as ../change-password?id=<--- user's id --->
 router.put("/change-password", authenticationMiddleware, authorizeSameUser, userController.changePassword);
 
+// Forgot password
+// Get request will send an otp and post request will check the opt and change the user's password
+router.post("/forgot-password", userController.sendOtp);
+router.put("/forgot-password", userController.verifyNChangePassword);
+
 // Get all course members for a specific user. 
 // Note only returns the members of the course the user's enlisted in. 
 router.get("/get-all-course-members", authenticationMiddleware, userController.getAllCourseMembers);
+
 
 /*
 Note: To update and retirve user's information, a middleware is needed

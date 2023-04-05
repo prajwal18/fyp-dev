@@ -7,24 +7,35 @@ import {
 } from '@mui/material';
 import TableHeadSection from '../Common/table/TableHeadSection';
 import TableBodySection from '../Common/table/TableBodySection';
-import { TableActionTypes, TestType } from '@/constants/Constants';
+import { TableActionTypes, TestType, UserTypes } from '@/constants/Constants';
 import { selectAllTests, selectPagination, selectSearchParams, selectSearchTerm, updateAllTests, updatePagination } from '@/redux/test/test.slice';
 import { handleChangePage, handleChangeRowsPerPage } from '../Common/table/PaginationFunctions';
 import { fetchAllSpecificTestsAC, fetchPaginationDataAC } from '@/redux/test/actions';
 import { fetchUserAC } from '@/redux/general/actions';
 import { selectUser } from '@/redux/general/general.slice';
 import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
+import { apiCallNResp } from '@/utils/apiCallNResp';
+import { httpDeleteTestAnswer } from '@/service/test.answer.service';
+import { httpDeleteTest } from '@/service/test.service';
 
 const TestTableHeadData = (testType: string) => {
   let list = [];
   if ([TestType.SUBMITTED.toString(), TestType.GRADED.toString()].includes(testType)) {
     list = [
-      { name: 'Title' }, { name: 'Course' }, { name: 'Type' }, { name: 'Due Date' },  { name: "Submitted By" },{ name: 'Full Marks' }, { name: 'Marks Obtained' }, { name: 'Actions' }
+      { name: 'Title' }, { name: 'Course' }, { name: 'Type' }, { name: 'Due Date' }, { name: "Submitted By" }, { name: 'Full Marks' }, { name: 'Marks Obtained' }, { name: 'Actions' }
     ];
   } else {
     list = [
       { name: 'Title' }, { name: 'Course' }, { name: 'Type' }, { name: 'Due Date' }, { name: 'Full Marks' }, { name: 'Actions' }
     ];
+  }
+  return list;
+}
+
+const TestTableActionData = (role: string, list: Array<any>) => {
+  if (role === UserTypes.STUDENT) {
+    return [list[0]]
   }
   return list;
 }
@@ -121,6 +132,28 @@ const TestTableContainer = () => {
     dispatch(updateAllTests([]));
   }, [dispatch, asPath]);
 
+
+  const refetch = () => {
+    setAllTestsFormatted([]);
+    dispatch(fetchPaginationDataAC());
+  }
+
+  const handleDeleteTest = async (data: any) => {
+    if ([TestType.SUBMITTED.toString(), TestType.GRADED.toString()].includes(searchParams.testType)) {
+      const response = await apiCallNResp(() => httpDeleteTestAnswer(data._id));
+      if (response.success) {
+        toast.success(response.message);
+        refetch();
+      }
+    } else {
+      const response = await apiCallNResp(() => httpDeleteTest(data._id));
+      if (response.success) {
+        toast.success(response.message);
+        refetch();
+      }
+    }
+  }
+
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer>
@@ -131,12 +164,19 @@ const TestTableContainer = () => {
             includeSN={false}
             dataList={allTestsFormatted}
             keyValues={TestTableKeyValues(searchParams.testType)}
-            actionData={[
-              {
-                name: TableActionTypes.MESSAGE,
-                callback: (data) => { push(data.routeLink); }
-              }
-            ]}
+            actionData={TestTableActionData(
+              user?.role,
+              [
+                {
+                  name: TableActionTypes.MESSAGE,
+                  callback: (data: any) => { push(data.routeLink); }
+                },
+                {
+                  name: TableActionTypes.DELETE,
+                  callback: handleDeleteTest
+                }
+
+              ])}
           />
         </Table>
         <Divider />

@@ -1,7 +1,9 @@
 //Importing Assignment model
 const Assignment = require("../models/assignment.model");
+const Submission = require("../models/assignment.submission.model");
 const User = require("../models/user.model");
 const Course = require("../models/course.model");
+const { deleteSubmission } = require("./assignment.submission.service");
 //Importing string to image function (Will replace it with another string to file function)
 const { base64ToPdf, removePdf } = require("../utils/read.write.pdf"); // base64ToPdf will be replaced by another function
 
@@ -65,7 +67,7 @@ const update = async (data, id) => {
     if (data.manual) {
         const manualDataPath = await base64ToPdf(data.manual, "assignments"); // base64toIm will be replaced here
         data.manual = manualDataPath;
-        if(assignment.manual){
+        if (assignment.manual) {
             removePdf(assignment.manual);
         }
     }
@@ -78,11 +80,30 @@ const update = async (data, id) => {
 }
 // Update Assignment
 
+// Delete Assignment
+const deleteAssignment = async (id) => {
+    const submissions = await Submission.find({
+        assignmentId: id
+    });
+    if (submissions?.length) {
+        submissions.forEach(submission => {
+            deleteSubmission(submission._id)
+        })
+    }
+    const assignment = await Assignment.findByIdAndDelete(id);
+    if (assignment) {
+        return { success: true, data: assignment, message: "Successfully delete Assignment." }
+    } else {
+        return { success: false, data: null, message: "Sorry, cannot delete Assignment." }
+    }
+}
+// Delete Assignment
+
 // Get Assignment
 const getAssignment = async (id) => {
     const assignment = await Assignment.findById(id)
-    .populate('createdBy', 'name', User)
-    .populate('courseId', 'name', Course);
+        .populate('createdBy', 'name', User)
+        .populate('courseId', 'name', Course);
     if (assignment) {
         return { success: true, data: assignment, message: "Assignment fetched successfully." }
     } else {
@@ -90,5 +111,5 @@ const getAssignment = async (id) => {
     }
 }
 // Get Assignment
-module.exports = { verifyCreateRequest, verifyUpdateRequest, create, update, getAssignment};
+module.exports = { verifyCreateRequest, verifyUpdateRequest, create, update, getAssignment, deleteAssignment };
 

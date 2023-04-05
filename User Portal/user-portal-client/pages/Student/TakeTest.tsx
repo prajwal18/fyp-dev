@@ -24,40 +24,42 @@ const TakeTest = () => {
     useEffect(() => {
         setTimeout(() => { setLoading(false) }, 5000);
 
-        if (user?._id && query?.id  && typeof query.id === 'string' && query.id !== '') {
+        if (user?._id && query?.id && typeof query.id === 'string' && query.id !== '') {
             setLoading(true);
 
-            httpCheckTestAnswerExists(query?.id?.toString() || '', user._id )
-            .then((response: any) => response.data)
-            .then((response: any) => {
-                console.log('Check test: ',response)
-                if(response.success){
-                    dispatch(fetchSelectedAnswerPaperAC({ id: response.data }))
-                } else {
-                    const data = { 
-                        testPaperId: query?.id?.toString() || '',
-                        submittedBy: user._id
-                    }
-                    httpCreateTestAnswer(data)
-                    .then((response:any) => response.data)
-                    .then((response:any) => {
-                        if(response.success){
-                            dispatch(fetchSelectedAnswerPaperAC({id: response.data._id}));
+            httpCheckTestAnswerExists(query?.id?.toString() || '', user._id)
+                .then((response: any) => response.data)
+                .then((response: any) => {
+                    console.log('Check test: ', response)
+                    if (response.success) {
+                        dispatch(fetchSelectedAnswerPaperAC({ id: response.data }))
+                    } else {
+                        const data = {
+                            testPaperId: query?.id?.toString() || '',
+                            submittedBy: user._id
                         }
-                    }).catch((error: any) => {
-                        toast.error(error.message);
-                    })
-                }
+                        httpCreateTestAnswer(data)
+                            .then((response: any) => response.data)
+                            .then((response: any) => {
+                                if (response.success) {
+                                    dispatch(fetchSelectedAnswerPaperAC({ id: response.data._id }));
+                                }else if (!response.message.includes("E11000 duplicate key error collection")) {
+                                    toast.error(response.message);
+                                }
+                            }).catch((error: any) => {
+                                toast.error(error.message);
+                            })
+                    }
 
-            }).catch((error:any) => {
-                toast.error(error.message);
-            })
+                }).catch((error: any) => {
+                    toast.error(error.message);
+                })
         } else if (query && user) {
             setProceed(false);
         }
     }, [user, query, dispatch]);
 
-    
+
     useEffect(() => {
         if (answerPaper?.testPaperId && answerPaper.testPaperId._id && query.id && answerPaper.testPaperId._id === query.id) {
             setLoading(false);

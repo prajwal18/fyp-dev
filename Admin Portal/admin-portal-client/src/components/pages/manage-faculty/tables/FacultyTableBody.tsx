@@ -47,16 +47,20 @@ const TableBodySection = ({ skip, dataList, handleShow, handleEdit, handleDelete
                         </TableCell>
                         <TableCell>
                             <Stack spacing={1}>
-                                <Typography>Total: {row.courses || '10'}</Typography>
                                 <Button variant='outlined'
-                                onClick={() => handleSelect(row)}
+                                onClick={() => {
+                                    handleSelect(row);
+                                }}
                                 >View</Button>
                             </Stack>
                         </TableCell>
                         <TableCell>
                             <Stack direction="row" gap={1}>
                                 <IconContainer
-                                    onClick={() => handleShow(row)}
+                                    onClick={() => {
+                                        handleSelect(row);
+                                        handleShow(true);
+                                    }}
                                     title={`View ${row.name}`}
                                 >
                                     <VisibilityIcon color="primary" />

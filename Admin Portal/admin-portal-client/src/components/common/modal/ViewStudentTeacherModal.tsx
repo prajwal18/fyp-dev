@@ -17,12 +17,13 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { UserTypes } from '../../../constants/Constants';
 // Importing user type
 
-import { baseURL } from '../../../utils/endpoints';
+import { userBaseURL } from '../../../utils/endpoints';
 import profilePic from "../../../assets/images/profilePic.png";
 import PasswordTextField from '../../common/form/PasswordTextField';
 
 import { changeStudentPWAC } from '../../../redux/students/actions';
 import { changeTeacherPWAC } from '../../../redux/teachers/actions';
+import { CustImage } from '../../../constants/FillerImg';
 
 
 // Initial Values and Schema for formik
@@ -34,7 +35,7 @@ const CPSchema = yup.object().shape({
 
 
 
-const ChangePasswordSection = ({ role, id }: { role:string, id: string }) => {
+const ChangePasswordSection = ({ role, id }: { role: string, id: string }) => {
     const [showCP, setShowCP] = useState(false); // Show change password
     const dispatch = useDispatch();
 
@@ -43,7 +44,7 @@ const ChangePasswordSection = ({ role, id }: { role:string, id: string }) => {
         validationSchema: CPSchema,
         enableReinitialize: true,
         onSubmit: (values: any) => {
-            switch(role){
+            switch (role) {
                 case UserTypes.STUDENT:
                     dispatch(changeStudentPWAC(id, values));
                     break;
@@ -95,14 +96,10 @@ const ContentSection = ({ data }: { data: any }) => {
         <DialogContent sx={{ padding: "30px" }}>
             <Typography variant='h6' component='h5' mb={2}>Personal Information</Typography>
             <Stack direction='row' sx={{ minWidth: "600px", gap: "50px" }}>
-                <img
-                    src={baseURL + data.profilePicture}
-                    alt={'profile'}
+                <CustImage
+                    src={userBaseURL + (data?.profilePicture || '/abc.jpb')}
+                    alt="Profile"
                     style={{ height: "180px", width: "180px", objectFit: "cover" }}
-                    onError={(e: any) => {
-                        e.target.src = profilePic;
-                        e.target.onError = null;
-                    }}
                 />
                 <Stack sx={{ gap: "5px" }}>
                     <Stack direction='row' spacing={2}>

@@ -164,7 +164,7 @@ function* deleteStudent(action: ActionType): Generator<any, any, any> {
     const { id } = action.payload;
     const response = yield apiCallNResp(() => httpDeleteStudent(id));
     if (response) {
-        toast.success('Student deleted successfully.');
+        toast.success(response.message);
         yield fetchPaginationData(action);
     }
     // fetchStudents

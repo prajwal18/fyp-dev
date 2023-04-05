@@ -57,8 +57,7 @@ const FacultyTable = ({ data, pagination, handleShow, handleEdit }: TableType) =
     const dispatch = useDispatch();
     // Dispatch function redux
     const handleDelete = (id: string) => {
-        dispatch(updateSelectedFaculty());
-        toast.warn('Delete functionality is not available right now.');
+        dispatch(deleteFacultyAC(id));
     }
 
     return (
@@ -111,7 +110,7 @@ const FacultyTablesSection = ({ handleShow, handleEdit }: {handleShow: (data: an
 
     return (
         <Grid container spacing={2}>
-            <Grid item xs={6}>
+            <Grid item xs={7}>
                 <FacultyTable
                     data={faculties}
                     pagination={pagination}
@@ -119,7 +118,7 @@ const FacultyTablesSection = ({ handleShow, handleEdit }: {handleShow: (data: an
                     handleShow={handleShow}
                 />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={5}>
                 <CourseTable />
             </Grid>
         </Grid>

@@ -29,10 +29,10 @@ import {
 } from '../../../redux/teachers/actions'; // Importing action creators
 // Redux Operations
 
-// Filler image
-import MyImg from '../../../constants/FillerImg';
-// Filler image
-import { baseURL } from '../../../utils/endpoints';
+import { httpCheckUserDocuments } from '../../../services/student.service';
+import ConfirmDeleteModal from '../../common/modal/ConfirmDeleteModal';
+import { setProfileImg } from '../../common/ProfilePicture';
+
 
 const TeacherHeadData: Array<TableHeadPropsType> = [
     {
@@ -67,49 +67,61 @@ const TeacherHeadData: Array<TableHeadPropsType> = [
 
 const TeacherTable = ({ data, pagination, handleShow, handleEdit }: TableType) => {
     const teachers = data;
+    const [confirmDelete, setConfirmDelete] = useState(false);
+    const [delUserId, setDelUserId] = useState<any>(null);
     // Dispatch function redux
     const dispatch = useDispatch();
     // Dispatch function redux
     const handleDelete = (id: string) => {
-        //dispatch(deleteTeacherAC(id))
-        toast.warn('Delete functionality is not available right now.');
+        httpCheckUserDocuments(id)
+            .then((response: any) => response.data)
+            .then((response: any) => {
+                if (response.success) {
+                    toast.warn(response.message);
+                    setConfirmDelete(true);
+                    setDelUserId(id);
+                } else {
+                    dispatch(deleteTeacherAC(id));
+                }
+            })
+            .catch((error: any) => { toast.error(error.message) })
     }
 
-    // Provide a filler image for teacher's without profile picture
-    const solveMissingProfile = (data: any) => {
-        if (data.profilePicture) {
-            return { ...data, profile: <MyImg src={`${baseURL}${data.profilePicture}`} /> };
-        } else {
-            return { ...data, profile: <MyImg /> }
+    const handleConfirmDelete = () => {
+        if (delUserId) {
+            dispatch(deleteTeacherAC(delUserId));
+            setConfirmDelete(false);
         }
     }
-    // Provide a filler image for teacher's without profile picture
     return (
-        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-            <TableContainer>
-                <Table>
-                    <TableHeadSection HeadData={TeacherHeadData} />
-                    <TableBodySection
-                        dataList={teachers && teachers.map(solveMissingProfile)}
-                        keyValues={['profile', 'name', 'email', 'contact', 'totalCourses']}
-                        handleShow={handleShow}
-                        handleEdit={handleEdit}
-                        handleDelete={handleDelete}
-                        skip={pagination.skip}
-                    />
-                </Table>
-            </TableContainer>
-            <Divider />
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={pagination.total}
-                rowsPerPage={pagination.take}
-                page={pagination.skip / pagination.take}
-                onPageChange={handleChangePage(pagination, setPaginationDataAC, dispatch)}
-                onRowsPerPageChange={handleChangeRowsPerPage(pagination, setPaginationDataAC, dispatch)}
-            />
-        </Paper>
+        <>
+            <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                <TableContainer>
+                    <Table>
+                        <TableHeadSection HeadData={TeacherHeadData} />
+                        <TableBodySection
+                            dataList={teachers && teachers.map(setProfileImg)}
+                            keyValues={['profile', 'name', 'email', 'contact', 'totalCourses']}
+                            handleShow={handleShow}
+                            handleEdit={handleEdit}
+                            handleDelete={handleDelete}
+                            skip={pagination.skip}
+                        />
+                    </Table>
+                </TableContainer>
+                <Divider />
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={pagination.total}
+                    rowsPerPage={pagination.take}
+                    page={pagination.skip / pagination.take}
+                    onPageChange={handleChangePage(pagination, setPaginationDataAC, dispatch)}
+                    onRowsPerPageChange={handleChangeRowsPerPage(pagination, setPaginationDataAC, dispatch)}
+                />
+            </Paper>
+            <ConfirmDeleteModal open={confirmDelete} setOpen={setConfirmDelete} handleDelete={handleConfirmDelete} />
+        </>
     )
 }
 

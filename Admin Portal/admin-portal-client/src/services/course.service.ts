@@ -5,7 +5,8 @@ import { UserTypes } from "../constants/Constants";
 const {
     create, edit, getAllCourses,
     getCourseDetail, facultyCourses, 
-    addUser, removeUser
+    addUser, removeUser,
+    deleteCourse
 } = endpoints.course;
 
 export const httpGetAllCourse = (query: string) => {
@@ -32,7 +33,7 @@ export const httpUpdateCourse = (id: string, data: any) => {
 }
 
 export const httpDeleteCourse = (id: string) => {
-    const url = `?id=${id}`;
+    const url = `${deleteCourse}?id=${id}`;
     return axiosWithToken('delete', url);
 }
 

@@ -34,6 +34,22 @@ const update = asyncWrapper(async (req, res, next) => {
 });
 // Update Assignment
 
+// Delete Assignment
+const deleteAssignment = asyncWrapper(async (req, res, next) => {
+    const { id } = req.query;
+    if (id) {
+        const { success, data, message } = await assignmentService.deleteAssignment(id);
+        if (success) {
+            res.json({ success, data, message })
+        } else {
+            throw new Error(message);
+        }
+    } else {
+        throw new Error("Please specify the assignment you want to delete.");
+    }
+})
+// Delete Assignment
+
 // Get Assignment
 const getAssignment = asyncWrapper(async (req, res, next) => {
     const { id } = req.query;
@@ -51,4 +67,4 @@ const getAssignment = asyncWrapper(async (req, res, next) => {
 // Get Assignment
 
 
-module.exports = { create, update, getAssignment }
+module.exports = { create, update, getAssignment, deleteAssignment }

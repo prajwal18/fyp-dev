@@ -30,6 +30,20 @@ const updateTestPaper = asyncWrapper(async (req, res, next) => {
     }
 });
 
+const deleteTest = asyncWrapper(async (req, res, next) => {
+    const { id } = req.query;
+    if (id) {
+        const { success, data, message } = await testPaperService.deleteTest(id);
+        if (success) {
+            res.json({ success, data, message })
+        } else {
+            throw new Error(message);
+        }
+    } else {
+        throw new Error("Please specify the test paper you want to delete.");
+    }
+})
+
 const getTest = asyncWrapper(async (req, res, next) => {
     const { id } = req.query;
     if (id) {
@@ -44,4 +58,4 @@ const getTest = asyncWrapper(async (req, res, next) => {
     }
 });
 
-module.exports = { createTestPaper, updateTestPaper, getTest };
+module.exports = { createTestPaper, updateTestPaper, getTest, deleteTest };

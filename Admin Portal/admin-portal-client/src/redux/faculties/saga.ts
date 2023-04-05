@@ -126,7 +126,7 @@ function* deleteFaculty(action: ActionType): Generator<any, any, any> {
     const { id } = action.payload;
     const response = yield apiCallNResp(() => httpDeleteFaculty(id));
     if (response) {
-        toast.success('Faculty deleted successfully.');
+        toast.success(response.message);
         yield fetchPaginationData(action);
     }
     // fetchFaculties

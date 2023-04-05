@@ -1,4 +1,4 @@
-import MyImg from "../../constants/FillerImg";
+import {MyImg} from "../../constants/FillerImg";
 
 export const teachers = [{
     "_id": 1,
