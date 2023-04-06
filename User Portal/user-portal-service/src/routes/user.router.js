@@ -25,8 +25,9 @@ router.put("/change-password", authenticationMiddleware, authorizeSameUser, user
 
 // Forgot password
 // Get request will send an otp and post request will check the opt and change the user's password
-router.post("/forgot-password", userController.sendOtp);
-router.put("/forgot-password", userController.verifyNChangePassword);
+router.post("/get-otp", userController.getOtp);
+router.post("/verify-otp", userController.verifyOtp);
+router.put("/reset-password", userController.verifyNChangePassword);
 
 // Get all course members for a specific user. 
 // Note only returns the members of the course the user's enlisted in. 

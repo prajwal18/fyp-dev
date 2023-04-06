@@ -109,10 +109,21 @@ const getAllCourseMembers = asyncWrapper(async (req, res, next) => {
 // Get all course members
 
 // send OTp 
-const sendOtp = asyncWrapper(async (req, res, next) => {
+const getOtp = asyncWrapper(async (req, res, next) => {
     const { email } = req.body;
     if (email) {
-        const { success, data, message } = await userService.sendOtp(email);
+        await userService.getOtp(email, res);
+    } else {
+        throw new Error('Cannot find users, provide your email.');
+    }
+});
+// send OTp 
+
+// send OTp 
+const verifyOtp = asyncWrapper(async (req, res, next) => {
+    const { email, otp } = req.body;
+    if (email && otp) {
+        const { success, data, message } = await userService.verifyOtp(email, otp);
         if (success) {
             res.json({ success, data, message });
         } else {
@@ -127,7 +138,7 @@ const sendOtp = asyncWrapper(async (req, res, next) => {
 // Verify otp and change password
 const verifyNChangePassword = asyncWrapper(async (req, res, next) => {
     const { email, otp, newPassword } = req.body;
-    if (email || otp || newPassword) {
+    if (email && otp && newPassword) {
         const { success, data, message } = await userService.verifyNChangePassword(email, otp, newPassword);
         if (success) {
             res.json({ success, data, message });
@@ -145,5 +156,5 @@ const verifyNChangePassword = asyncWrapper(async (req, res, next) => {
 module.exports = {
     userLogin, userRegistration, userUpdate,
     userDetail, changePassword, getAllCourseMembers,
-    sendOtp, verifyNChangePassword
+    getOtp, verifyNChangePassword, verifyOtp
 }

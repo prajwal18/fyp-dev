@@ -11,6 +11,12 @@ const {
     getMembers
 } = endpoints.user;
 
+const {
+    getOtp,
+    verifyOtp,
+    resetPassword
+} = endpoints.resetPassword;
+
 export const httpUserLogin = ({ email, password }: { email: string, password: string }) => {
     return axios.post(login, { email, password });
 }
@@ -37,4 +43,16 @@ export const httpChangeUserPassword = (data: any, id: string) => {
 export const httpGetAllMembers = (query: string) => {
     const url=`${getMembers}${query}`;
     return axiosWithToken('get', url);
+}
+
+export const httpGetOtp = (email: string) => {
+    return axios.post(getOtp, { email });
+}
+
+export const httpVerifyOtp = (data: any) => {
+    return axios.post(verifyOtp, data);
+}
+
+export const httpResetPassword = (data: any) => {
+    return axios.put(resetPassword, data);
 }

@@ -1,8 +1,13 @@
+require('dotenv').config();
 //Importing admin model
 const User = require("../models/user.model");
+const Otp = require("../models/otp.model");
 const Course = require("../models/course.model");
 const jwt = require("jsonwebtoken");
+const otpGenerator = require('otp-generator');
+const nodemailer = require("nodemailer");
 //Importing password creation and comparision functions
+const { generateCustomMessage, generateTransporter } = require("../utils/generate.message.otp");
 const { base64toImg, removeImage } = require("../utils/read.write.image");
 const { checkPassword, encryptPassword } = require("../utils/encrypt.decrypt.password");
 
@@ -169,11 +174,84 @@ const getAllCourseMembers = async (courses, roles, searchTerm, skip, take) => {
 }
 
 // Send OTP
-const sendOtp = async (email) => {
-    
+const getOtp = async (email, res) => {
+    const user = await User.findOne({ email });
+    if (user) {
+        let message = '';
+        let success = false;
+        const sender = process.env.NODE_MAILER_EMAIL;
+        const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false });
+        const otpRec = await Otp.create({
+            user: user._id,
+            otp: otp
+        });
+
+        if (otpRec) {
+            let mailTransporter = nodemailer.createTransport({
+                service: 'gmail',
+                host: 'smtp.gmail.com',
+                port: 465,
+                secure: true,
+                auth: {
+                    user: process.env.NODE_MAILER_EMAIL,
+                    pass: process.env.NODE_MALER_EMAIL_PASSWORD
+                }
+            });
+            let mailDetails = {
+                from: sender,
+                to: email,
+                subject: "Reset Password - Your OTP",
+                text: `Your one time password is: ${otp}`,
+                html: `<p>Your one time password is: <h2>${otp}</h2></p>`
+
+            }
+
+            mailTransporter.sendMail(mailDetails, function (err, data) {
+                if (err) {
+                    console.log("Error: ", err);
+                    res.json({success: false, data: null, message: "Sorry, Failed to send the otp."})
+                } else {
+                    console.log("Message sent successfully");
+                    res.json({success: true, data: null, message: "Otp sent successfully to your email."})
+                }
+            });
+
+            return {success: success, data: null, message: message}
+        } else {
+            res.json({success: false, data: null, message: 'Sorry, failed to generate otp. Try again'})
+        }
+
+    } else {
+        res.json({ success: false, data: null, message: "Sorry, cannot find user." })
+    }
+    /*
+    */
 }
 // Send OTP
 
+
+// Verify OTP
+const verifyOtp = async (email, otp) => {
+    const user = await User.findOne({ email });
+    if (user) {
+        const otpRecord = await Otp.find({ user: user._id }).sort({ 'createdAt': -1 });
+        if (otpRecord?.length) {
+            const correctOTP = otpRecord[0].otp;
+            if (correctOTP === otp) {
+                return {
+                    success: true, data: null, message: "Otp matches."
+                }
+            } else {
+                return { success: false, data: null, message: "Incorrect OTP." }
+            }
+        } else {
+            return { success: false, data: null, message: "There is no record of otp" }
+        }
+    } else {
+        return { success: false, data: null, message: "Sorry, cannot find user." }
+    }
+}
+// Verify OTP
 
 
 
@@ -181,15 +259,26 @@ const sendOtp = async (email) => {
 const verifyNChangePassword = async (email, otp, newPassword) => {
     const user = await User.findOne({ email });
     if (user) {
-        const correctOTP = user.password;
-        if (correctOTP === otp) {
-            const hashedPassword = await encryptPassword(newPassword);
-            const updatedUser = await User.findByIdAndUpdate(user._id, hashedPassword);
-            return {
-                success: true, data: null, message: "Password updated successfully"
+        const otpRecord = await Otp.find({ user: user._id }).sort({ 'createdAt': -1 });
+        if (otpRecord?.length) {
+            const correctOTP = otpRecord[0].otp;
+            if (correctOTP === otp) {
+                const hashedPassword = await encryptPassword(newPassword);
+                const updatedUser = await User.findByIdAndUpdate(user._id, {password: hashedPassword});
+                return updatedUser ?
+                {
+                    success: true, data: null, message: "Password updated successfully"
+                }
+                :
+                {
+                    success: false, data: null, message: "Sorry, failed to update your password."
+                }
+
+            } else {
+                return { success: false, data: null, message: "Incorrect OTP." }
             }
         } else {
-            return { success: false, data: null, message: "Incorrect OTP." }
+            return { success: false, data: null, message: "There is no record of otp" }
         }
     } else {
         return { success: false, data: null, message: "Sorry, cannot find user." }
@@ -201,5 +290,9 @@ const verifyNChangePassword = async (email, otp, newPassword) => {
 module.exports = {
     loginUser, validateRequest, registerUser, updateUser,
     getUserDetail, changePassword, getAllCourseMembers,
-    verifyNChangePassword, 
+    verifyNChangePassword, getOtp, verifyOtp
 }
+
+
+
+

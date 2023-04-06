@@ -58,6 +58,12 @@ const endpoints = {
         create: baseURL + "/conversation/create",
         update: baseURL + "/conversation/update",
         getConversation: baseURL + "/conversation/get-conversation"
+    },
+
+    resetPassword: {
+        getOtp: baseURL + "/user/get-otp",
+        verifyOtp: baseURL + "/user/verify-otp",
+        resetPassword: baseURL + "/user/reset-password"
     }
 }
 

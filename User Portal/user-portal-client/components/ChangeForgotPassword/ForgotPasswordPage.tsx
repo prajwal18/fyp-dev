@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import LoginSignupLayout from "../Layout/LoginSignupLayout";        // The layout that will be used
 
 //MUI Components
@@ -18,6 +18,11 @@ import { useRouter } from 'next/router';
 //MUI Icon
 
 import { toast } from "react-toastify";
+import { useFormik } from 'formik';
+import { apiCallNResp } from '@/utils/apiCallNResp';
+import { httpGetOtp, httpResetPassword, httpVerifyOtp } from '@/service/user.service';
+import { GenerateCustTextField } from '../Common/form/CustTextFieldNErrorMsg';
+import PasswordTextField from '../Common/form/PasswordTextField';
 
 const HeadSection = ({ subText }: { subText: string }) => {
     return (
@@ -33,7 +38,7 @@ const HeadSection = ({ subText }: { subText: string }) => {
     )
 }
 
-const ButtonSection = ({ btnText }: { btnText: string }) => {
+const ButtonSection = ({ btnText, formik }: { btnText: string, formik: any }) => {
     return (
         <>
             <Button
@@ -41,6 +46,7 @@ const ButtonSection = ({ btnText }: { btnText: string }) => {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
+                disabled={formik.isSubmitting}
             >
                 {btnText}
             </Button>
@@ -48,61 +54,51 @@ const ButtonSection = ({ btnText }: { btnText: string }) => {
     )
 }
 
-const RenderFormSection = (progress: number) => {
+const RenderFormSection = (progress: number, formik: any) => {
     switch (progress) {
         case 1:
             return (
-                <TextField
-                    margin="normal"
-                    fullWidth
-                    label="Enter your email" />
+                <GenerateCustTextField
+                    formik={formik}
+                    name='email'
+                    label='Email'
+                />
             );
         case 2:
             return (
-                <TextField
-                    margin="normal"
-                    fullWidth
-                    label="Enter the OTP" />
+                <GenerateCustTextField
+                    formik={formik}
+                    name='otp'
+                    label='Enter the OTP'
+                />
             );
         case 3:
         case 4:
             return (
-                <>
-                    <TextField
-                        margin="normal"
-                        fullWidth
-                        label="New Password" />
-                    <TextField
-                        margin="normal"
-                        fullWidth
-                        label="Re-enter Password" />
-                </>
+                <Stack spacing={1}>
+                    <PasswordTextField
+                        formik={formik}
+                        name='newPassword'
+                        label='New Password'
+                    />
+                    <PasswordTextField
+                        formik={formik}
+                        name='retypePassword'
+                        label='Retype Password'
+                    />
+                </Stack>
             )
         default:
             return <></>;
     }
 }
 
-const FormSection = ({ progress, setProgress }: { progress: number, setProgress: (value: any) => void }) => {
-    const router = useRouter();
-    const handleSubmit = (event: React.ChangeEvent<HTMLInputElement>) => {
-        event.preventDefault();         // Prevent the default behaviour of the form to refresh
-        if (progress < 3) {
-            setProgress(progress + 1);
-        }
-        if (progress === 3) {
-            setProgress(4);
-            toast.success("Redirecting to Login");
-            setTimeout(() => {
-                router.push('/Auth/Login');
-            }, 1000);
-        }
-    }
+const FormSection = ({ progress, formik }: { progress: number, formik: any }) => {
     return (
         <>
-            <Box component="form" sx={{ mt: 1 }} onSubmit={handleSubmit}>
-                {RenderFormSection(progress)}
-                <ButtonSection btnText='NEXT' />
+            <Box component="form" sx={{ mt: 2 }} onSubmit={formik.handleSubmit}>
+                {RenderFormSection(progress, formik)}
+                <ButtonSection btnText='NEXT' formik={formik} />
             </Box>
         </>
     )
@@ -110,6 +106,50 @@ const FormSection = ({ progress, setProgress }: { progress: number, setProgress:
 
 const ChangePasswordSection = () => {
     const [progress, setProgress] = useState(1);
+    const router = useRouter();
+
+    const formik = useFormik<any>({
+        initialValues: {
+            email: '', otp: '', newPassword: '', retypePassword: ''
+        },
+        onSubmit: async (values: any) => {
+            if (progress === 1) {
+                if (values?.email !== '') {
+                    const response = await apiCallNResp(() => httpGetOtp(values.email));
+                    if (response.success) {
+                        toast.success(response.message);
+                        setProgress(2);
+                    }
+                }
+            }
+            else if (progress === 2) {
+                if (values?.email !== '' && values?.otp !== '') {
+                    const response2 = await apiCallNResp(() => httpVerifyOtp({ email: values.email, otp: values.otp }));
+                    if (response2.success) {
+                        toast.success(response2.message);
+                        setProgress(3);
+                    }
+                }
+            }
+            else if (progress === 3) {
+
+                if (values?.newPassword === values?.retypePassword && (values?.email !== '' && values?.otp !== '' && values?.newPassword !== '')) {
+                    const response3 = await apiCallNResp(() => httpResetPassword({ email: values.email, otp: values.otp, newPassword: values.newPassword }))
+                    if (response3.success) {
+                        toast.success(response3.message);
+                        setProgress(4);
+                        setTimeout(() => {
+                            formik.resetForm();
+                            router.push('/Auth/Login');
+                        }, 200);
+                    }
+                } else {
+                    toast.error("Passwords doesn't match");
+                }
+            }
+        }
+    });
+
     const genProgress = () => {
         switch (progress) {
             case 1:
@@ -141,7 +181,7 @@ const ChangePasswordSection = () => {
 
                 {/* Form Section */}
                 <Box sx={{ width: '100%' }}>
-                    <FormSection progress={progress} setProgress={setProgress} />
+                    <FormSection progress={progress} formik={formik} />
                 </Box>
                 {/* Form Section */}
             </Stack>
