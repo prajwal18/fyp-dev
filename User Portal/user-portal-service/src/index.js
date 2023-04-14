@@ -22,21 +22,6 @@ app.use(cors());
 app.use("/public", express.static("public"));
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Socket IO to establish full duplex communication between server and client
 const socketIO = require('socket.io')(http, {
     cors: {
@@ -82,30 +67,6 @@ socketIO.on('connection', (socket) => {
     });
 });
 // Socket IO to establish full duplex communication between server and client
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // Routes

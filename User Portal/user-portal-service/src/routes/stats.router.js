@@ -4,7 +4,6 @@ const router = express.Router();
 const { authenticationMiddleware, authorizeTeacher, authorizeStudent } = require("../middleware/auth");
 const statsController = require("../controllers/stats.controller");
 
-
 // Get Header Info
 /* 
     Header Info contains the number of courses the user's resitered in, 
@@ -27,11 +26,9 @@ router.get('/course-stat', authenticationMiddleware, statsController.getCourseSt
 router.get('/assignment-stat', authenticationMiddleware, statsController.getAssignmentStat);
 // Fetch Assignment Stats
 
-
 // Fetch Test Stats
 router.get('/test-stat', authenticationMiddleware, statsController.getTestStat);
 // Fetch Test Stats
-
 
 // Get test result data
 /*
@@ -41,7 +38,6 @@ router.get('/test-stat', authenticationMiddleware, statsController.getTestStat);
 router.get("/test-progress", authenticationMiddleware, statsController.getTestProgress);
 // Get test result data
 
-
 // Get assignment result data
 /*
     To get the assignment result data you need to provide the following parameters:
@@ -49,8 +45,5 @@ router.get("/test-progress", authenticationMiddleware, statsController.getTestPr
 */
 router.get("/assignment-progress", authenticationMiddleware, statsController.getAssignmentProgress);
 // Get test result data
-
-
-
 
 module.exports = router;

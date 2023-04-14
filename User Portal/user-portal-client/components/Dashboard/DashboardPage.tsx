@@ -15,7 +15,6 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 ChartJS.register(ArcElement, Tooltip, Legend);
 // To use chart js in this project
 
-
 const DashboardPage = () => {
     return (
         <Box>

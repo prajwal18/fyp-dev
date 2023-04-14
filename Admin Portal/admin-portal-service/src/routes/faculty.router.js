@@ -4,7 +4,6 @@ const router = express.Router();
 const facultyController = require("../controllers/faculty.controller");
 const { authenticationMiddleware, authorizeAdmin } = require("../middleware/auth");
 
-
 // Create Faculty
 router.post("/create", authenticationMiddleware, authorizeAdmin, facultyController.create );
 
@@ -22,14 +21,5 @@ router.get("/dd-faculties", authenticationMiddleware, authorizeAdmin, facultyCon
 
 // Delete Faculty api
 router.delete("/delete", authenticationMiddleware, authorizeAdmin, facultyController.deleteFaculty);
-
-
-
-/*
-Note: To create, update, retrive and delete a Faculty, a middleware
-is needed to authorize the admin with those privileges.
-
-Authentication middleware will only authorize requests with JWT token present
-*/
 
 module.exports = router;

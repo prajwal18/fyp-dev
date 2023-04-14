@@ -16,6 +16,13 @@ import { ViewProfileModalOnly } from '../ViewEditProfile/ViewProfileModal';
 import { updateReceiver } from '@/redux/message/message.slice';
 import { useRouter } from 'next/router';
 import { selectUser } from '@/redux/general/general.slice';
+import ProfileImage from '../Common/components/ProfileImage';
+import { baseURL } from '@/utils/endpoints';
+
+const addProfileToMembers = (data: any) => {
+    const newData = data.map((item:any) => ({...item, profile: <ProfileImage src={baseURL + (item?.profilePicture || '/abc.jpg')} />}))
+    return newData;
+}
 
 const PeopleTableContainer = () => {
     const [openView, setOpenView] = useState(false);
@@ -48,7 +55,7 @@ const PeopleTableContainer = () => {
                         <TableBodySection
                             skip={pagination.skip}
                             includeSN={true}
-                            dataList={members}
+                            dataList={addProfileToMembers(members || [])}
                             keyValues={['profile', 'role', 'name', 'email']}
                             actionData={[
                                 {

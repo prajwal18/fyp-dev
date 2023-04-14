@@ -26,7 +26,4 @@ router.get('/get-test', authenticationMiddleware, testController.getTest);
 router.delete('/delete', authenticationMiddleware, authorizeTeacher, testController.deleteTest);
 
 
-
-
-
 module.exports = router;

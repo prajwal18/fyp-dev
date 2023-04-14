@@ -4,7 +4,6 @@ const router = express.Router();
 const userController = require("../controllers/user.controller");
 const { authenticationMiddleware, authorizeSameUser } = require("../middleware/auth");
 
-
 // User Login
 router.post("/auth/login", userController.userLogin);
 
@@ -33,12 +32,5 @@ router.put("/reset-password", userController.verifyNChangePassword);
 // Note only returns the members of the course the user's enlisted in. 
 router.get("/get-all-course-members", authenticationMiddleware, userController.getAllCourseMembers);
 
-
-/*
-Note: To update and retirve user's information, a middleware is needed
-to authorize the same user access.
-
-Authentication middleware will only authorize requests with JWT token present
-*/
 
 module.exports = router;
